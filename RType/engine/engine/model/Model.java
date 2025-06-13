@@ -1,0 +1,328 @@
+package engine.model;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import engine.IModel;
+import engine.IView;
+
+public class Model implements IModel {
+	private int m_ncols, m_nrows;
+	private Entity[][] m_grid;
+	private Player m_player;
+	private List<Entity> m_entities;
+	private IView m_view;
+	private Config m_conf;
+	private int m_metric;
+	private double m_xsize, m_ysize;
+
+	public Model(int nr, int nc) {
+		m_ncols = nc;
+		m_nrows = nr;
+		m_grid = new Entity[nr][nc];
+		m_entities = new LinkedList<Entity>();
+		m_metric = 1;
+		m_xsize = m_ncols * m_metric;
+		m_ysize = m_nrows * m_metric;
+	}
+
+	/*
+	 * A callback from the constructor of an entity to notify this model of a new
+	 * entity to add to this model.
+	 */
+	public void addAt(Entity e) {
+		if (m_grid[e.m_row][e.m_col] != null)
+			throw new IllegalArgumentException("There is already an entity at (" + e.m_row + "," + e.m_col + ")");
+
+		m_grid[e.m_row][e.m_col] = e;
+		m_entities.add(e);
+		m_view.birth(e);
+	}
+
+	public void setPlayer(Player p) {
+		if (m_player != null)
+			throw new IllegalStateException("Player is already set");
+		m_player = p;
+	}
+
+	@Override
+	public void register(IView v) {
+		if (v == null)
+			throw new IllegalArgumentException("Cannot set a null view to the model");
+		m_view = v;
+	}
+
+	@Override
+	public void unregister(IView v) {
+		if (v == null)
+			throw new IllegalArgumentException("Cannot unset a null view to the model");
+		m_view = null;
+	}
+
+	/*
+	 * Move the given entity from its current location by adding the given number of
+	 * rows and columns to its current location.
+	 */
+	public boolean move(Entity e, int nrows, int ncols) {
+		int newrow = e.m_row + nrows;
+		int newcol = e.m_col + ncols;
+
+		
+		newrow = normalize(newrow, m_nrows);
+		newcol = normalize(newcol, m_ncols);
+
+		if (entity(newrow, newcol) == null) {
+			m_grid[e.m_row][e.m_col] = null; // remove from old position
+
+			e.at(newrow, newcol); // update entity position
+			m_grid[newrow][newcol] = e; // add to new position
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * Move the given entity from its current location by adding the given number of
+	 * rows and columns to its current location.
+	 */
+	/*
+	 * Move the given entity from its current location by adding the given number of
+	 * rows and columns to its current location.
+	 */
+	public void move(Entity e, double x, double y) {
+		double tempc = x + e.x;
+		double tempr = y + e.y;
+		
+
+		tempr = normalize(tempr, m_ysize);
+		tempc = normalize(tempc, m_xsize);
+		
+		
+
+		boolean left = isEntityAtLeftEdge(e);
+		boolean right = isEntityAtRightEdge(e);
+		boolean up = isEntityAtTopEdge(e);
+		boolean down = isEntityAtBottomEdge(e);
+
+		// Gestion des collisions selon la direction
+		if (up && y < 0) {
+			if (handleUpwardCollisions(e, left, right)) {
+
+				tempr = e.y;
+			e.speedY = 0;
+			}
+		}
+
+		else if (down && y > 0) {
+			if (handleDownwardCollisions(e, left, right)) {
+				tempr = e.y;
+			e.speedY = 0;
+			}
+		}
+
+		if (right && x > 0) {
+			if (handleRightwardCollisions(e, up, down)) {
+				tempc = e.x;
+			e.speedX = 0;
+			}
+		}
+
+		else if (left && x < 0) {
+			if (handleLeftwardCollisions(e, up, down)){
+			tempc = e.x;
+			e.speedX = 0;
+			}
+		}
+//		System.out.println(tempc+ " "+tempr);
+		updateEntityPosition(e, tempc, tempr);
+	}
+
+	/*
+	 * Normalize a number back to the range [0,lengh[
+	 */
+	private int normalize(int n, int length) {
+		if (m_conf.tore)
+			return ((n % length) + length) % length;
+		else
+			return n = n < 0 ? Math.max(n, 0) : Math.min(n, length-1);
+	}
+
+	private double normalize(double n, double length) {
+		if (m_conf.tore)
+			return ((n % length) + length) % length;
+		else
+			return n = n < 0 ? Math.max(n, 0) : Math.min(n, length);
+	}
+
+	@Override
+	public Entity entity(int r, int c) {
+		return m_grid[normalize(r, m_nrows)][normalize(c, m_ncols)];
+	}
+
+	@Override
+	public Iterator<Entity> entities() {
+		return m_entities.iterator();
+	}
+
+	@Override
+	public Config config() {
+		return m_conf;
+	}
+
+	@Override
+	public void config(Config c) {
+		m_conf = c;
+	}
+
+	@Override
+	public Player player() {
+		return m_player;
+	}
+
+	@Override
+	public int ncols() {
+		return m_ncols;
+	}
+
+	@Override
+	public int nrows() {
+		return m_nrows;
+	}
+
+	@Override
+	public double metric() {
+		return m_metric;
+	}
+
+	@Override
+	public int toCellCoordinate(double x) {
+		return (int) (x / m_metric);
+	}
+
+	@Override
+	public void tick(int elapsed) {
+		for (Entity e : m_entities)
+			if (e.stunt != null)
+				e.stunt.tick(elapsed);
+	}
+
+	public void death(Entity entity) {
+		m_grid[entity.m_row][entity.m_col] = null;
+		m_entities.remove(entity);
+		m_view.death(entity);
+	}
+
+	// ---------- Private methods -------------
+
+	private boolean isEntityAtLeftEdge(Entity e) {
+		double fractionalPart = (e.x / m_metric) % 1;
+		return (fractionalPart > 0 && fractionalPart < 0.2);
+	}
+
+	private boolean isEntityAtRightEdge(Entity e) {
+		double fractionalPart = (e.x / m_metric) % 1;
+		return (fractionalPart > 0.8);
+	}
+
+	private boolean isEntityAtTopEdge(Entity e) {
+		double fractionalPart = (e.y / m_metric) % 1;
+		return (fractionalPart > 0 && fractionalPart < 0.2);
+	}
+
+	private boolean isEntityAtBottomEdge(Entity e) {
+		double fractionalPart = (e.y / m_metric) % 1;
+		return (fractionalPart > 0.8);
+	}
+
+	private boolean handleUpwardCollisions(Entity e, boolean left, boolean right) {
+		// Collision directe vers le haut
+		if (entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x)) != null) {
+			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x)));
+			return true;
+		}
+
+		// Collision diagonale haut-gauche
+		if (left && entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1));
+			return true;
+		}
+
+		// Collision diagonale haut-droite
+		if (right && entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1));
+			return true;
+		}
+		return false;
+	}
+
+	private boolean handleDownwardCollisions(Entity e, boolean left, boolean right) {
+		// Collision directe vers le bas
+		if (entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x)) != null) {
+			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x)));
+			return true;
+		}
+
+		// Collision diagonale bas-gauche
+		if (left && entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1));
+			return true;
+		}
+
+		// Collision diagonale bas-droite
+		if (right && entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1));
+			return true;
+		}
+		return false;
+	}
+
+	private boolean handleRightwardCollisions(Entity e, boolean up, boolean down) {
+		// Collision directe vers la droite
+		if (entity(toCellCoordinate(e.y), toCellCoordinate(e.x) + 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y), toCellCoordinate(e.x) + 1));
+			return true;
+		}
+
+		// Collision diagonale droite-haut
+		if (up && entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1));
+			return true;
+		}
+
+		// Collision diagonale droite-bas
+		if (down && entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1));
+			return true;
+		}
+		return false;
+	}
+
+	private boolean handleLeftwardCollisions(Entity e, boolean up, boolean down) {
+		// Collision directe vers la gauche
+		if (entity(toCellCoordinate(e.y), toCellCoordinate(e.x) - 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y), toCellCoordinate(e.x) - 1));
+			return true;
+		}
+
+		// Collision diagonale gauche-haut
+		if (up && entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1));
+			return true;
+		}
+
+		// Collision diagonale gauche-bas
+		if (down && entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1) != null) {
+			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1));
+			return true;
+		}
+		return false;
+	}
+
+	private void updateEntityPosition(Entity e, double newX, double newY) {
+		m_grid[e.row()][e.col()] = null;
+		m_grid[toCellCoordinate(newY)][toCellCoordinate(newX)] = e;
+		e.at(newX, newY, toCellCoordinate(newY), toCellCoordinate(newX));
+	}
+
+}

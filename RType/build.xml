@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Java Build" default="all" basedir=".">
+	<description>
+    The Java Build template for projects developped
+    as part of the workshop in object-oriented programming
+    of the Polytech engineering school, in Grenoble, France.
+    Author: Pr. Olivier Gruber.
+    Copyright holder: Pr. Olivier Gruber.
+	</description>
+  <!--
+      Several useful properties.
+      - output.dir: where class files will be generated
+        notice that we use ".bin" so that it does not interfere
+        with IDEs like Eclipse that generate class files in "bin".
+      - class.path: where existing class files can be found
+      - jars: where extra Java archives are
+      - javac.compiler: which version of the Java compiler to use
+      - javac.target: which version of the Java language to use
+  -->
+	<property name="output.dir" value=".bin" />
+	<property name="class.path" value=".bin" />
+	<property name="jars.dir" value="./jars" />
+	<property name="javac.compiler" value="javac10+" />
+	<property name="javac.target" value="11" />
+
+  <!--
+    If you need to compile using Java archives (jar files)
+    You can add them in the directory "jars" and they will
+    be automatically picked up when compiling your Java sources.
+  -->
+	<path id="jars.classpath">
+		<fileset dir="${jars.dir}">
+			<include name="*.jar" />
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+  <!--
+      Target to make sure needed directories exist
+      and if they do not, they are created.
+  -->
+	<target name="init">
+		<mkdir dir="${output.dir}" />
+		<mkdir dir="${jars.dir}" />
+	</target>
+
+  <!--
+      This is the target to compile your Java sources,
+		  Adapt the source paths used, you need one source
+      path per source folder in your Eclipse project.
+  -->
+	<target name="compile" depends="init">
+		<javac destdir="${output.dir}" 
+			debug="yes" 
+			compiler="${javac.compiler}" 
+			source="${javac.target}" 
+			target="${javac.target}" 
+			includeantruntime="false" 
+			classpath="${class.path}">
+			<classpath refid="jars.classpath" />
+			<!-- source paths -->			
+			<src path="../ple.given/given"/>
+			<src path="../ple.given/_given"/>
+			<src path="engine"/>
+			<src path="game"/>
+			<src path="GAL"/>
+			<src path="parser"/>
+		</javac>
+	</target>
+
+  <!--
+      Default target that compiles your code.
+  -->
+	<target name="all" depends="compile">
+	</target>
+
+  <!--
+      Target that cleans up all generated files
+      and directories.
+  -->
+	<target name="clean">
+		<delete dir="${output.dir}" />
+	</target>
+
+</project>
