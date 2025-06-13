@@ -115,7 +115,7 @@ public abstract class View implements IView {
 	}
 
 	protected void debugMode(Graphics2D g) {
-		int ligne = 3;
+		int ligne = 1;
 		g.setColor(java.awt.Color.BLACK);
 
 		for (int i = 0; i <= m_model.nrows(); i++) {
