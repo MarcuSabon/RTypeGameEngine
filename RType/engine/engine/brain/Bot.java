@@ -12,6 +12,10 @@ public abstract class Bot implements IBot {
 	protected Mode mode;
 	protected FSM fsm;
 
+	// champs valeur d'un bot pour le score du Player
+	protected int pointsValue; // J'ai mis dans bot et pas Entity pcq la difficulté à tuer l'entité dépend de
+								// son bot mais on pourrait changer
+
 	private boolean wait;
 	protected int delay;
 
@@ -20,6 +24,8 @@ public abstract class Bot implements IBot {
 		this.e = e;
 		e.bot = this;
 		b.bots.add(this);
+		this.pointsValue = 0; // valeur par défaut (valeur obstacle), on ajoute + dans le consructeur des bots
+								// ennemis
 
 		delay = 500; // 0,5 second by default
 	}
@@ -45,6 +51,11 @@ public abstract class Bot implements IBot {
 	@Override
 	public void setFSM(FSM fsm) {
 		this.fsm = fsm;
+	}
+
+	@Override
+	public int getPointsValue() {
+		return pointsValue;
 	}
 
 // ---------------- Protected ------------------------
