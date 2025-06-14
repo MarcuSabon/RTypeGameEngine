@@ -12,5 +12,7 @@ public interface IBrain {
 
 		void setFSM(FSM fsm);
 
+		int getPointsValue();
+
 	}
 }

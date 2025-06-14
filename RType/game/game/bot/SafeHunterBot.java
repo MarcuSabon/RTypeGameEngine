@@ -18,6 +18,8 @@ public class SafeHunterBot extends Bot {
 		c = Category.Adversary;
 		duration = delay;
 		state = Track;
+		pointsValue += 100; // valeur d'un bot de base par exemple
+
 	}
 
 	public void think() {
