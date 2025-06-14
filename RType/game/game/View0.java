@@ -16,10 +16,13 @@ import oop.graphics.Canvas;
 public class View0 extends View {
 
 	LinkedList<Avatar> listA;
+	private ScrollingBackground background;
 
 	public View0(Canvas canvas, IModel model) {
 		super(canvas, model);
 		listA = new LinkedList();
+		background = new ScrollingBackground(canvas, "/Ressources/space.png");
+
 	}
 
 	public void focus(int px, int py) {
@@ -32,6 +35,7 @@ public class View0 extends View {
 	}
 
 	public void subPaint(Graphics2D g, double x, double y, float zoom) {
+		background.draw(g);
 		g.setColor(java.awt.Color.WHITE);
 		p = m_model.player();
 		Iterator i = listA.iterator();
@@ -48,10 +52,9 @@ public class View0 extends View {
 
 	@Override
 	public void tick(int ms) {
-
 		oX = 0;
 		oY = 0;
-
+		background.update(ms);
 	}
 
 	@Override

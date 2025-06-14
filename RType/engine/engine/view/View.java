@@ -1,17 +1,11 @@
 package engine.view;
 
 import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.geom.AffineTransform;
 
 import engine.IModel;
 import engine.IView;
-import engine.model.Entity;
 import engine.model.Player;
-import engine.utils.Utils;
 import oop.graphics.Canvas;
-import oop.graphics.Color;
-import oop.tasks.Task;
 
 public abstract class View implements IView {
 
@@ -100,9 +94,9 @@ public abstract class View implements IView {
 		g.translate(oX, oY);
 		g.setColor(java.awt.Color.GRAY);
 		g.fillRect(0, 0, m_model.ncols() * pxPerMeter() * zoom, m_model.nrows() * pxPerMeter() * zoom);
+		subPaint(g, oX, oY, zoom);
 		if (debug)
 			debugMode(g);
-		subPaint(g, oX, oY, zoom);
 
 		g.scale(zoom, zoom);
 	}
@@ -116,7 +110,7 @@ public abstract class View implements IView {
 
 	protected void debugMode(Graphics2D g) {
 		int ligne = 1;
-		g.setColor(java.awt.Color.BLACK);
+		g.setColor(java.awt.Color.WHITE);
 
 		for (int i = 0; i <= m_model.nrows(); i++) {
 			g.fillRect(0, i * cellsize * zoom, cellsize * zoom * m_model.ncols() + ligne, ligne);
