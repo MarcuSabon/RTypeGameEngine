@@ -32,8 +32,7 @@ public class Model implements IModel {
 	 * entity to add to this model.
 	 */
 	public void addAt(Entity e) {
-		if (m_grid[e.m_row][e.m_col] != null)
-			throw new IllegalArgumentException("There is already an entity at (" + e.m_row + "," + e.m_col + ")");
+		assert (m_grid[e.m_row][e.m_col] != null) : "There is already an entity at (" + e.m_row + "," + e.m_col + ")";
 
 		m_grid[e.m_row][e.m_col] = e;
 		m_entities.add(e);
@@ -41,22 +40,19 @@ public class Model implements IModel {
 	}
 
 	public void setPlayer(Player p) {
-		if (m_player != null)
-			throw new IllegalStateException("Player is already set");
+		assert (m_player != null) : "Player is already set";
 		m_player = p;
 	}
 
 	@Override
 	public void register(IView v) {
-		if (v == null)
-			throw new IllegalArgumentException("Cannot set a null view to the model");
+		assert (v == null) : "Cannot set a null view to the model";
 		m_view = v;
 	}
 
 	@Override
 	public void unregister(IView v) {
-		if (v == null)
-			throw new IllegalArgumentException("Cannot unset a null view to the model");
+		assert (v == null) : "Cannot unset a null view to the model";
 		m_view = null;
 	}
 
@@ -68,7 +64,6 @@ public class Model implements IModel {
 		int newrow = e.m_row + nrows;
 		int newcol = e.m_col + ncols;
 
-		
 		newrow = normalize(newrow, m_nrows);
 		newcol = normalize(newcol, m_ncols);
 
@@ -93,12 +88,9 @@ public class Model implements IModel {
 	public void move(Entity e, double x, double y) {
 		double tempc = x + e.x;
 		double tempr = y + e.y;
-		
 
 		tempr = normalize(tempr, m_ysize);
 		tempc = normalize(tempc, m_xsize);
-		
-		
 
 		boolean left = isEntityAtLeftEdge(e);
 		boolean right = isEntityAtRightEdge(e);
@@ -108,30 +100,29 @@ public class Model implements IModel {
 		// Gestion des collisions selon la direction
 		if (up && y < 0) {
 			if (handleUpwardCollisions(e, left, right)) {
-
 				tempr = e.y;
-			e.speedY = 0;
+				e.speedY = 0;
 			}
 		}
 
 		else if (down && y > 0) {
 			if (handleDownwardCollisions(e, left, right)) {
 				tempr = e.y;
-			e.speedY = 0;
+				e.speedY = 0;
 			}
 		}
 
 		if (right && x > 0) {
 			if (handleRightwardCollisions(e, up, down)) {
 				tempc = e.x;
-			e.speedX = 0;
+				e.speedX = 0;
 			}
 		}
 
 		else if (left && x < 0) {
-			if (handleLeftwardCollisions(e, up, down)){
-			tempc = e.x;
-			e.speedX = 0;
+			if (handleLeftwardCollisions(e, up, down)) {
+				tempc = e.x;
+				e.speedX = 0;
 			}
 		}
 //		System.out.println(tempc+ " "+tempr);
@@ -145,7 +136,7 @@ public class Model implements IModel {
 		if (m_conf.tore)
 			return ((n % length) + length) % length;
 		else
-			return n = n < 0 ? Math.max(n, 0) : Math.min(n, length-1);
+			return n = n < 0 ? Math.max(n, 0) : Math.min(n, length - 1);
 	}
 
 	private double normalize(double n, double length) {
