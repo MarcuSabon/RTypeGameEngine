@@ -14,6 +14,8 @@ public class TrackerBot extends Bot {
 		super(b, e);
 		c = Category.Adversary;
 		duration = delay;
+		pointsValue += 100; // valeur d'un bot de base par exemple
+
 	}
 
 	@Override
