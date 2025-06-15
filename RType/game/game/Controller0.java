@@ -34,47 +34,25 @@ public class Controller0 extends Controller {
 
 		switch (keyCode) {
 		case VirtualKeyCodes.VK_LEFT:
-			if (m_shift)
-				sp.rotateLeft();
-			else
-				sp.L(-1);
+			sp.L(-1);
 			break;
 
 		case VirtualKeyCodes.VK_RIGHT:
-			if (m_shift)
-				sp.rotateRight();
-			else
-				sp.R(1);
+			sp.R(1);
 			break;
 
 		case VirtualKeyCodes.VK_UP:
-			if (m_shift && !inMotion) {
-				// Specialization : goes to the cardinal point where the player is facing
-				inMotion = true;
-				startContinuousMovement();
-			} else
-				sp.U(-1);
+			sp.U(-1);
 
 			break;
 
 		case VirtualKeyCodes.VK_DOWN:
-			// Specialization : stop the player
-			if (m_shift)
-				inMotion = false;
-			else
-				sp.D(1);
+			sp.D(1);
 			break;
 
 		case VirtualKeyCodes.VK_SPACE:
 			sp.shoot();
 			break;
-
-		case VirtualKeyCodes.VK_F:
-			// Toggle focus mode
-			System.out.println("Focus mode disabled for now");
-			// focus = !focus;
-			break;
-			
 		}
 	}
 
@@ -102,31 +80,21 @@ public class Controller0 extends Controller {
 
 	@Override
 	protected void typed(Canvas canvas, char keyChar) {
-		if(keyChar == '+') {
-			m_view.zoom(1);
-		}
-		if(keyChar == '-') {
-			m_view.zoom(-1);;
-		}
-		if(keyChar == '=') {
-			m_view.reset();
-		}
-
 	}
 
 	@Override
 	protected void pressed(Canvas canvas, int bno, int x, int y) {
 		switch (bno) {
-		case 1: // Left mouse button
-			leftButtonPressed = true;
-			currentDirection = -1;
-			startRotation();
-			break;
-		case 3: // Right mouse button
-			rightButtonPressed = true;
-			currentDirection = 1;
-			startRotation();
-			break;
+//		case 1: // Left mouse button
+//			leftButtonPressed = true;
+//			currentDirection = -1;
+//			startRotation();
+//			break;
+//		case 3: // Right mouse button
+//			rightButtonPressed = true;
+//			currentDirection = 1;
+//			startRotation();
+//			break;
 		}
 
 	}
@@ -134,16 +102,16 @@ public class Controller0 extends Controller {
 	@Override
 	protected void released(Canvas canvas, int bno, int x, int y) {
 		switch (bno) {
-		case 1: // Left mouse button
-			leftButtonPressed = false;
-			if (rightButtonPressed)
-				currentDirection = 1;
-			break;
-		case 3: // Right mouse button
-			rightButtonPressed = false;
-			if (leftButtonPressed)
-				currentDirection = -1;
-			break;
+//		case 1: // Left mouse button
+//			leftButtonPressed = false;
+//			if (rightButtonPressed)
+//				currentDirection = 1;
+//			break;
+//		case 3: // Right mouse button
+//			rightButtonPressed = false;
+//			if (leftButtonPressed)
+//				currentDirection = -1;
+//			break;
 		}
 	}
 
@@ -206,7 +174,7 @@ public class Controller0 extends Controller {
 	}
 
 	private void focusPlayer() {
-		// FIXME : No longer work with non-continuous model
+		// FIXME (optional) : No longer work with non-continuous model
 		Player player = m_model.player();
 		if (player != null && m_view != null && focus) {
 			double playerPixelX, playerPixelY;
