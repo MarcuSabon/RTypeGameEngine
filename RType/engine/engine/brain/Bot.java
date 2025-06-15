@@ -15,6 +15,7 @@ public abstract class Bot implements IBot {
 	// champs valeur d'un bot pour le score du Player
 	protected int pointsValue; // J'ai mis dans bot et pas Entity pcq la difficulté à tuer l'entité dépend de
 								// son bot mais on pourrait changer
+	protected boolean collision; // booleen qui indique s'il y a eu une collision avec le bot
 
 	private boolean wait;
 	protected int delay;
@@ -26,6 +27,7 @@ public abstract class Bot implements IBot {
 		b.bots.add(this);
 		this.pointsValue = 0; // valeur par défaut (valeur obstacle), on ajoute + dans le consructeur des bots
 								// ennemis
+		this.collision = false;
 
 		delay = 500; // 0,5 second by default
 	}
@@ -56,6 +58,17 @@ public abstract class Bot implements IBot {
 	@Override
 	public int getPointsValue() {
 		return pointsValue;
+	}
+
+	public void setCollision(boolean b) { // Permet à l'entité de set collision à true lorsqu'il y a une collision
+		this.collision = b;
+	}
+
+	public boolean collision(Entity e) { // Quand on a enregistrer une collision on repasse collision à false car
+											// plusieurs collisions sont possibles pour un même bot
+		boolean tmp = collision;
+		collision = false;
+		return tmp;
 	}
 
 // ---------------- Protected ------------------------
