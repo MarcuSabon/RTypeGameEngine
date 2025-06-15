@@ -32,7 +32,7 @@ public interface IView {
 	double toPixel(double x);
 
 	double toMetricPixel(double x);
-	
+
 	double mouseViewportX();
 
 	double mouseViewportY();
@@ -40,11 +40,8 @@ public interface IView {
 	void debug();
 
 	void birth(Entity e);
-	
+
 	void death(Entity e);
 
-	void zoom(double i);
-
-	void reset();
-
+	void tick(int elapsed);
 }

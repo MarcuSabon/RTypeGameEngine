@@ -15,8 +15,6 @@ import engine.view.View;
 import gal.ast.AST;
 import gal.ast.export.Ast2FSM;
 import gal.parser.Parser;
-import game.bot.SafeHunterBot;
-import game.bot.TrackerBot;
 import game.bot.WalkerBot;
 import oop.graphics.Canvas;
 
@@ -44,12 +42,10 @@ public class Game {
 		m_controller = new Controller0(canvas, m_model, m_view);
 
 		m_brain = new Brain(m_model);
-		
+
 		new Player(m_model, 5, 5, 0);
 
 		m_ticker = new Ticker(this);
-
-		
 
 		PNJ W = new PNJ(m_model, 15, 15, 0);
 		new WalkerBot(m_brain, W);
@@ -69,7 +65,7 @@ public class Game {
 
 	public void tick(int elapsed) {
 		m_model.tick(elapsed);
-		m_view.moveBySpeed(elapsed);
+		m_view.tick(elapsed);
 	}
 
 	// ------------ Private Methods ------------
