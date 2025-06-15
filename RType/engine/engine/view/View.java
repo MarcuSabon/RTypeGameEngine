@@ -159,9 +159,11 @@ public abstract class View implements IView {
 
 	public void cellSize() {
 		int min;
+		// Pour laisser de la place pour l'HUD
+		int height = (int) (m_canvas.getHeight() * 0.9);
 
-		if (m_canvas.getHeight() / m_model.nrows() < m_canvas.getWidth() / m_model.ncols()) {
-			min = m_canvas.getHeight();
+		if (height / m_model.nrows() < m_canvas.getWidth() / m_model.ncols()) {
+			min = height;
 			cellSize = min / m_model.nrows();
 		} else {
 			min = m_canvas.getWidth();
@@ -176,11 +178,14 @@ public abstract class View implements IView {
 		g.translate(oX, oY);
 		g.setColor(java.awt.Color.GRAY);
 		g.fillRect(0, 0, m_model.ncols() * pxPerMeter() * zoom, m_model.nrows() * pxPerMeter() * zoom);
+		subPaint(canvas, g);
 		if (debug)
 			debugMode(g);
 
 		g.scale(zoom, zoom);
 	}
+
+	public abstract void subPaint(Canvas canvas, Graphics2D g);
 
 	@Override
 	public void debug() {

@@ -16,17 +16,19 @@ import oop.graphics.Canvas;
 
 public class View0 extends View {
 	private ScrollingBackground background;
+	private ViewBar viewBar;
 
 	public View0(Canvas canvas, IModel model) {
 		super(canvas, model);
 		background = new ScrollingBackground(canvas, "/Ressources/space.png");
+		viewBar = new ViewBar(canvas, "/Ressources/retroGaming.ttf");
 	}
 
 	@Override
-	public void paint(Canvas canvas, Graphics2D g) {
-		super.paint(canvas, g);
-
+	public void subPaint(Canvas canvas, Graphics2D g) {
 		background.draw(g);
+		p = m_model.player();
+		viewBar.draw(g, p);
 
 		for (Avatar a : m_visibleAvatars)
 			a.render(g);
