@@ -313,12 +313,12 @@ public class StuntPlayer extends Stunt {
 		double col = p.col() + Math.cos(rad);
 		double row = p.row() + Math.sin(rad);
 		if (m.entity((int) row, (int) col) == null) {
-			if(m.entity((int)(e.y() + Math.sin(rad)), (int)(e.x() + Math.cos(rad)))==null) {
+			if (m.entity((int) (e.y() + Math.sin(rad)), (int) (e.x() + Math.cos(rad))) == null) {
 				Bullet b = new Bullet((Model) m, (int) row, (int) col, p.orientation());
 				b.at(e.x() + Math.cos(rad), e.y() + Math.sin(rad));
 			}
 		}
-		
+
 	}
 
 // --------------- Private methods ----------------
