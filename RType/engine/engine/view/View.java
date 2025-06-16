@@ -8,6 +8,7 @@ import engine.IModel;
 import engine.IView;
 import engine.model.Entity;
 import engine.model.Player;
+import engine.model.entities.Bullet;
 import oop.graphics.Canvas;
 
 public abstract class View implements IView {
@@ -179,8 +180,10 @@ public abstract class View implements IView {
 		g.setColor(java.awt.Color.GRAY);
 		g.fillRect(0, 0, m_model.ncols() * pxPerMeter() * zoom, m_model.nrows() * pxPerMeter() * zoom);
 		subPaint(canvas, g);
-		if (debug)
+
+		if (debug) {
 			debugMode(g);
+		}
 
 		g.scale(zoom, zoom);
 	}
@@ -201,6 +204,8 @@ public abstract class View implements IView {
 // ------------- PRIVATE METHODS ------------- //
 	private void debugMode(Graphics2D g) {
 		drawGrid(g);
+		drawScoreBots(g);
+
 	}
 
 	private void drawGrid(Graphics2D g) {
@@ -214,6 +219,38 @@ public abstract class View implements IView {
 		for (int i = 0; i <= m_model.ncols(); i++) {
 			int x = i * cellSize * zoom;
 			g.fillRect(x, 0, ligne, cellSize * zoom * m_model.nrows() + ligne);
+		}
+	}
+
+	private void drawScoreBots(Graphics2D g) {
+		for (Avatar avatar : m_visibleAvatars) {
+			Entity entity = avatar.e;
+
+			if (entity instanceof Player || entity instanceof Bullet)
+				// NE PAS AFFICHER LA BARRE DE VIE
+				continue;
+
+			int currentScore = entity.bot.getHP();
+
+			// on récupère les coordonnées du bots pour placer la barre au dessus de lui
+			int posX = (int) (entity.col() * cellSize);
+			int posY = (int) (entity.row() * cellSize);
+
+			int barX = posX;
+			int barY = posY - 10;
+
+			// TODO : affiche en rouge la barre si entité vivante, grise si morte
+			// a modifier par la suite (attente de gestion de vie/collision des bots)
+			if (currentScore > 0) {
+				g.setColor(java.awt.Color.RED);
+			} else {
+				g.setColor(java.awt.Color.GRAY);
+			}
+			g.fillRect(barX, barY, cellSize, 6);
+
+			g.setColor(java.awt.Color.YELLOW);
+			g.drawString(String.valueOf(currentScore), barX, barY - 2);
+
 		}
 	}
 

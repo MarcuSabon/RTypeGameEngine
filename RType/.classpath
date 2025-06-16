@@ -7,8 +7,9 @@
 	</classpathentry>
 	<classpathentry kind="src" path="GAL"/>
 	<classpathentry kind="src" path="engine"/>
-	<classpathentry kind="src" path="game"/>
+	<classpathentry excluding="Ressources/|Ressources/" kind="src" path="game"/>
 	<classpathentry kind="src" path="parser"/>
 	<classpathentry exported="true" kind="src" path="/ple.given"/>
+	<classpathentry kind="lib" path="game/Ressources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -2,8 +2,11 @@ package Avatars;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
+import java.awt.Image;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import engine.model.Entity;
 import engine.view.Avatar;
@@ -11,9 +14,15 @@ import engine.view.View;
 
 public class AvatarPlayer extends Avatar {
 	public Color color;
+	private Image image;
 
 	public AvatarPlayer(View v, Entity e) {
 		super(v, e);
+		try {
+			image = ImageIO.read(getClass().getResourceAsStream("/bombardiro_crocodilo.png"));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
@@ -27,26 +36,10 @@ public class AvatarPlayer extends Avatar {
 		AffineTransform saved = g.getTransform();
 		g.translate(posX * v.pxPerMeter(), posY * v.pxPerMeter());
 		g.rotate(rot);
-		g.setColor(java.awt.Color.WHITE);
-		g.fillPolygon(triangle());
+
+		int size = (int) (v.pxPerMeter() * 1.5);
+		g.drawImage(image, -size / 2, -size / 2, size, size, null);
 		g.setTransform(saved);
-		g.setColor(oldColor);
 	}
 
-	private Polygon triangle() {
-		Polygon triangle;
-
-		triangle = new Polygon();
-
-		int cellsize = v.pxPerMeter();
-		int y1 = 0, x1 = cellsize / 3;
-		int y2 = cellsize / 3, x2 = -cellsize / 3;
-		int y3 = -cellsize / 3, x3 = -cellsize / 3;
-
-		triangle.addPoint(x1, y1);
-		triangle.addPoint(x2, y2);
-		triangle.addPoint(x3, y3);
-
-		return triangle;
-	}
 }
