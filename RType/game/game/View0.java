@@ -20,8 +20,8 @@ public class View0 extends View {
 
 	public View0(Canvas canvas, IModel model) {
 		super(canvas, model);
-		background = new ScrollingBackground(canvas, "/Ressources/space.png");
-		viewBar = new ViewBar(canvas, "/Ressources/retroGaming.ttf");
+		background = new ScrollingBackground(canvas, "/space.png");
+		viewBar = new ViewBar(canvas, "/retroGaming.ttf");
 	}
 
 	@Override

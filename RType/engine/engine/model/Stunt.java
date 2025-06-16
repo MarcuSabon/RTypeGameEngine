@@ -14,7 +14,7 @@ public abstract class Stunt {
 	protected Model m;
 	protected Entity e;
 	protected Action action;
-	protected int progress;
+	protected double progress; // pourcentage mathematique entre 0 et 1;
 	protected double SPEEDNERF = 600;
 	protected double ACCNERF = 60;
 	protected double SPEEDLOSS = 0;
@@ -25,11 +25,11 @@ public abstract class Stunt {
 		e.stunt = this;
 	}
 
-	public int progress() {
+	public double progress() {
 		return progress;
 	}
 
-	public void setProgress(int progress) {
+	public void setProgress(double progress) {
 		this.progress = progress;
 	}
 
