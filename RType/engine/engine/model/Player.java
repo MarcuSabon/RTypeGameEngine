@@ -1,6 +1,7 @@
 package engine.model;
 
 import Stunts.StuntPlayer;
+import engine.model.entities.Bullet;
 
 public class Player extends Entity {
 
@@ -36,8 +37,10 @@ public class Player extends Entity {
 		return this.score;
 	}
 
-	public void setScore(int points) {
-		this.score += points;
+	public void setScore(Entity e) {
+		if (!(e instanceof Bullet)) {
+			this.score += e.bot.getPointsValue();
+		}
 	}
 
 	public int getHP() {

@@ -2,6 +2,7 @@ package engine;
 
 import java.util.Iterator;
 
+import engine.brain.Brain;
 import engine.model.Entity;
 import engine.model.Player;
 
@@ -40,5 +41,11 @@ public interface IModel {
 	void tick(int elapsed);
 
 	boolean move(Entity e, int nrows, int ncols);
+
+	void cerebrate(Brain b);
+
+	void decerebrate(Brain b);
+
+	Brain getBrain();
 
 }

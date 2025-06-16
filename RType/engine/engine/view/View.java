@@ -198,7 +198,7 @@ public abstract class View implements IView {
 	@Override
 	public void death(Entity e) {
 		m_visibleAvatars.remove(e.avatar);
-		m_model.player().setScore(e.bot.getPointsValue());
+		m_model.player().setScore(e);
 	}
 
 // ------------- PRIVATE METHODS ------------- //
