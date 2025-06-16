@@ -20,5 +20,7 @@ public interface IBrain {
 
 		void setCollision(boolean b);
 
+		int getHP();
+
 	}
 }
