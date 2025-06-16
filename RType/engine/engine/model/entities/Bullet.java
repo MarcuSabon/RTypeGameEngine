@@ -16,7 +16,7 @@ public class Bullet extends Entity {
 	@Override
 	protected void collision(Entity entity) {
 		// TODO : infliger des dégats au lieu de le tuer
-		//entity.die();
+		// entity.die();
 		speedX = 0;
 		speedY = 0;
 

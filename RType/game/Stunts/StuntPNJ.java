@@ -189,7 +189,7 @@ public class StuntPNJ extends Stunt {
 
 		private void updateProgress() {
 			float percent = (float) (this.elapsed / duration);
-			sp.setProgress((int) (100 * percent));
+			sp.setProgress(percent);
 		}
 
 	}

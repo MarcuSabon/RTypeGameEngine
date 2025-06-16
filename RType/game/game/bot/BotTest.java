@@ -6,11 +6,11 @@ import engine.brain.Category;
 import engine.brain.Direction;
 import engine.model.Entity;
 
-public class WalkerBot extends Bot {
+public class BotTest extends Bot {
 
 	private int duration;
 
-	public WalkerBot(Brain b, Entity e) {
+	public BotTest(Brain b, Entity e) {
 		super(b, e);
 		c = Category.Adversary;
 		duration = delay;
@@ -23,14 +23,11 @@ public class WalkerBot extends Bot {
 	}
 
 	private void Action() {
-		if (cell(Direction.F) == null)
+		if (collision(e)) {
+			e.die();
+		} else {
 			move(Direction.F);
-		else if (cell(Direction.L) == null)
-			turn(Direction.L);
-		else if (cell(Direction.R) == null)
-			turn(Direction.R);
-		else if (cell(Direction.B) == null)
-			turn(Direction.B);
+		}
 
 		delay = duration;
 	}

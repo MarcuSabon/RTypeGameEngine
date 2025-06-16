@@ -16,6 +16,9 @@ public abstract class Entity {
 	public Stunt stunt;
 	public Object avatar;
 
+	private boolean isDead = false; // Pour pouvoir marquer l'entité comme morte en attendant sa suppression à la
+									// fin du tick()
+
 	protected Entity(Model m, int r, int c, int o) {
 		m_model = m;
 		m_row = r;
@@ -86,8 +89,14 @@ public abstract class Entity {
 		m_col = c;
 	}
 
-	public void die() {
-		m_model.death(this);
+	public void die() { // chagngement de die(), on ne fait plus mourir l'entité directement pour éviter
+						// une ConcurrentModificationException
+		isDead = true;
+	}
+
+	public boolean isDead() { // Marque l'entité comme morte. La suppression réelle est différée à la fin du
+								// tick via Model.tick().
+		return isDead;
 	}
 
 	protected abstract void collision(Entity entity);
