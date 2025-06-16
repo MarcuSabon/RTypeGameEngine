@@ -29,6 +29,7 @@ public class View0 extends View {
 		background.draw(g);
 		p = m_model.player();
 		viewBar.draw(g, p);
+		g.scale(zoom, zoom);
 
 		for (Avatar a : m_visibleAvatars)
 			a.render(g);

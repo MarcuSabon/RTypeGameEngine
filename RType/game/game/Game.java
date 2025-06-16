@@ -15,7 +15,7 @@ import engine.view.View;
 import gal.ast.AST;
 import gal.ast.export.Ast2FSM;
 import gal.parser.Parser;
-import game.bot.WalkerBot;
+import game.bot.Bot3HP;
 import oop.graphics.Canvas;
 
 public class Game {
@@ -48,7 +48,7 @@ public class Game {
 		m_ticker = new Ticker(this);
 
 		PNJ W = new PNJ(m_model, 15, 15, 0);
-		new WalkerBot(m_brain, W);
+		new Bot3HP(m_brain, W);
 //
 //		PNJ T = new PNJ(m_model, 10, 10, 0);
 //		new TrackerBot(m_brain, T);

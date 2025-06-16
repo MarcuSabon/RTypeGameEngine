@@ -1,5 +1,6 @@
 package engine.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -192,10 +193,20 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public void tick(int elapsed) {
-		for (Entity e : m_entities)
-			if (e.stunt != null)
+	public void tick(int elapsed) { // Nouvelle version du tick permettant de différer la mort des entités
+		// -> évite une erreur lors de la modification d'une entité (mort) pendant son
+		// itération
+		List<Entity> toRemove = new ArrayList<>();
+
+		for (Entity e : m_entities) {
+			if ((!e.isDead()) && (e.stunt != null))
 				e.stunt.tick(elapsed);
+			if (e.isDead())
+				toRemove.add(e);
+		}
+
+		for (Entity e : toRemove)
+			death(e);
 	}
 
 	public void death(Entity entity) {
@@ -228,83 +239,111 @@ public class Model implements IModel {
 
 	private boolean handleUpwardCollisions(Entity e, boolean left, boolean right) {
 		// Collision directe vers le haut
-		if (entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x)) != null) {
-			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x)));
+		Entity upward = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x)); // variables pour codes plus lisible
+		Entity upwardLeft = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1);
+		Entity upwardRight = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1);
+
+		if (upward != null) {
+			e.collision(upward);
+			upward.collision(e); // on informe l'entité dans laquelle on est entré en collision qu'il y
+									// a eu une collision
 			return true;
 		}
 
 		// Collision diagonale haut-gauche
-		if (left && entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1));
+		if (left && upwardLeft != null) {
+			e.collision(upwardLeft);
+			upwardLeft.collision(e);
 			return true;
 		}
 
 		// Collision diagonale haut-droite
-		if (right && entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1));
+		if (right && upwardRight != null) {
+			e.collision(upwardRight);
+			upwardRight.collision(e);
 			return true;
 		}
 		return false;
 	}
 
 	private boolean handleDownwardCollisions(Entity e, boolean left, boolean right) {
+		Entity downward = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x));
+		Entity downwardLeft = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1);
+		Entity downwardRight = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1);
 		// Collision directe vers le bas
-		if (entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x)) != null) {
-			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x)));
+		if (downward != null) {
+			e.collision(downward);
+			downward.collision(e);
 			return true;
 		}
 
 		// Collision diagonale bas-gauche
-		if (left && entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1));
+		if (left && downwardLeft != null) {
+			e.collision(downwardLeft);
+			downwardLeft.collision(e);
 			return true;
 		}
 
 		// Collision diagonale bas-droite
-		if (right && entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1));
+		if (right && downwardRight != null) {
+			e.collision(downwardRight);
+			downwardRight.collision(e);
 			return true;
 		}
 		return false;
 	}
 
 	private boolean handleRightwardCollisions(Entity e, boolean up, boolean down) {
+		Entity right = entity(toCellCoordinate(e.y), toCellCoordinate(e.x) + 1);
+		Entity rightUp = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1);
+		Entity rightDown = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1);
+
 		// Collision directe vers la droite
-		if (entity(toCellCoordinate(e.y), toCellCoordinate(e.x) + 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y), toCellCoordinate(e.x) + 1));
+		if (right != null) {
+			e.collision(right);
+			right.collision(e);
 			return true;
 		}
 
 		// Collision diagonale droite-haut
-		if (up && entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1));
+		if (up && rightUp != null) {
+			e.collision(rightUp);
+			rightUp.collision(e);
 			return true;
 		}
 
 		// Collision diagonale droite-bas
-		if (down && entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1));
+		if (down && rightDown != null) {
+			e.collision(rightDown);
+			rightDown.collision(e);
 			return true;
 		}
 		return false;
 	}
 
 	private boolean handleLeftwardCollisions(Entity e, boolean up, boolean down) {
+		Entity left = entity(toCellCoordinate(e.y), toCellCoordinate(e.x) - 1);
+		Entity leftUp = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1);
+		Entity leftDown = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1);
+
 		// Collision directe vers la gauche
-		if (entity(toCellCoordinate(e.y), toCellCoordinate(e.x) - 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y), toCellCoordinate(e.x) - 1));
+		if (left != null) {
+			e.collision(left);
+			left.collision(e);
 			return true;
 		}
 
 		// Collision diagonale gauche-haut
-		if (up && entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1));
+		if (up && leftUp != null) {
+			e.collision(leftUp);
+			leftUp.collision(e);
 			return true;
 		}
 
 		// Collision diagonale gauche-bas
-		if (down && entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1) != null) {
-			e.collision(entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1));
+		if (down && leftDown != null) {
+			e.collision(leftDown);
+			leftDown.collision(e);
 			return true;
 		}
 		return false;
