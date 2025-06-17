@@ -76,17 +76,23 @@ public class Model implements IModel {
 	 * rows and columns to its current location.
 	 */
 	public boolean move(Entity e, int nrows, int ncols) {
-		int newrow = e.m_row + nrows;
-		int newcol = e.m_col + ncols;
+		int oldRow = e.m_row;
+		int oldCol = e.m_col;
+		int newRow = oldRow + nrows;
+		int newCol = oldCol + ncols;
 
-		newrow = normalize(newrow, m_nrows);
-		newcol = normalize(newcol, m_ncols);
+		newRow = normalize(newRow, m_nrows);
+		newCol = normalize(newCol, m_ncols);
 
-		if (entity(newrow, newcol) == null) {
+		if (newRow == oldRow && newCol == oldCol) {
+			return false; // No movement
+		}
+
+		if (entity(newRow, newCol) == null) {
 			m_grid[e.m_row][e.m_col] = null; // remove from old position
 
-			e.at(newrow, newcol); // update entity position
-			m_grid[newrow][newcol] = e; // add to new position
+			e.at(newRow, newCol); // update entity position
+			m_grid[newRow][newCol] = e; // add to new position
 			return true;
 		}
 		return false;
@@ -101,11 +107,17 @@ public class Model implements IModel {
 	 * rows and columns to its current location.
 	 */
 	public void move(Entity e, double x, double y) {
-		double tempc = x + e.x;
-		double tempr = y + e.y;
+		double oldX = e.x;
+		double oldY = e.y;
+		double tempX = x + e.x;
+		double tempY = y + e.y;
 
-		tempr = normalize(tempr, m_ysize);
-		tempc = normalize(tempc, m_xsize);
+		tempY = normalize(tempY, m_ysize);
+		tempX = normalize(tempX, m_xsize);
+
+		if (tempX == oldX && tempY == oldY) {
+			return; // No movement
+		}
 
 		boolean left = isEntityAtLeftEdge(e);
 		boolean right = isEntityAtRightEdge(e);
@@ -115,33 +127,33 @@ public class Model implements IModel {
 		// Gestion des collisions selon la direction
 		if (up && y < 0) {
 			if (handleUpwardCollisions(e, left, right)) {
-				tempr = e.y;
+				tempY = e.y;
 				e.speedY = 0;
 			}
 		}
 
 		else if (down && y > 0) {
 			if (handleDownwardCollisions(e, left, right)) {
-				tempr = e.y;
+				tempY = e.y;
 				e.speedY = 0;
 			}
 		}
 
 		if (right && x > 0) {
 			if (handleRightwardCollisions(e, up, down)) {
-				tempc = e.x;
+				tempX = e.x;
 				e.speedX = 0;
 			}
 		}
 
 		else if (left && x < 0) {
 			if (handleLeftwardCollisions(e, up, down)) {
-				tempc = e.x;
+				tempX = e.x;
 				e.speedX = 0;
 			}
 		}
-//		System.out.println(tempc+ " "+tempr);
-		updateEntityPosition(e, tempc, tempr);
+//		System.out.println(tempX+ " "+tempY);
+		updateEntityPosition(e, tempX, tempY);
 	}
 
 	/*
@@ -370,8 +382,10 @@ public class Model implements IModel {
 
 	private void updateEntityPosition(Entity e, double newX, double newY) {
 		m_grid[e.row()][e.col()] = null;
-		m_grid[toCellCoordinate(newY)][toCellCoordinate(newX)] = e;
-		e.at(newX, newY, toCellCoordinate(newY), toCellCoordinate(newX));
+		int newRow = normalize(toCellCoordinate(newY), m_nrows);
+		int newCol = normalize(toCellCoordinate(newX), m_ncols);
+		m_grid[newRow][newCol] = e;
+		e.at(newX, newY, newRow, newCol);
 	}
 
 }
