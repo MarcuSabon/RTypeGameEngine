@@ -11,6 +11,11 @@ public class StuntPNJ extends Stunt {
 	private static final int ROTATION_DURATION = 100;
 	private static final int MOVEMENT_DURATION = 250;
 
+	public StuntPNJ(Model m, Entity e) {
+		super(m, e);
+		pnj = (PNJ) e;
+	}
+
 	public class PNJMotion implements Action {
 
 		private StuntPNJ sp;
@@ -192,11 +197,6 @@ public class StuntPNJ extends Stunt {
 			sp.setProgress(percent);
 		}
 
-	}
-
-	public StuntPNJ(Model m, Entity e) {
-		super(m, e);
-		pnj = (PNJ) e;
 	}
 
 	public PNJ entity() {
