@@ -3,6 +3,7 @@ package engine.brain;
 import Stunts.StuntPNJ;
 import engine.IBrain.IBot;
 import engine.model.Entity;
+import engine.model.Player;
 import engine.utils.Utils;
 
 public abstract class Bot implements IBot {
@@ -18,6 +19,7 @@ public abstract class Bot implements IBot {
 	protected int HP; // nombre de fois où un bot peut subir des collisions jusqu'à sa mort (à titre
 						// simplement informatif pour la vue, n'influe pas sur le comportement des bots)
 	protected boolean collision; // booleen qui indique s'il y a eu une collision avec le bot
+	protected Entity entityCollisionWithPlayer;
 
 	private boolean wait;
 	protected int delay;
@@ -71,6 +73,11 @@ public abstract class Bot implements IBot {
 
 	public void setCollision(boolean b) { // Permet à l'entité de set collision à true lorsqu'il y a une collision
 		this.collision = b;
+	}
+
+	public void setCollisionWithEntity(Entity e) { // Permet au bot du PLayer de savoir avec quelle entité il a eu une
+													// collision
+		entityCollisionWithPlayer = e;
 	}
 
 	public boolean collision(Entity e) { // Quand on a enregistrer une collision on repasse collision à false car
@@ -177,6 +184,12 @@ public abstract class Bot implements IBot {
 			else
 				throw new IllegalArgumentException("Invalid direction: " + d);
 		}
+	}
+
+	protected void playerCollision(Player p, Entity e) {
+		p.setHP(e.bot.getPointsValue()); // HP baisse de la valeur de l'entité touchée
+		entityCollisionWithPlayer = null;
+
 	}
 
 	protected Entity closest(Category c) {
