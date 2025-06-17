@@ -7,6 +7,7 @@ import java.util.List;
 
 import engine.IModel;
 import engine.IView;
+import engine.brain.Brain;
 
 public class Model implements IModel {
 	private int m_ncols, m_nrows;
@@ -14,6 +15,7 @@ public class Model implements IModel {
 	private Player m_player;
 	private List<Entity> m_entities;
 	private IView m_view;
+	private Brain m_brain;
 	private Config m_conf;
 	private int m_metric;
 	private double m_xsize, m_ysize;
@@ -55,6 +57,18 @@ public class Model implements IModel {
 	public void unregister(IView v) {
 		assert (v == null) : "Cannot unset a null view to the model";
 		m_view = null;
+	}
+
+	@Override
+	public void cerebrate(Brain b) {
+		assert (b == null) : "Cannot set a null view to the model";
+		m_brain = b;
+	}
+
+	@Override
+	public void decerebrate(Brain b) {
+		assert (b == null) : "Cannot set a null view to the model";
+		m_brain = b;
 	}
 
 	/*
@@ -165,6 +179,11 @@ public class Model implements IModel {
 	@Override
 	public void config(Config c) {
 		m_conf = c;
+	}
+
+	@Override
+	public Brain getBrain() {
+		return m_brain;
 	}
 
 	@Override

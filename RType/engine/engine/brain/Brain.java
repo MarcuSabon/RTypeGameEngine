@@ -13,8 +13,8 @@ public class Brain implements IBrain {
 
 	public Brain(IModel model) {
 		this.model = model;
-
 		this.bots = new LinkedList<>();
+		model.cerebrate(this);
 	}
 
 }
