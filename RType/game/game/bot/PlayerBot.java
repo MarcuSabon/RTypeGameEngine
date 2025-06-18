@@ -21,9 +21,8 @@ public class PlayerBot extends Bot {
 	}
 
 	private void Playing() {
-		if (collision(e)) {
+		if (collision(e))
 			playerCollision((Player) e, entityCollisionWithPlayer); // action de collision -> décrémentation des HP
-		}
 
 		delay = duration;
 	}

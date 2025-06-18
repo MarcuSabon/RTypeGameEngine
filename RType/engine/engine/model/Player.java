@@ -2,7 +2,6 @@ package engine.model;
 
 import Stunts.StuntPlayer;
 import engine.model.entities.Bullet;
-import game.bot.PlayerBot;
 
 public class Player extends Entity {
 
@@ -12,7 +11,6 @@ public class Player extends Entity {
 
 	public Player(Model m, int x, int y, int o) {
 		super(m, x, y, o);
-		new PlayerBot(m.getBrain(), this); // on assigne le bot du Player
 		new StuntPlayer(m, this);
 		m.setPlayer(this);
 		this.score = 0;
@@ -29,11 +27,8 @@ public class Player extends Entity {
 	@Override
 	protected void collision(Entity entity) {
 		if (!(entity instanceof Player)) { // Si collision avec une autre entité
-			StuntPlayer sp = (StuntPlayer) stunt;
 			bot.setCollision(true);
 			bot.setCollisionWithEntity(entity);
-			sp.playerCollision(this);
-
 		}
 		System.out.println("HP : " + HP);
 		System.out.println("Collision avec " + entity.getClass().getSimpleName());

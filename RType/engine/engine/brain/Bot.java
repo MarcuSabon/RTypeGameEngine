@@ -1,6 +1,7 @@
 package engine.brain;
 
 import Stunts.StuntPNJ;
+import Stunts.StuntPlayer;
 import engine.IBrain.IBot;
 import engine.model.Entity;
 import engine.model.Player;
@@ -29,10 +30,10 @@ public abstract class Bot implements IBot {
 		this.e = e;
 		e.bot = this;
 		b.bots.add(this);
-		this.pointsValue = 0; // valeur par défaut (valeur obstacle), on ajoute + dans le consructeur des bots
-								// ennemis
-		this.HP = 1; // les entités de bases ont 1HP
-		this.collision = false;
+		pointsValue = 0; // valeur par défaut (valeur obstacle), on ajoute + dans le consructeur des bots
+							// ennemis
+		HP = 1; // les entités de bases ont 1HP
+		collision = false;
 
 		delay = 500; // 0,5 second by default
 	}
@@ -71,23 +72,32 @@ public abstract class Bot implements IBot {
 		return HP;
 	}
 
+	@Override
 	public void setCollision(boolean b) { // Permet à l'entité de set collision à true lorsqu'il y a une collision
 		this.collision = b;
 	}
 
-	public void setCollisionWithEntity(Entity e) { // Permet au bot du PLayer de savoir avec quelle entité il a eu une
-													// collision
-		entityCollisionWithPlayer = e;
-	}
-
+	@Override
 	public boolean collision(Entity e) { // Quand on a enregistrer une collision on repasse collision à false car
-											// plusieurs collisions sont possibles pour un même bot
+		// plusieurs collisions sont possibles pour un même bot
 		boolean tmp = collision;
 		collision = false;
 		return tmp;
 	}
 
-// ---------------- Protected ------------------------
+	@Override
+	public void setCollisionWithEntity(Entity e) { // Permet au bot du PLayer de savoir avec quelle entité il a eu une
+													// collision
+		entityCollisionWithPlayer = e;
+	}
+
+	@Override
+	public Entity getCollisionWithEntity() { // Permet au bot du Player de savoir avec quelle entité il a eu une
+												// collision
+		return entityCollisionWithPlayer;
+	}
+
+	// ---------------- Protected ------------------------
 	protected void turn(Direction d) {
 		int angle;
 		if (d.isRelative())
@@ -187,9 +197,8 @@ public abstract class Bot implements IBot {
 	}
 
 	protected void playerCollision(Player p, Entity e) {
-		p.setHP(e.bot.getPointsValue()); // HP baisse de la valeur de l'entité touchée
-		entityCollisionWithPlayer = null;
-
+		StuntPlayer sp = (StuntPlayer) p.stunt;
+		sp.playerCollision(e);
 	}
 
 	protected Entity closest(Category c) {
@@ -206,7 +215,7 @@ public abstract class Bot implements IBot {
 		return Direction.newAbsolute(angle);
 	}
 
-// ---------------------- Private methods ----------------------
+	// ---------------------- Private methods ----------------------
 
 	private Direction cardinalOfOrient(int orientation, Direction d) {
 		if (d.isRelative()) {
