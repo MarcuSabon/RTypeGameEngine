@@ -22,5 +22,9 @@ public interface IBrain {
 
 		int getHP();
 
+		void setCollisionWithEntity(Entity entity);
+
+		Entity getCollisionWithEntity();
+
 	}
 }

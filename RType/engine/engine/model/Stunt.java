@@ -8,7 +8,6 @@ public abstract class Stunt {
 		void tick(int elapsed);
 
 		int kind();
-
 	}
 
 	protected Model m;

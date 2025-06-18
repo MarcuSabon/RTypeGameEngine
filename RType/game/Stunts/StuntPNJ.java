@@ -66,8 +66,8 @@ public class StuntPNJ extends Stunt {
 		}
 
 		private void updateProgress() {
-			float percent = (float) (this.elapsed / duration);
-			sp.setProgress((int) (100 * percent));
+			double percent = (double) this.elapsed / duration;
+			sp.setProgress(percent);
 		}
 	}
 
@@ -119,8 +119,8 @@ public class StuntPNJ extends Stunt {
 		}
 
 		private void updateProgress() {
-			float percent = (float) (this.elapsed / duration);
-			sp.setProgress((int) (100 * percent));
+			double percent = (double) this.elapsed / duration;
+			sp.setProgress(percent);
 		}
 	}
 
@@ -193,7 +193,7 @@ public class StuntPNJ extends Stunt {
 		}
 
 		private void updateProgress() {
-			float percent = (float) (this.elapsed / duration);
+			double percent = (double) this.elapsed / duration;
 			sp.setProgress(percent);
 		}
 

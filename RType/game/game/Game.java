@@ -15,6 +15,8 @@ import engine.view.View;
 import gal.ast.AST;
 import gal.ast.export.Ast2FSM;
 import gal.parser.Parser;
+import game.bot.Bot3HP;
+import game.bot.PlayerBot;
 import oop.graphics.Canvas;
 
 public class Game {
@@ -42,12 +44,16 @@ public class Game {
 
 		m_brain = new Brain(m_model);
 
-		new Player(m_model, 5, 5, 0);
+		Player P = new Player(m_model, 5, 5, 0);
+		new PlayerBot(m_brain, P);
 
 		m_ticker = new Ticker(this);
 
-		new PNJ(m_model, 15, 15, 0);
+		PNJ HP = new PNJ(m_model, 15, 15, 0);
+		new Bot3HP(m_brain, HP);
 
+		PNJ HP1 = new PNJ(m_model, 10, 10, 0);
+		new Bot3HP(m_brain, HP1);
 //
 //		PNJ T = new PNJ(m_model, 10, 10, 0);
 //		new TrackerBot(m_brain, T);
