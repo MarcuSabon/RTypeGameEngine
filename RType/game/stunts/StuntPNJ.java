@@ -1,21 +1,22 @@
-package Stunts;
+package stunts;
 
 import engine.IModel;
-import engine.model.Entity;
 import engine.model.Model;
 import engine.model.PNJ;
 import engine.model.Stunt;
 
-public class StuntPNJ extends Stunt {
+public abstract class StuntPNJ extends Stunt {
 	private PNJ pnj;
 	private static final int ROTATION_DURATION = 100;
 	private static final int MOVEMENT_DURATION = 250;
 
-	public StuntPNJ(Model m, Entity e) {
+	// CONSTRUCTOR
+	public StuntPNJ(Model m, PNJ e) {
 		super(m, e);
-		pnj = (PNJ) e;
+		pnj = e;
 	}
 
+	// INNER CLASSES
 	public class PNJMotion implements Action {
 
 		private StuntPNJ sp;
@@ -199,6 +200,7 @@ public class StuntPNJ extends Stunt {
 
 	}
 
+	// PUBLIC METHODS
 	public PNJ entity() {
 		return pnj;
 	}

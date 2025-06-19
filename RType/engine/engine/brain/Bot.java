@@ -1,11 +1,12 @@
 package engine.brain;
 
-import Stunts.StuntPNJ;
-import Stunts.StuntPlayer;
 import engine.IBrain.IBot;
 import engine.model.Entity;
-import engine.model.Player;
 import engine.utils.Utils;
+import entities.Player;
+import stunts.StuntPNJ;
+import stunts.StuntPlayer;
+import stunts.StuntShooter;
 
 public abstract class Bot implements IBot {
 	protected Brain b;
@@ -178,9 +179,9 @@ public abstract class Bot implements IBot {
 	}
 
 	protected void moveWithRotation(Direction d) {
-		Direction cardinal = cardinalOfOrient(e.orientation(), d);
-
 		if (e.stunt instanceof StuntPNJ) {
+			Direction cardinal = cardinalOfOrient(e.orientation(), d);
+
 			StuntPNJ stuntPNJ = (StuntPNJ) e.stunt;
 
 			if (cardinal.equals(Direction.N))
@@ -191,6 +192,21 @@ public abstract class Bot implements IBot {
 				stuntPNJ.moveAndRotate(90, 1, 0);
 			else if (cardinal.equals(Direction.W))
 				stuntPNJ.moveAndRotate(180, 0, -1);
+			else
+				throw new IllegalArgumentException("Invalid direction: " + d);
+		}
+	}
+
+	protected void shoot(Direction d) {
+		if (e.stunt instanceof StuntShooter) {
+			Direction cardinal = cardinalOfOrient(e.orientation(), d);
+
+			StuntShooter stuntShooter = (StuntShooter) e.stunt;
+
+			if (cardinal.equals(Direction.E))
+				stuntShooter.shoot();
+			else if (cardinal.equals(Direction.W))
+				stuntShooter.shoot();
 			else
 				throw new IllegalArgumentException("Invalid direction: " + d);
 		}

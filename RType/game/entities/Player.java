@@ -1,7 +1,8 @@
-package engine.model;
+package entities;
 
-import Stunts.StuntPlayer;
-import engine.model.entities.Bullet;
+import engine.model.Entity;
+import engine.model.Model;
+import stunts.StuntPlayer;
 
 public class Player extends Entity {
 
@@ -13,8 +14,8 @@ public class Player extends Entity {
 		super(m, x, y, o);
 		new StuntPlayer(m, this);
 		m.setPlayer(this);
-		this.score = 0;
-		this.HP = 1000; // au pif sah
+		score = 0;
+		HP = 1000; // au pif sah
 	}
 
 	/*

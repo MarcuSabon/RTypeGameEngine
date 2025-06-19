@@ -1,10 +1,10 @@
-package game.bot;
+package bot;
 
 import engine.brain.Bot;
 import engine.brain.Brain;
 import engine.brain.Category;
 import engine.model.Entity;
-import engine.model.Player;
+import entities.Player;
 
 public class PlayerBot extends Bot {
 	private int duration;

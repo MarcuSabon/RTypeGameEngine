@@ -2,16 +2,20 @@ package game;
 
 import java.awt.Graphics2D;
 
-import Avatars.AvatarPNJ;
-import Avatars.AvatarPlayer;
-import Avatars.BulletAvatar;
+import avatars.AvatarPNJ;
+import avatars.AvatarPlayer;
+import avatars.AvatarShooter;
+import avatars.AvatarTracker;
+import avatars.AvatarBullet;
 import engine.IModel;
 import engine.model.Entity;
-import engine.model.PNJ;
-import engine.model.Player;
-import engine.model.entities.Bullet;
 import engine.view.Avatar;
 import engine.view.View;
+import entities.BasicPNJ;
+import entities.Bullet;
+import entities.Player;
+import entities.Shooter;
+import entities.Tracker;
 import oop.graphics.Canvas;
 
 public class View0 extends View {
@@ -46,8 +50,12 @@ public class View0 extends View {
 		if (e instanceof Player)
 			a = new AvatarPlayer(this, e);
 		else if (e instanceof Bullet)
-			a = new BulletAvatar(this, e);
-		else if (e instanceof PNJ)
+			a = new AvatarBullet(this, e);
+		else if (e instanceof Tracker)
+			a = new AvatarTracker(this, e);
+		else if (e instanceof Shooter)
+			a = new AvatarShooter(this, e);
+		else if (e instanceof BasicPNJ)
 			a = new AvatarPNJ(this, e);
 
 		if (a != null)

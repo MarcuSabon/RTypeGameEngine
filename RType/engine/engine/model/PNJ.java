@@ -1,12 +1,9 @@
 package engine.model;
 
-import Stunts.StuntPNJ;
+public abstract class PNJ extends Entity {
 
-public class PNJ extends Entity {
-
-	public PNJ(Model m, int r, int c, int o) {
+	protected PNJ(Model m, int r, int c, int o) {
 		super(m, r, c, o);
-		new StuntPNJ(m_model, this);
 	}
 
 	@Override

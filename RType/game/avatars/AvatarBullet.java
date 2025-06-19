@@ -1,4 +1,4 @@
-package Avatars;
+package avatars;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,10 +9,10 @@ import engine.model.Entity;
 import engine.view.Avatar;
 import engine.view.View;
 
-public class BulletAvatar extends Avatar {
+public class AvatarBullet extends Avatar {
 	public Color color;
-	
-	public BulletAvatar(View v, Entity e) {
+
+	public AvatarBullet(View v, Entity e) {
 		super(v, e);
 		e.avatar = this;
 		color = java.awt.Color.RED;
@@ -23,7 +23,7 @@ public class BulletAvatar extends Avatar {
 	@Override
 	public void render(Graphics2D g) {
 		double posX = e.x();
-		double posY = e.y();
+		double posY = e.y() + 0.5; // +0.5mètres pour une demi case
 
 		double d = e.orientation();
 
