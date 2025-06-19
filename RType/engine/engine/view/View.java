@@ -7,8 +7,8 @@ import java.util.List;
 import engine.IModel;
 import engine.IView;
 import engine.model.Entity;
-import engine.model.Player;
-import engine.model.entities.Bullet;
+import entities.Bullet;
+import entities.Player;
 import oop.graphics.Canvas;
 
 public abstract class View implements IView {

@@ -1,11 +1,11 @@
-package Stunts;
+package stunts;
 
 import engine.IModel;
 import engine.model.Entity;
 import engine.model.Model;
-import engine.model.Player;
 import engine.model.Stunt;
-import engine.model.entities.Bullet;
+import entities.Bullet;
+import entities.Player;
 
 public class StuntPlayer extends Stunt {
 
@@ -17,9 +17,9 @@ public class StuntPlayer extends Stunt {
 	protected int U, D, L, R = 0;
 
 	// CONSTRUCTOR
-	public StuntPlayer(Model m, Entity e) {
-		super(m, e);
-		p = (Player) e;
+	public StuntPlayer(Model m, Player p) {
+		super(m, p);
+		this.p = p;
 		SPEEDLOSS = 0.001;
 	}
 
@@ -301,6 +301,7 @@ public class StuntPlayer extends Stunt {
 	/*
 	 * Move this entity in the model by the given count of rows and columns.
 	 */
+	// Inutilisé
 	public boolean move(int nrows, int ncols) {
 		if (action == null) {
 			this.action = new PlayerMotion(this, nrows, ncols, MOVEMENT_DURATION);
@@ -310,12 +311,14 @@ public class StuntPlayer extends Stunt {
 	}
 
 	@Override
+	// Inutilisé
 	public void rotate(int angle) {
 		if (action == null) {
 			this.action = new PlayerRotation(this, angle, ROTATION_DURATION);
 		}
 	}
 
+	// Inutilisé
 	private boolean moveWithRotation(int targetAngle, int nrows, int ncols) {
 		if (action == null) {
 			this.action = new PlayerRotateAndMove(this, targetAngle, nrows, ncols);

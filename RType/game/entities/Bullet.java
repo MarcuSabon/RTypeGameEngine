@@ -1,15 +1,16 @@
-package engine.model.entities;
+package entities;
 
-import Stunts.BulletStunt;
+import bot.BulletBot;
 import engine.model.Entity;
 import engine.model.Model;
-import game.bot.BulletBot;
+import engine.model.PNJ;
+import stunts.StuntBullet;
 
-public class Bullet extends Entity {
+public class Bullet extends PNJ {
 
 	public Bullet(Model m, int r, int c, int o) {
 		super(m, r, c, o);
-		stunt = new BulletStunt(m_model, this);
+		new StuntBullet(m_model, this);
 		new BulletBot(m.getBrain(), this);
 		speedX = 1;
 		speedY = 1;
@@ -18,10 +19,8 @@ public class Bullet extends Entity {
 	@Override
 	protected void collision(Entity entity) {
 		bot.setCollision(true);
-		System.out.println("Collision avec " + entity.getClass().getSimpleName());
 		speedX = 0;
 		speedY = 0;
-
 	}
 
 }
