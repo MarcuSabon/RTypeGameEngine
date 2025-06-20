@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import engine.brain.Brain;
 import engine.model.Entity;
-import engine.model.Player;
+import entities.Player;
 
 public interface IModel {
 

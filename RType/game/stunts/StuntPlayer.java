@@ -1,11 +1,11 @@
-package Stunts;
+package stunts;
 
 import engine.IModel;
 import engine.model.Entity;
 import engine.model.Model;
-import engine.model.Player;
 import engine.model.Stunt;
-import engine.model.entities.Bullet;
+import entities.Bullet;
+import entities.Player;
 
 public class StuntPlayer extends Stunt {
 
@@ -13,7 +13,15 @@ public class StuntPlayer extends Stunt {
 	private Player p;
 	private static final int ROTATION_DURATION = 100;
 	private static final int MOVEMENT_DURATION = 250;
+	private static final int COLLISION_DURATION = 250;
 	protected int U, D, L, R = 0;
+
+	// CONSTRUCTOR
+	public StuntPlayer(Model m, Player p) {
+		super(m, p);
+		this.p = p;
+		SPEEDLOSS = 0.001;
+	}
 
 	// INNER CLASSES
 	class PlayerMotion implements Action {
@@ -66,8 +74,8 @@ public class StuntPlayer extends Stunt {
 		}
 
 		private void updateProgress() {
-			float percent = (float) (this.elapsed / duration);
-			sp.setProgress((int) (100 * percent));
+			double percent = (double) this.elapsed / duration;
+			sp.setProgress(percent);
 		}
 	}
 
@@ -119,8 +127,8 @@ public class StuntPlayer extends Stunt {
 		}
 
 		private void updateProgress() {
-			float percent = (float) (this.elapsed / duration);
-			sp.setProgress((int) (100 * percent));
+			double percent = (double) this.elapsed / duration;
+			sp.setProgress(percent);
 		}
 	}
 
@@ -150,12 +158,6 @@ public class StuntPlayer extends Stunt {
 
 		public void tick(int elapsed) {
 			this.elapsed += elapsed;
-
-			delay -= elapsed;
-			if (delay > 0) {
-				updateProgress();
-				return;
-			}
 
 			switch (step) {
 			case 0:
@@ -192,16 +194,65 @@ public class StuntPlayer extends Stunt {
 		}
 
 		private void updateProgress() {
-			float percent = (float) (this.elapsed / duration);
-			sp.setProgress((int) (100 * percent));
+			double percent = (double) this.elapsed / duration;
+			sp.setProgress(percent);
 		}
 	}
 
-	// CONSTRUCTOR
-	public StuntPlayer(Model m, Entity e) {
-		super(m, e);
-		p = (Player) e;
-		SPEEDLOSS = 0.001;
+	class PlayerCollision implements Action {
+
+		private StuntPlayer sp;
+		private Player p;
+		private Entity collisionEntity;
+
+		private int delay, step, elapsed, duration;
+
+		PlayerCollision(StuntPlayer sp, Entity collisionEntity, int duration) {
+			this.sp = sp;
+			this.collisionEntity = collisionEntity;
+			this.duration = duration;
+
+			p = sp.entity();
+			delay = duration;
+		}
+
+		public void tick(int elapsed) {
+			this.elapsed += elapsed;
+
+			delay -= elapsed;
+			if (delay > 0) {
+				updateProgress();
+				return;
+			}
+
+			switch (step) {
+			case 0:
+				step++;
+				if (collisionEntity != null) {
+					int damage = collisionEntity.bot.getPointsValue();
+					p.setHP(damage);
+				}
+				p.bot.setCollisionWithEntity(null);
+				break;
+			case 1:
+				// Fin du mouvement
+				step++;
+				action = null;
+				break;
+			}
+			updateProgress();
+		}
+
+		@Override
+		public int kind() {
+			return 3;
+		}
+
+		private void updateProgress() {
+			double percent = (double) this.elapsed / duration; // Je prends de l'avance sur le fait qu'on a corrigé le
+																// pourcentage en double
+			sp.setProgress(percent);
+		}
 	}
 
 	// --------- PUBLIC METHODS -------------
@@ -243,34 +294,14 @@ public class StuntPlayer extends Stunt {
 
 	@Override
 	public void tick(int elapsed) {
-		e.setAccX(R + L);
-		e.setAccY(U + D);
-
-//		e.speedX = R + L;
-//		e.speedY = F + B;
-
-		if (e.speedX < 5 && e.getAccX() > 0)
-			e.speedX += e.getAccX() * elapsed / ACCNERF;
-
-		if (e.speedX > -5 && e.getAccX() < 0)
-			e.speedX += e.getAccX() * elapsed / ACCNERF;
-
-		if (e.speedY < 5 && e.getAccY() > 0)
-			e.speedY += e.getAccY() * elapsed / ACCNERF;
-
-		if (e.speedY > -5 && e.getAccY() < 0)
-			e.speedY += e.getAccY() * elapsed / ACCNERF;
-
-		// ralenti avec le temps
-		e.speedX = e.speedX * (1 - SPEEDLOSS * elapsed);
-		e.speedY = e.speedY * (1 - SPEEDLOSS * elapsed);
-
-		move(e.speedX * elapsed / SPEEDNERF, e.speedY * elapsed / SPEEDNERF);
+		super.tick(elapsed);
+		updateMove(elapsed);
 	}
 
 	/*
 	 * Move this entity in the model by the given count of rows and columns.
 	 */
+	// Inutilisé
 	public boolean move(int nrows, int ncols) {
 		if (action == null) {
 			this.action = new PlayerMotion(this, nrows, ncols, MOVEMENT_DURATION);
@@ -280,18 +311,26 @@ public class StuntPlayer extends Stunt {
 	}
 
 	@Override
+	// Inutilisé
 	public void rotate(int angle) {
 		if (action == null) {
 			this.action = new PlayerRotation(this, angle, ROTATION_DURATION);
 		}
 	}
 
+	// Inutilisé
 	private boolean moveWithRotation(int targetAngle, int nrows, int ncols) {
 		if (action == null) {
 			this.action = new PlayerRotateAndMove(this, targetAngle, nrows, ncols);
 			return true;
 		}
 		return false;
+	}
+
+	public void playerCollision(Entity entity) {
+		if (action == null) {
+			this.action = new PlayerCollision(this, entity, COLLISION_DURATION);
+		}
 	}
 
 	public void rotateRight() {
@@ -321,7 +360,7 @@ public class StuntPlayer extends Stunt {
 
 	}
 
-// --------------- Private methods ----------------
+	// --------------- Private methods ----------------
 
 	/*
 	 * compute the needed angle to only rotate to a cardinal direction: north,
@@ -352,4 +391,29 @@ public class StuntPlayer extends Stunt {
 		}
 	}
 
+	private void updateMove(int elapsed) {
+		e.setAccX(R + L);
+		e.setAccY(U + D);
+
+		// e.speedX = R + L;
+		// e.speedY = F + B;
+
+		if (e.speedX < 5 && e.getAccX() > 0)
+			e.speedX += e.getAccX() * elapsed / ACCNERF;
+
+		if (e.speedX > -5 && e.getAccX() < 0)
+			e.speedX += e.getAccX() * elapsed / ACCNERF;
+
+		if (e.speedY < 5 && e.getAccY() > 0)
+			e.speedY += e.getAccY() * elapsed / ACCNERF;
+
+		if (e.speedY > -5 && e.getAccY() < 0)
+			e.speedY += e.getAccY() * elapsed / ACCNERF;
+
+		// ralenti avec le temps
+		e.speedX = e.speedX * (1 - SPEEDLOSS * elapsed);
+		e.speedY = e.speedY * (1 - SPEEDLOSS * elapsed);
+
+		move(e.speedX * elapsed / SPEEDNERF, e.speedY * elapsed / SPEEDNERF);
+	}
 }

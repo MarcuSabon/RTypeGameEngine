@@ -1,9 +1,12 @@
 package engine.brain;
 
-import Stunts.StuntPNJ;
 import engine.IBrain.IBot;
 import engine.model.Entity;
 import engine.utils.Utils;
+import entities.Player;
+import stunts.StuntPNJ;
+import stunts.StuntPlayer;
+import stunts.StuntShooter;
 
 public abstract class Bot implements IBot {
 	protected Brain b;
@@ -18,6 +21,7 @@ public abstract class Bot implements IBot {
 	protected int HP; // nombre de fois où un bot peut subir des collisions jusqu'à sa mort (à titre
 						// simplement informatif pour la vue, n'influe pas sur le comportement des bots)
 	protected boolean collision; // booleen qui indique s'il y a eu une collision avec le bot
+	protected Entity entityCollisionWithPlayer;
 
 	private boolean wait;
 	protected int delay;
@@ -27,10 +31,10 @@ public abstract class Bot implements IBot {
 		this.e = e;
 		e.bot = this;
 		b.bots.add(this);
-		this.pointsValue = 0; // valeur par défaut (valeur obstacle), on ajoute + dans le consructeur des bots
-								// ennemis
-		this.HP = 1; // les entités de bases ont 1HP
-		this.collision = false;
+		pointsValue = 0; // valeur par défaut (valeur obstacle), on ajoute + dans le consructeur des bots
+							// ennemis
+		HP = 1; // les entités de bases ont 1HP
+		collision = false;
 
 		delay = 500; // 0,5 second by default
 	}
@@ -69,18 +73,32 @@ public abstract class Bot implements IBot {
 		return HP;
 	}
 
+	@Override
 	public void setCollision(boolean b) { // Permet à l'entité de set collision à true lorsqu'il y a une collision
 		this.collision = b;
 	}
 
+	@Override
 	public boolean collision(Entity e) { // Quand on a enregistrer une collision on repasse collision à false car
-											// plusieurs collisions sont possibles pour un même bot
+		// plusieurs collisions sont possibles pour un même bot
 		boolean tmp = collision;
 		collision = false;
 		return tmp;
 	}
 
-// ---------------- Protected ------------------------
+	@Override
+	public void setCollisionWithEntity(Entity e) { // Permet au bot du PLayer de savoir avec quelle entité il a eu une
+													// collision
+		entityCollisionWithPlayer = e;
+	}
+
+	@Override
+	public Entity getCollisionWithEntity() { // Permet au bot du Player de savoir avec quelle entité il a eu une
+												// collision
+		return entityCollisionWithPlayer;
+	}
+
+	// ---------------- Protected ------------------------
 	protected void turn(Direction d) {
 		int angle;
 		if (d.isRelative())
@@ -161,9 +179,9 @@ public abstract class Bot implements IBot {
 	}
 
 	protected void moveWithRotation(Direction d) {
-		Direction cardinal = cardinalOfOrient(e.orientation(), d);
-
 		if (e.stunt instanceof StuntPNJ) {
+			Direction cardinal = cardinalOfOrient(e.orientation(), d);
+
 			StuntPNJ stuntPNJ = (StuntPNJ) e.stunt;
 
 			if (cardinal.equals(Direction.N))
@@ -177,6 +195,26 @@ public abstract class Bot implements IBot {
 			else
 				throw new IllegalArgumentException("Invalid direction: " + d);
 		}
+	}
+
+	protected void shoot(Direction d) {
+		if (e.stunt instanceof StuntShooter) {
+			Direction cardinal = cardinalOfOrient(e.orientation(), d);
+
+			StuntShooter stuntShooter = (StuntShooter) e.stunt;
+
+			if (cardinal.equals(Direction.E))
+				stuntShooter.shoot();
+			else if (cardinal.equals(Direction.W))
+				stuntShooter.shoot();
+			else
+				throw new IllegalArgumentException("Invalid direction: " + d);
+		}
+	}
+
+	protected void playerCollision(Player p, Entity e) {
+		StuntPlayer sp = (StuntPlayer) p.stunt;
+		sp.playerCollision(e);
 	}
 
 	protected Entity closest(Category c) {
@@ -193,7 +231,7 @@ public abstract class Bot implements IBot {
 		return Direction.newAbsolute(angle);
 	}
 
-// ---------------------- Private methods ----------------------
+	// ---------------------- Private methods ----------------------
 
 	private Direction cardinalOfOrient(int orientation, Direction d) {
 		if (d.isRelative()) {

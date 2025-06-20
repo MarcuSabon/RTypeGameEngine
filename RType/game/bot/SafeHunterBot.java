@@ -1,4 +1,4 @@
-package game.bot;
+package bot;
 
 import engine.brain.Bot;
 import engine.brain.Brain;

@@ -4,14 +4,19 @@ import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 
+import bot.Bot3HP;
+import bot.PlayerBot;
 import engine.IModel.Config;
 import engine.brain.Brain;
 import engine.brain.FSM;
 import engine.controller.Controller;
 import engine.model.Model;
 import engine.model.PNJ;
-import engine.model.Player;
 import engine.view.View;
+import entities.BasicPNJ;
+import entities.Player;
+import entities.Shooter;
+import entities.Tracker;
 import gal.ast.AST;
 import gal.ast.export.Ast2FSM;
 import gal.parser.Parser;
@@ -42,12 +47,16 @@ public class Game {
 
 		m_brain = new Brain(m_model);
 
-		new Player(m_model, 5, 5, 0);
+		Player P = new Player(m_model, 5, 5, 0);
+		new PlayerBot(m_brain, P);
 
 		m_ticker = new Ticker(this);
 
-		new PNJ(m_model, 15, 15, 0);
+		PNJ HP = new BasicPNJ(m_model, 15, 15, 0);
+		new Bot3HP(m_brain, HP);
 
+		new Shooter(m_model, 16, 16, 0);
+		new Tracker(m_model, 17, 17, 0);
 //
 //		PNJ T = new PNJ(m_model, 10, 10, 0);
 //		new TrackerBot(m_brain, T);

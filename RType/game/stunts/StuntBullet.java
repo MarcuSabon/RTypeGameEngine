@@ -1,16 +1,16 @@
-package Stunts;
+package stunts;
 
 import engine.IBrain.IBot;
 import engine.model.Entity;
 import engine.model.Model;
 import engine.model.Stunt;
-import engine.model.entities.Bullet;
+import entities.Bullet;
 
-public class BulletStunt extends Stunt {
+public class StuntBullet extends Stunt {
 	private Bullet bullet;
 	private static final int MOVEMENT_DURATION = 250;
 
-	public BulletStunt(Model m, Entity e) {
+	public StuntBullet(Model m, Entity e) {
 		super(m, e);
 		SPEEDNERF = 50;
 	}

@@ -1,4 +1,4 @@
-package Avatars;
+package avatars;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

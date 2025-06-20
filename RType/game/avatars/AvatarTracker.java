@@ -1,4 +1,4 @@
-package Avatars;
+package avatars;
 
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -8,18 +8,18 @@ import engine.model.Entity;
 import engine.view.Avatar;
 import engine.view.View;
 
-public class AvatarPNJ extends Avatar {
+public class AvatarTracker extends Avatar {
 
-	public AvatarPNJ(View v, Entity e) {
+	public AvatarTracker(View v, Entity e) {
 		super(v, e);
 	}
 
 	@Override
 	public void render(Graphics2D g) {
-		drawPNJCell(g);
+		drawTrackerCell(g);
 		// You can add more rendering logic here if needed
-		// For example, drawing additional information or effects related to the PNJ
-		// g.drawString("PNJ Name: " + e.getName(), x, y - 10); // Example text
+		// For example, drawing additional information or effects related to the Tracker
+		// g.drawString("Tracker Name: " + e.getName(), x, y - 10); // Example text
 	}
 
 	// ------------- Private methods -------------//
@@ -33,13 +33,13 @@ public class AvatarPNJ extends Avatar {
 		g.setTransform(saved);
 	}
 
-	private void drawPNJCell(Graphics2D g) {
+	private void drawTrackerCell(Graphics2D g) {
 		int CellWidth = v.pxPerMeter();
 
 		int x = e.col() * CellWidth + CellWidth / 2;
 		int y = e.row() * CellWidth + CellWidth / 2;
 
-		// create a polygon for the PNJ, a triangle pointing upwards
+		// create a polygon for the Tracker, a triangle pointing upwards
 		Polygon pg = new Polygon();
 		int polySize = (int) (CellWidth / 3);
 
@@ -47,8 +47,8 @@ public class AvatarPNJ extends Avatar {
 		pg.addPoint(-polySize, -polySize); // rear left
 		pg.addPoint(-polySize, polySize); // rear right
 
-		// paint the PNJ
-		g.setColor(java.awt.Color.BLUE);
+		// paint the Tracker
+		g.setColor(java.awt.Color.RED);
 		paintPlayer(g, e, x, y, pg);
 
 	}

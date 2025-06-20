@@ -1,4 +1,4 @@
-package game.bot;
+package bot;
 
 import engine.brain.Bot;
 import engine.brain.Brain;
@@ -24,6 +24,10 @@ public class TrackerBot extends Bot {
 	}
 
 	private void Action() {
+		if (collision(e)) {
+			e.die();
+		}
+
 		Entity e = closest(Category.Adversary);
 		if (e == null)
 			return;

@@ -1,4 +1,4 @@
-package game.bot;
+package bot;
 
 import engine.brain.Bot;
 import engine.brain.Brain;
@@ -44,14 +44,7 @@ public class Bot3HP extends Bot {
 			System.out.println("HP Bot : " + getHP());
 			state = MID;
 		} else {
-			if (cell(Direction.F) == null)
-				move(Direction.F);
-			else if (cell(Direction.L) == null)
-				turn(Direction.L);
-			else if (cell(Direction.R) == null)
-				turn(Direction.R);
-			else if (cell(Direction.B) == null)
-				turn(Direction.B);
+			action();
 		}
 
 		delay = duration;
@@ -63,14 +56,7 @@ public class Bot3HP extends Bot {
 			System.out.println("HP Bot : " + getHP());
 			state = LOW;
 		} else {
-			if (cell(Direction.F) == null)
-				move(Direction.F);
-			else if (cell(Direction.L) == null)
-				turn(Direction.L);
-			else if (cell(Direction.R) == null)
-				turn(Direction.R);
-			else if (cell(Direction.B) == null)
-				turn(Direction.B);
+			action();
 		}
 
 		delay = duration;
@@ -82,16 +68,20 @@ public class Bot3HP extends Bot {
 			System.out.println("HP Bot : " + getHP());
 			e.die();
 		} else {
-			if (cell(Direction.F) == null)
-				move(Direction.F);
-			else if (cell(Direction.L) == null)
-				turn(Direction.L);
-			else if (cell(Direction.R) == null)
-				turn(Direction.R);
-			else if (cell(Direction.B) == null)
-				turn(Direction.B);
+			action();
 		}
 
 		delay = duration;
+	}
+
+	private void action() {
+		if (cell(Direction.F) == null)
+			move(Direction.F);
+		else if (cell(Direction.L) == null)
+			turn(Direction.L);
+		else if (cell(Direction.R) == null)
+			turn(Direction.R);
+		else if (cell(Direction.B) == null)
+			turn(Direction.B);
 	}
 }

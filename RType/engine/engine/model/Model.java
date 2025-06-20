@@ -8,12 +8,15 @@ import java.util.List;
 import engine.IModel;
 import engine.IView;
 import engine.brain.Brain;
+import entities.Bullet;
+import entities.Player;
 
 public class Model implements IModel {
 	private int m_ncols, m_nrows;
 	private Entity[][] m_grid;
 	private Player m_player;
 	private List<Entity> m_entities;
+	private List<Entity> toAdd;
 	private IView m_view;
 	private Brain m_brain;
 	private Config m_conf;
@@ -25,6 +28,8 @@ public class Model implements IModel {
 		m_nrows = nr;
 		m_grid = new Entity[nr][nc];
 		m_entities = new LinkedList<Entity>();
+		toAdd = new ArrayList<>(); // De la même façon que pour toRemove, on delay l'ajout d'une entity à la liste
+									// pour éviter le ConcurrentModificationException
 		m_metric = 1;
 		m_xsize = m_ncols * m_metric;
 		m_ysize = m_nrows * m_metric;
@@ -38,7 +43,11 @@ public class Model implements IModel {
 		assert (m_grid[e.m_row][e.m_col] != null) : "There is already an entity at (" + e.m_row + "," + e.m_col + ")";
 
 		m_grid[e.m_row][e.m_col] = e;
-		m_entities.add(e);
+		if (e instanceof Bullet) // évite le concurrentModificationException
+			toAdd.add(e);
+		else
+			m_entities.add(e);
+
 		m_view.birth(e);
 	}
 
@@ -84,9 +93,8 @@ public class Model implements IModel {
 		newRow = normalize(newRow, m_nrows);
 		newCol = normalize(newCol, m_ncols);
 
-		if (newRow == oldRow && newCol == oldCol) {
+		if (newRow == oldRow && newCol == oldCol)
 			return false; // No movement
-		}
 
 		if (entity(newRow, newCol) == null) {
 			m_grid[e.m_row][e.m_col] = null; // remove from old position
@@ -115,9 +123,8 @@ public class Model implements IModel {
 		tempY = normalize(tempY, m_ysize);
 		tempX = normalize(tempX, m_xsize);
 
-		if (tempX == oldX && tempY == oldY) {
+		if (tempX == oldX && tempY == oldY)
 			return; // No movement
-		}
 
 		boolean left = isEntityAtLeftEdge(e);
 		boolean right = isEntityAtRightEdge(e);
@@ -232,10 +239,13 @@ public class Model implements IModel {
 		for (Entity e : m_entities) {
 			if ((!e.isDead()) && (e.stunt != null))
 				e.stunt.tick(elapsed);
-			if (e.isDead())
-				toRemove.add(e);
-		}
 
+			else if (e.isDead())
+				toRemove.add(e);
+
+		}
+		m_entities.addAll(toAdd); // on ajoute les entités créées lors de l'itération après
+		toAdd.clear();
 		for (Entity e : toRemove)
 			death(e);
 	}
@@ -270,9 +280,12 @@ public class Model implements IModel {
 
 	private boolean handleUpwardCollisions(Entity e, boolean left, boolean right) {
 		// Collision directe vers le haut
-		Entity upward = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x)); // variables pour codes plus lisible
-		Entity upwardLeft = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1);
-		Entity upwardRight = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1);
+		int row = normalize(toCellCoordinate(e.y), m_nrows);
+		int col = normalize(toCellCoordinate(e.x), m_ncols);
+
+		Entity upward = entity(row - 1, col); // variables pour codes plus lisible
+		Entity upwardLeft = entity(row - 1, col - 1);
+		Entity upwardRight = entity(row - 1, col + 1);
 
 		if (upward != null) {
 			e.collision(upward);
@@ -298,9 +311,12 @@ public class Model implements IModel {
 	}
 
 	private boolean handleDownwardCollisions(Entity e, boolean left, boolean right) {
-		Entity downward = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x));
-		Entity downwardLeft = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1);
-		Entity downwardRight = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1);
+		int row = normalize(toCellCoordinate(e.y), m_nrows);
+		int col = normalize(toCellCoordinate(e.x), m_ncols);
+
+		Entity downward = entity(row + 1, col);
+		Entity downwardLeft = entity(row + 1, col - 1);
+		Entity downwardRight = entity(row + 1, col + 1);
 		// Collision directe vers le bas
 		if (downward != null) {
 			e.collision(downward);
@@ -325,9 +341,12 @@ public class Model implements IModel {
 	}
 
 	private boolean handleRightwardCollisions(Entity e, boolean up, boolean down) {
-		Entity right = entity(toCellCoordinate(e.y), toCellCoordinate(e.x) + 1);
-		Entity rightUp = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) + 1);
-		Entity rightDown = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) + 1);
+		int row = normalize(toCellCoordinate(e.y), m_nrows);
+		int col = normalize(toCellCoordinate(e.x), m_ncols);
+
+		Entity right = entity(row, col + 1);
+		Entity rightUp = entity(row - 1, col + 1);
+		Entity rightDown = entity(row + 1, col + 1);
 
 		// Collision directe vers la droite
 		if (right != null) {
@@ -353,9 +372,12 @@ public class Model implements IModel {
 	}
 
 	private boolean handleLeftwardCollisions(Entity e, boolean up, boolean down) {
-		Entity left = entity(toCellCoordinate(e.y), toCellCoordinate(e.x) - 1);
-		Entity leftUp = entity(toCellCoordinate(e.y) - 1, toCellCoordinate(e.x) - 1);
-		Entity leftDown = entity(toCellCoordinate(e.y) + 1, toCellCoordinate(e.x) - 1);
+		int row = normalize(toCellCoordinate(e.y), m_nrows);
+		int col = normalize(toCellCoordinate(e.x), m_ncols);
+
+		Entity left = entity(row, col - 1);
+		Entity leftUp = entity(row - 1, col - 1);
+		Entity leftDown = entity(row + 1, col - 1);
 
 		// Collision directe vers la gauche
 		if (left != null) {
