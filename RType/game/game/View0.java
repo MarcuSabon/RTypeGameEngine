@@ -42,10 +42,10 @@ public class View0 extends View {
 	public void subPaint(Canvas canvas, Graphics2D g) {
 		switch (gameState) {
 		case Intro:
-			afficherIntro(canvas, g);
+			background(g, canvas, "/landscape_comp.jpeg");
 			break;
 		case Pseudo:
-			setBackGround(g, canvas);
+			background(g, canvas, "/main_fond.png");
 			choisirPseudo(canvas, g);
 			break;
 		case Playing:
@@ -58,9 +58,12 @@ public class View0 extends View {
 				a.render(g);
 			break;
 		case End:
-			endBackground(g, canvas);
+			background(g, canvas, "/gameOver.jpg");
 			break;
-
+		case Restart:
+			background(g, canvas, "/main_fond.png");
+			choisir_restart_leave(canvas, g);
+			break;
 		default:
 			System.err.println("Unknown game state: " + gameState);
 			break;
@@ -95,21 +98,6 @@ public class View0 extends View {
 
 	// Private Methods
 
-	private void afficherIntro(Canvas canvas, Graphics2D g) {
-		// new Avatar.Animator("/intro", 1);
-		try {
-			backgroundImage = ImageIO.read(getClass().getResource("/landscape_comp.jpeg"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (backgroundImage != null) {
-			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth(), m_canvas.getHeight(), null);
-		} else {
-			g.setColor(java.awt.Color.LIGHT_GRAY);
-			g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
-		}
-	}
-
 	private Font getFont(float taille) {
 
 		Font retroFont = null;
@@ -130,7 +118,7 @@ public class View0 extends View {
 		String sousTexte = GameManager.pseudoBuilder.toString();
 		String instruction = "Appuyez sur Entrée pour valider";
 
-		// Fontes
+		// Fonts
 		Font titreFont = getFont(36f).deriveFont(Font.BOLD);
 		Font pseudoFont = getFont(28f);
 		Font instructionFont = getFont(16f);
@@ -173,9 +161,9 @@ public class View0 extends View {
 
 	}
 
-	private void endBackground(Graphics2D g, Canvas canvas) {
+	private void background(Graphics2D g, Canvas canvas, String imagePath) {
 		try {
-			backgroundImage = ImageIO.read(getClass().getResource("/gameOver.jpg"));
+			backgroundImage = ImageIO.read(getClass().getResource(imagePath));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -187,18 +175,52 @@ public class View0 extends View {
 		}
 	}
 
-	private void setBackGround(Graphics2D g, Canvas canvas) {
-		try {
-			backgroundImage = ImageIO.read(getClass().getResource("/main_fond.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (backgroundImage != null) {
-			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth(), m_canvas.getHeight(), null);
+	private void choisir_restart_leave(Canvas canvas, Graphics2D g) {
+		String titre = "New Game";
+		String instruction = "Quit";
+
+		// Fontes
+		Font pseudoFont = getFont(28f);
+
+		// Mesures
+		FontMetrics fontMetricPseudo = g.getFontMetrics(pseudoFont);
+
+		int width = m_canvas.getWidth();
+		int height = m_canvas.getHeight();
+
+		// Taille du bloc à dessiner
+		int boxWidth = 600;
+		int boxHeight = 200;
+		int boxX = (width - boxWidth) / 2;
+		int boxY = (height - boxHeight) / 2;
+
+		// Fond semi-transparent avec coins arrondis
+		g.setColor(new Color(0, 0, 0, 180)); // noir transparent
+		g.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 30, 30);
+
+		// Dessin des textes
+		g.setColor(Color.WHITE);
+
+		if (((GameManager.surligne % 2) + 2) % 2 == 0) {
+			g.setColor(Color.YELLOW); // toujours restart
 		} else {
-			g.setColor(java.awt.Color.LIGHT_GRAY);
-			g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
+			g.setColor(Color.WHITE);
 		}
+		g.setFont(pseudoFont);
+		int titreX = boxX + (boxWidth - fontMetricPseudo.stringWidth(titre)) / 2;
+		int titreY = boxY + 60;
+		g.drawString(titre, titreX, titreY);
+
+		if (((GameManager.surligne % 2) + 2) % 2 == 1) {
+			g.setColor(Color.YELLOW); // toujours quit
+		} else {
+			g.setColor(Color.WHITE);
+		}
+		g.setFont(pseudoFont);
+		int instructionX = boxX + (boxWidth - fontMetricPseudo.stringWidth(instruction)) / 2;
+		int instructionY = boxY + boxHeight - 50;
+		g.drawString(instruction, instructionX, instructionY);
+
 	}
 
 	public void setGameState(GameState gameState) {

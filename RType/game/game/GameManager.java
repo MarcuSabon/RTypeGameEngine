@@ -1,18 +1,11 @@
 package game;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import engine.brain.Brain;
-import engine.brain.FSM;
 import engine.controller.Controller;
 import engine.model.Model;
 import engine.model.PNJ;
 import engine.model.Player;
 import engine.view.View;
-import gal.ast.AST;
-import gal.ast.export.Ast2FSM;
-import gal.parser.Parser;
 
 //public enum GameState {
 //	INTRO, PSEUDO, PLAYING, END
@@ -26,8 +19,11 @@ class GameManager {
 	private Player player;
 	public GameState gameState;// Initial state set to PSEUDO
 	protected static StringBuilder pseudoBuilder;
-	private List<FSM> m_fsm_list;
+	public static int surligne;
+	public static boolean restartButton;
 	private int time;
+	private int time2;
+	private boolean tr;
 
 	public GameManager(Controller controller, View view, Model model) {
 		this.controller = (Controller0) controller;
@@ -37,19 +33,20 @@ class GameManager {
 		this.view.setGameState(gameState);
 		pseudoBuilder = new StringBuilder();
 		this.time = 2000;
+		this.time2 = 2000;
 	}
 
 	public void start(int elapsed) {
 		if (gameState == GameState.Intro) {
 			time -= elapsed;
 			if (time < 0) {
-				gameState = switchState(gameState);
+				gameState = switchState(gameState, false);
 				view.setGameState(gameState);
 			}
 		}
 		if (gameState == GameState.Pseudo) {
-			if (getBoole()) {
-				gameState = switchState(gameState);
+			if (nameGiven()) {
+				gameState = switchState(gameState, false);
 				view.setGameState(gameState);
 			}
 		}
@@ -58,42 +55,67 @@ class GameManager {
 			init();
 
 			if (player.getHP() <= 0) {
-				gameState = switchState(gameState);
+				gameState = switchState(gameState, false);
+				view.setGameState(gameState);
+			} else if (player.getHP() > 0 && player.getHP() <= 0) { // && boss.getHP() <= 0) {
+				gameState = switchState(gameState, true);
 				view.setGameState(gameState);
 			}
 		}
 		if (gameState == GameState.End) {
 			model.clear();
+			// clean la view /////////////// IMPORTANT
 			// proposeRestart();
+			time2 -= elapsed;
+			if (time2 < 0) {
+				controller.playerInit = false;
+				controller.nameGiven = false;
+				gameState = switchState(gameState, false);
+				view.setGameState(gameState);
+			}
+
+		}
+		if (gameState == GameState.Restart) {
+			if (controller.nameGiven) {
+				if ((surligne % 2 + 2) % 2 == 0) {
+					System.out.println(">> Nouvelle partie");
+					gameState = switchState(gameState, false);
+					view.setGameState(gameState);
+				} else {
+					// ajout cinematique de fin
+					System.out.println(">> Quitter le jeu");
+					System.exit(0); // ou autre méthode de fermeture
+				}
+			}
 
 		}
 	}
 
-	public boolean getBoole() {
-		return controller.boole;
+	public boolean nameGiven() {
+		return controller.nameGiven;
 	}
 
-	public boolean getBooleRealse() {
-		return controller.boolRealse;
+	public boolean playerInitialized() {
+		return controller.playerInit;
 	}
 
-	public void setboolRealse() {
-		controller.boolRealse = true;
+	public void initializePlayer() {
+		controller.playerInit = true;
 	}
 
 	public void setNomDonnee() {
-		view.setNomDonnee(getBoole());
+		view.setNomDonnee(nameGiven());
 	}
 
 	public void init() {
-		if (!getBooleRealse()) {
+		if (!playerInitialized()) {
 			setNomDonnee();
 			m_brain = new Brain(model);
 
 			player = new Player(model, 5, 5, 0);
 
 			Player.name = GameManager.pseudoBuilder.toString();
-			setboolRealse();
+			initializePlayer();
 
 			PNJ W = new PNJ(model, 15, 15, 0);
 			// new Bot3HP(m_brain, W);
@@ -105,42 +127,18 @@ class GameManager {
 			// PNJ SH = new PNJ(m_model, 2, 2, 0);
 			// new SafeHunterBot(m_brain, SH);
 
-			m_fsm_list = loadAutomata("parser/gal/demo/test/GAL2025.gal");
-		}
-	}
-
-	private List<FSM> loadAutomata(String filename) {
-		try {
-			AST ast = Parser.from_file(filename);
-
-			Ast2FSM converter = new Ast2FSM();
-
-			Object result = ast.accept(converter);
-
-			if (result instanceof List<?>) {
-				@SuppressWarnings("unchecked")
-				List<FSM> fsmList = (List<FSM>) result;
-				return fsmList;
-
-			} else {
-				System.err.println("Erreur: Le résultat de la conversion n'est pas une liste de FSM");
-				return new LinkedList<FSM>();
-			}
-		} catch (Exception ex) {
-			System.err.println("Erreur lors du chargement des automates: " + ex.getMessage());
-			return new LinkedList<FSM>();
 		}
 	}
 
 	public enum GameState {
-		Intro, Pseudo, Playing, End;
+		Intro, Pseudo, Playing, End, Level1Win, Restart, Level2;
 	}
 
 	public GameState getGameState() {
 		return gameState;
 	}
 
-	public GameState switchState(GameState gameState) {
+	public GameState switchState(GameState gameState, boolean b) {
 		switch (gameState) {
 		case Intro:
 			gameState = GameState.Pseudo;
@@ -149,7 +147,20 @@ class GameManager {
 			gameState = GameState.Playing;
 			break;
 		case Playing:
-			gameState = GameState.End;
+			if (b)
+				gameState = GameState.Level1Win;
+			else
+				gameState = GameState.End;
+
+			break;
+		case Level1Win:
+			gameState = GameState.Playing;
+			break;
+		case End:
+			gameState = GameState.Restart;
+			break;
+		case Restart:
+			gameState = GameState.Playing;
 			break;
 		default:
 			return gameState;

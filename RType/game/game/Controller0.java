@@ -6,7 +6,6 @@ import engine.IView;
 import engine.controller.Controller;
 import engine.model.Player;
 import engine.utils.Utils;
-import engine.view.View;
 import oop.graphics.Canvas;
 import oop.graphics.VirtualKeyCodes;
 import oop.tasks.Task;
@@ -18,10 +17,10 @@ public class Controller0 extends Controller {
 	private boolean inMotion;
 	private boolean focus;
 	private int currentDirection; // 1 for clockwise, -1 for counter-clockwise
-	private Object rotationToken = null;
-	public boolean boole = false;
-	public boolean boolRealse = false;
-	private View m_view;
+	private Object rotationToken;
+
+	public boolean nameGiven;
+	public boolean playerInit;
 
 	private static final int ROTATION_DELAY = 33; // milliseconds
 	private static final int MOVEMENT_DELAY = 33; // milliseconds
@@ -29,12 +28,11 @@ public class Controller0 extends Controller {
 
 	public Controller0(Canvas canvas, IModel model, IView view) {
 		super(canvas, model, view);
-		this.m_view = (View) view;
 	}
 
 	@Override
 	protected void pressed(Canvas canvas, int keyCode, char keyChar) {
-		if (boolRealse) {
+		if (playerInit) {
 			Player p = m_model.player();
 			StuntPlayer sp = ((StuntPlayer) p.stunt);
 
@@ -61,22 +59,24 @@ public class Controller0 extends Controller {
 				break;
 			}
 		} else if (VirtualKeyCodes.VK_ENTER == keyCode) {
-			boole = true;
+			nameGiven = true;
 		}
 	}
 
 	@Override
 	protected void released(Canvas canvas, int keyCode, char keyChar) {
-		if (boolRealse) {
+		if (playerInit) {
 			Player p = m_model.player();
 			StuntPlayer sp = ((StuntPlayer) p.stunt);
 
 			switch (keyCode) {
 			case VirtualKeyCodes.VK_UP:
 				sp.U(0);
+				GameManager.surligne += 1;
 				break;
 			case VirtualKeyCodes.VK_DOWN:
 				sp.D(0);
+				GameManager.surligne -= 1;
 				break;
 			case VirtualKeyCodes.VK_LEFT:
 				sp.L(0);
@@ -85,20 +85,25 @@ public class Controller0 extends Controller {
 				sp.R(0);
 				break;
 			}
-		} else if (VirtualKeyCodes.VK_ENTER == keyCode) {
-			boole = true;
-		} else if (Character.isLetterOrDigit(keyChar) || Character.isWhitespace(keyChar)) {
-			if (GameManager.pseudoBuilder.length() < 3) {
-				GameManager.pseudoBuilder.append(keyChar);
-			}
-
-		} else if (keyCode == VirtualKeyCodes.VK_BACK_SPACE)
-
-		{
-			if (GameManager.pseudoBuilder.length() > 0) {
-				GameManager.pseudoBuilder.deleteCharAt(GameManager.pseudoBuilder.length() - 1);
-			}
 		}
+
+		else if (VirtualKeyCodes.VK_ENTER == keyCode)
+			nameGiven = true;
+
+		else if (Character.isLetterOrDigit(keyChar) || Character.isWhitespace(keyChar))
+			if (GameManager.pseudoBuilder.length() < 3)
+				GameManager.pseudoBuilder.append(keyChar);
+
+			else if (keyCode == VirtualKeyCodes.VK_BACK_SPACE)
+				if (GameManager.pseudoBuilder.length() > 0)
+					GameManager.pseudoBuilder.deleteCharAt(GameManager.pseudoBuilder.length() - 1);
+
+				else if (VirtualKeyCodes.VK_UP == keyCode)
+					GameManager.surligne += 1;
+
+				else if (VirtualKeyCodes.VK_DOWN == keyCode)
+					GameManager.surligne -= 1;
+
 	}
 
 	@Override
