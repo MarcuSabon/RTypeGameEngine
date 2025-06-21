@@ -1,20 +1,12 @@
 package game;
 
 import java.awt.Graphics2D;
-import java.util.LinkedList;
-import java.util.List;
 
 import engine.IModel.Config;
 import engine.brain.Brain;
-import engine.brain.FSM;
 import engine.controller.Controller;
 import engine.model.Model;
-import engine.model.PNJ;
-import engine.model.Player;
 import engine.view.View;
-import gal.ast.AST;
-import gal.ast.export.Ast2FSM;
-import gal.parser.Parser;
 import oop.graphics.Canvas;
 
 public class Game {
@@ -24,8 +16,8 @@ public class Game {
 	private Controller m_controller;
 	private Brain m_brain;
 	private Ticker m_ticker;
-
-	private List<FSM> m_fsm_list;
+	private Controller0 newcontroller;
+	private GameManager gameState;
 
 	Game(Canvas canvas, int nrows, int ncols) {
 		this.m_canvas = canvas;
@@ -38,24 +30,12 @@ public class Game {
 		m_model.config(conf); // configure before adding entities
 
 		m_view = new View0(canvas, m_model);
+
 		m_controller = new Controller0(canvas, m_model, m_view);
-
-		m_brain = new Brain(m_model);
-
-		new Player(m_model, 5, 5, 0);
+		gameState = new GameManager(m_controller, m_view, m_model);
 
 		m_ticker = new Ticker(this);
 
-		new PNJ(m_model, 15, 15, 0);
-
-//
-//		PNJ T = new PNJ(m_model, 10, 10, 0);
-//		new TrackerBot(m_brain, T);
-//
-//		PNJ SH = new PNJ(m_model, 2, 2, 0);
-//		new SafeHunterBot(m_brain, SH);
-
-		m_fsm_list = loadAutomata("parser/gal/demo/test/GAL2025.gal");
 	}
 
 	public void paint(Canvas canvas, Graphics2D g) {
@@ -63,32 +43,10 @@ public class Game {
 	}
 
 	public void tick(int elapsed) {
-		m_model.tick(elapsed);
 		m_view.tick(elapsed);
-	}
+		m_model.tick(elapsed);
+		gameState.start(elapsed);
 
-	// ------------ Private Methods ------------
-	private List<FSM> loadAutomata(String filename) {
-		try {
-			AST ast = Parser.from_file(filename);
-
-			Ast2FSM converter = new Ast2FSM();
-
-			Object result = ast.accept(converter);
-
-			if (result instanceof List<?>) {
-				@SuppressWarnings("unchecked")
-				List<FSM> fsmList = (List<FSM>) result;
-				return fsmList;
-
-			} else {
-				System.err.println("Erreur: Le résultat de la conversion n'est pas une liste de FSM");
-				return new LinkedList<FSM>();
-			}
-		} catch (Exception ex) {
-			System.err.println("Erreur lors du chargement des automates: " + ex.getMessage());
-			return new LinkedList<FSM>();
-		}
 	}
 
 }

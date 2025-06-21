@@ -1,6 +1,15 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
 
 import Avatars.AvatarPNJ;
 import Avatars.AvatarPlayer;
@@ -12,27 +21,51 @@ import engine.model.Player;
 import engine.model.entities.Bullet;
 import engine.view.Avatar;
 import engine.view.View;
+import game.GameManager.GameState;
 import oop.graphics.Canvas;
 
 public class View0 extends View {
 	private ScrollingBackground background;
 	private ViewBar viewBar;
+	private BufferedImage backgroundImage;
+	protected boolean nomDonnee;
+	private GameState gameState;
 
 	public View0(Canvas canvas, IModel model) {
 		super(canvas, model);
 		background = new ScrollingBackground(canvas, "/space.png");
 		viewBar = new ViewBar(canvas, "/retroGaming.ttf");
+		nomDonnee = false;
 	}
 
 	@Override
 	public void subPaint(Canvas canvas, Graphics2D g) {
-		background.draw(g);
-		p = m_model.player();
-		viewBar.draw(g, p);
-		g.scale(zoom, zoom);
+		switch (gameState) {
+		case Intro:
+			afficherIntro(canvas, g);
+			break;
+		case Pseudo:
+			setBackGround(g, canvas);
+			choisirPseudo(canvas, g);
+			break;
+		case Playing:
+			background.draw(g);
+			p = m_model.player();
+			viewBar.draw(g, p);
+			g.scale(zoom, zoom);
 
-		for (Avatar a : m_visibleAvatars)
-			a.render(g);
+			for (Avatar a : m_visibleAvatars)
+				a.render(g);
+			break;
+		case End:
+			endBackground(g, canvas);
+			break;
+
+		default:
+			System.err.println("Unknown game state: " + gameState);
+			break;
+		}
+
 	}
 
 	@Override
@@ -56,4 +89,119 @@ public class View0 extends View {
 			System.err.println("Avatar not found for entity: " + e.getClass().getSimpleName());
 	}
 
+	public void setNomDonnee(boolean bool) {
+		this.nomDonnee = bool;
+	}
+
+	// Private Methods
+
+	private void afficherIntro(Canvas canvas, Graphics2D g) {
+		// new Avatar.Animator("/intro", 1);
+		try {
+			backgroundImage = ImageIO.read(getClass().getResource("/landscape_comp.jpeg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (backgroundImage != null) {
+			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth(), m_canvas.getHeight(), null);
+		} else {
+			g.setColor(java.awt.Color.LIGHT_GRAY);
+			g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
+		}
+	}
+
+	private Font getFont(float taille) {
+
+		Font retroFont = null;
+		try {
+			InputStream is = getClass().getResourceAsStream("/retroGaming.ttf");
+			if (is != null) {
+				Font baseFont1 = Font.createFont(Font.TRUETYPE_FONT, is);
+				retroFont = baseFont1.deriveFont(Font.PLAIN, taille); // adapte la taille du texte
+			}
+		} catch (IOException | FontFormatException e) {
+			System.err.println("Erreur de chargement de la police : " + e.getMessage());
+		}
+		return retroFont;
+	}
+
+	private void choisirPseudo(Canvas canvas, Graphics2D g) {
+		String titre = "Choisissez un pseudo";
+		String sousTexte = GameManager.pseudoBuilder.toString();
+		String instruction = "Appuyez sur Entrée pour valider";
+
+		// Fontes
+		Font titreFont = getFont(36f).deriveFont(Font.BOLD);
+		Font pseudoFont = getFont(28f);
+		Font instructionFont = getFont(16f);
+
+		// Mesures
+		FontMetrics fontMetricTitre = g.getFontMetrics(titreFont);
+		FontMetrics fontMetricPseudo = g.getFontMetrics(pseudoFont);
+		FontMetrics fontMetricInstruction = g.getFontMetrics(instructionFont);
+
+		int width = m_canvas.getWidth();
+		int height = m_canvas.getHeight();
+
+		// Taille du bloc à dessiner
+		int boxWidth = 600;
+		int boxHeight = 200;
+		int boxX = (width - boxWidth) / 2;
+		int boxY = (height - boxHeight) / 2;
+
+		// Fond semi-transparent avec coins arrondis
+		g.setColor(new Color(0, 0, 0, 180)); // noir transparent
+		g.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 30, 30);
+
+		// Dessin des textes
+		g.setColor(Color.WHITE);
+
+		g.setFont(titreFont);
+		int titreX = boxX + (boxWidth - fontMetricTitre.stringWidth(titre)) / 2;
+		int titreY = boxY + 40;
+		g.drawString(titre, titreX, titreY);
+
+		g.setFont(pseudoFont);
+		int pseudoX = boxX + (boxWidth - fontMetricPseudo.stringWidth(sousTexte)) / 2;
+		int pseudoY = titreY + 40;
+		g.drawString(sousTexte, pseudoX, pseudoY);
+
+		g.setFont(instructionFont);
+		int instructionX = boxX + (boxWidth - fontMetricInstruction.stringWidth(instruction)) / 2;
+		int instructionY = boxY + boxHeight - 20;
+		g.drawString(instruction, instructionX, instructionY);
+
+	}
+
+	private void endBackground(Graphics2D g, Canvas canvas) {
+		try {
+			backgroundImage = ImageIO.read(getClass().getResource("/gameOver.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (backgroundImage != null) {
+			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth(), m_canvas.getHeight(), null);
+		} else {
+			g.setColor(java.awt.Color.LIGHT_GRAY);
+			g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
+		}
+	}
+
+	private void setBackGround(Graphics2D g, Canvas canvas) {
+		try {
+			backgroundImage = ImageIO.read(getClass().getResource("/main_fond.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (backgroundImage != null) {
+			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth(), m_canvas.getHeight(), null);
+		} else {
+			g.setColor(java.awt.Color.LIGHT_GRAY);
+			g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
+		}
+	}
+
+	public void setGameState(GameState gameState) {
+		this.gameState = gameState;
+	}
 }

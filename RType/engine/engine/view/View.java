@@ -36,6 +36,7 @@ public abstract class View implements IView {
 		model.register(this);
 		m_visibleAvatars = new LinkedList<Avatar>();
 		pixelsPerMetricCell = cellSize / m_model.metric();
+
 	}
 
 	public void focus(int px, int py) {
@@ -174,13 +175,8 @@ public abstract class View implements IView {
 
 	public void paint(Canvas canvas, Graphics2D g) {
 		cellSize();
-		g.setColor(java.awt.Color.LIGHT_GRAY);
-		g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
 		g.translate(oX, oY);
-		g.setColor(java.awt.Color.GRAY);
-		g.fillRect(0, 0, m_model.ncols() * pxPerMeter() * zoom, m_model.nrows() * pxPerMeter() * zoom);
 		subPaint(canvas, g);
-
 		if (debug) {
 			debugMode(g);
 		}
@@ -226,7 +222,7 @@ public abstract class View implements IView {
 		for (Avatar avatar : m_visibleAvatars) {
 			Entity entity = avatar.e;
 
-			if (entity instanceof Player || entity instanceof Bullet)
+			if (entity instanceof Player || entity instanceof Bullet )
 				// NE PAS AFFICHER LA BARRE DE VIE
 				continue;
 
