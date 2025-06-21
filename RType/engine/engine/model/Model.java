@@ -388,4 +388,13 @@ public class Model implements IModel {
 		e.at(newX, newY, newRow, newCol);
 	}
 
+	public void clear() {
+
+		for (Entity e : m_entities) {
+			m_grid[e.m_row][e.m_col] = null; // Clear the grid
+		}
+		m_entities.clear(); // Clear the entity list
+
+	}
+
 }

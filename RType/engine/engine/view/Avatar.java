@@ -20,7 +20,7 @@ public abstract class Avatar {
 
 	public abstract void render(Graphics2D g);
 
-	public class Animator {
+	public static class Animator {
 		private BufferedImage[] images;
 		private int actualFrame = 0;
 

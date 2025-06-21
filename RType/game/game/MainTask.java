@@ -8,16 +8,16 @@ import oop.tasks.Task;
 
 public class MainTask {
 
-  public static void main(String args[]) {
-    EventPump ep = new EventPump();
-    Dimension d = new Dimension(640, 640);
-    Runnable r = new Runnable() {
-      public void run() {
-        Task task = Task.task();
-        Canvas canvas = (Canvas) task.find("canvas");
-        new Painter(canvas,20,30);
-      }
-    };
-    ep.boot(d, r);
-  }
+	public static void main(String args[]) {
+		EventPump ep = new EventPump();
+		Dimension d = new Dimension(640, 640);
+		Runnable r = new Runnable() {
+			public void run() {
+				Task task = Task.task();
+				Canvas canvas = (Canvas) task.find("canvas");
+				new Painter(canvas, 20, 42);
+			}
+		};
+		ep.boot(d, r);
+	}
 }

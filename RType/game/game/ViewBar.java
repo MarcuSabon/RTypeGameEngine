@@ -38,9 +38,12 @@ public class ViewBar {
 
 		g.setFont(retroFont);
 		g.setColor(Color.GREEN);
-
+		String name = "BDI"; // Valeur par défaut si Player.name est null
+		if (Player.name != null && !Player.name.isEmpty()) {
+			name = Player.name;
+		}
 		// Pseudo scanf a faire
-		String text = "Pseudo: ABC    Score: " + p.getScore() + "    Vie: " + p.getHP();
+		String text = "Pseudo: " + name + "    Score: " + p.getScore() + "    Vie: " + p.getHP();
 		int textWidth = g.getFontMetrics().stringWidth(text);
 		int textHeight = g.getFontMetrics().getHeight();
 		g.drawString(text, (width - textWidth) / 2, height - barHeight / 2 + textHeight / 4);

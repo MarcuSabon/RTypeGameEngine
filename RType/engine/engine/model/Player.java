@@ -8,6 +8,7 @@ public class Player extends Entity {
 	protected double x, y;
 	private int score;
 	private int HP;
+	public static String name;
 
 	public Player(Model m, int x, int y, int o) {
 		super(m, x, y, o);
@@ -50,4 +51,5 @@ public class Player extends Entity {
 	public void setHP(int points) {
 		this.HP -= points;
 	}
+
 }
