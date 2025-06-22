@@ -20,6 +20,8 @@ import entities.Tracker;
 import gal.ast.AST;
 import gal.ast.export.Ast2FSM;
 import gal.parser.Parser;
+import map.MapLoader;
+import map.SpawnData;
 import oop.graphics.Canvas;
 
 public class Game {
@@ -29,6 +31,10 @@ public class Game {
 	private Controller m_controller;
 	private Brain m_brain;
 	private Ticker m_ticker;
+	private MapLoader m_loader;
+
+	private double scrollTimer = 0;
+	private final double SCROLL_INTERVAL = 500;
 
 	private List<FSM> m_fsm_list;
 
@@ -47,6 +53,8 @@ public class Game {
 
 		m_brain = new Brain(m_model);
 
+		m_fsm_list = loadAutomata("parser/gal/demo/test/GAL2025.gal");
+
 		Player P = new Player(m_model, 5, 5, 0);
 		new PlayerBot(m_brain, P);
 
@@ -64,7 +72,9 @@ public class Game {
 //		PNJ SH = new PNJ(m_model, 2, 2, 0);
 //		new SafeHunterBot(m_brain, SH);
 
-		m_fsm_list = loadAutomata("parser/gal/demo/test/GAL2025.gal");
+		String path = "game/Ressources/Maps/Map1.txt";
+		m_loader = new MapLoader(path, m_model);
+
 	}
 
 	public void paint(Canvas canvas, Graphics2D g) {
@@ -74,6 +84,7 @@ public class Game {
 	public void tick(int elapsed) {
 		m_model.tick(elapsed);
 		m_view.tick(elapsed);
+		SpawnEntities(elapsed);
 	}
 
 	// ------------ Private Methods ------------
@@ -97,6 +108,21 @@ public class Game {
 		} catch (Exception ex) {
 			System.err.println("Erreur lors du chargement des automates: " + ex.getMessage());
 			return new LinkedList<FSM>();
+		}
+	}
+
+	// spawn les entités de la grille Map.txt
+	private void SpawnEntities(int elapsed) {
+		if (m_loader != null) {
+			m_loader.tick(elapsed, m_model);
+			List<SpawnData> spawns = m_loader.RemoveNewEntities();
+			for (SpawnData s : spawns) {
+				switch (s.type) {
+				case '2':
+					new BasicPNJ(m_model, s.row, s.col, 0);
+					break;
+				}
+			}
 		}
 	}
 
