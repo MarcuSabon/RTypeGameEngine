@@ -7,6 +7,7 @@ import java.util.List;
 import engine.IModel;
 import engine.IView;
 import engine.model.Entity;
+import engine.utils.FPSCounter;
 import entities.Bullet;
 import entities.Player;
 import oop.graphics.Canvas;
@@ -18,15 +19,16 @@ public abstract class View implements IView {
 	protected int px;
 	protected int py;
 	protected int cellSize;
-	protected Player p;
 	protected int zoom = 1;
-	protected double oX = 0;
-	protected double oY = 0;
-	protected double speedX = 0;
-	protected double speedY = 0;
+	protected double oX;
+	protected double oY;
+	protected double speedX;
+	protected double speedY;
 	protected double pixelsPerMetricCell;
 	protected boolean debug;
 	protected List<Avatar> m_visibleAvatars;
+
+	private FPSCounter fpsCounter;
 
 	protected static final int MAX_ZOOM = 15;
 
@@ -36,6 +38,7 @@ public abstract class View implements IView {
 		model.register(this);
 		m_visibleAvatars = new LinkedList<Avatar>();
 		pixelsPerMetricCell = cellSize / m_model.metric();
+		fpsCounter = new FPSCounter();
 	}
 
 	public void focus(int px, int py) {
@@ -60,7 +63,7 @@ public abstract class View implements IView {
 	@Override
 	public void resetZoom() {
 		zoom = 1;
-		oX = 0;
+		oX = -cellSize;
 		oY = 0;
 	}
 
@@ -172,7 +175,16 @@ public abstract class View implements IView {
 		}
 	}
 
+	@Override
+	public void tick(int elapsed) {
+		subtick(elapsed);
+	}
+
+	public abstract void subtick(int elapsed);
+
+	@Override
 	public void paint(Canvas canvas, Graphics2D g) {
+		oX = -cellSize;
 		cellSize();
 		g.setColor(java.awt.Color.LIGHT_GRAY);
 		g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
@@ -182,6 +194,7 @@ public abstract class View implements IView {
 		subPaint(canvas, g);
 
 		if (debug) {
+			fpsCounter.frame();
 			debugMode(g);
 		}
 
@@ -201,11 +214,17 @@ public abstract class View implements IView {
 		m_model.player().setScore(e);
 	}
 
-// ------------- PRIVATE METHODS ------------- //
+	// ------------- PRIVATE METHODS ------------- //
 	private void debugMode(Graphics2D g) {
 		drawGrid(g);
 		drawScoreBots(g);
+		drawFPS(g);
+	}
 
+	private void drawFPS(Graphics2D g) {
+		int fps = fpsCounter.getFPS();
+		g.setColor(java.awt.Color.RED);
+		g.drawString("FPS : " + String.valueOf(fps), 10 + cellSize, 35 + cellSize);
 	}
 
 	private void drawGrid(Graphics2D g) {

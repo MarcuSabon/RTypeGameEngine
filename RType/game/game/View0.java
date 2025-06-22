@@ -2,11 +2,12 @@ package game;
 
 import java.awt.Graphics2D;
 
+import avatars.AvatarBullet;
 import avatars.AvatarPNJ;
 import avatars.AvatarPlayer;
 import avatars.AvatarShooter;
 import avatars.AvatarTracker;
-import avatars.AvatarBullet;
+import avatars.AvatarWall;
 import engine.IModel;
 import engine.model.Entity;
 import engine.view.Avatar;
@@ -16,6 +17,7 @@ import entities.Bullet;
 import entities.Player;
 import entities.Shooter;
 import entities.Tracker;
+import map.Wall;
 import oop.graphics.Canvas;
 
 public class View0 extends View {
@@ -31,7 +33,7 @@ public class View0 extends View {
 	@Override
 	public void subPaint(Canvas canvas, Graphics2D g) {
 		background.draw(g);
-		p = m_model.player();
+		Player p = m_model.player();
 		viewBar.draw(g, p);
 		g.scale(zoom, zoom);
 
@@ -40,7 +42,7 @@ public class View0 extends View {
 	}
 
 	@Override
-	public void tick(int elapsed) {
+	public void subtick(int elapsed) {
 		background.update(elapsed);
 	}
 
@@ -57,6 +59,8 @@ public class View0 extends View {
 			a = new AvatarShooter(this, e);
 		else if (e instanceof BasicPNJ)
 			a = new AvatarPNJ(this, e);
+		else if (e instanceof Wall)
+			a = new AvatarWall(this, e);
 
 		if (a != null)
 			m_visibleAvatars.add(a);
