@@ -6,6 +6,7 @@ import engine.IModel.Config;
 import engine.controller.Controller;
 import engine.model.Model;
 import engine.view.View;
+import game.GameManager.GameState;
 import oop.graphics.Canvas;
 
 public class Game {
@@ -23,6 +24,7 @@ public class Game {
 
 		Config conf = new Config();
 		conf.tore = false;
+		conf.gameState = GameState.Playing;
 //		conf.continuous = true; // continuous model
 
 		m_model = new Model(nrows, ncols);
@@ -31,7 +33,7 @@ public class Game {
 		m_view = new View0(canvas, m_model);
 
 		m_controller = new Controller0(canvas, m_model, m_view);
-		gameManager = new GameManager(this, m_controller, m_view, m_model);
+		gameManager = new GameManager(this, m_controller, m_view, m_model, conf.gameState);
 
 		new Ticker(this);
 

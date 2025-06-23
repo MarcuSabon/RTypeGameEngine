@@ -19,7 +19,7 @@ import map.SpawnData;
 //	INTRO, PSEUDO, PLAYING, END
 //}
 
-class GameManager {
+public class GameManager {
 	private Controller0 controller;
 	private View0 view;
 	private Model model;
@@ -35,11 +35,11 @@ class GameManager {
 
 	public boolean initialized;
 
-	public GameManager(Game game, Controller controller, View view, Model model) {
+	public GameManager(Game game, Controller controller, View view, Model model, GameState gameState) {
 		this.controller = (Controller0) controller;
 		this.view = (View0) view;
 		this.model = model;
-		this.gameState = GameState.Intro; // Initialize game state
+		this.gameState = gameState; // Initialize game state
 		this.view.setGameState(gameState);
 		pseudoBuilder = new StringBuilder();
 		this.time = 2000;
@@ -60,7 +60,6 @@ class GameManager {
 				view.setGameState(gameState);
 			}
 		}
-
 		if (gameState == GameState.Playing) {
 			init();
 

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import engine.brain.Brain;
 import engine.model.Entity;
 import entities.Player;
+import game.GameManager.GameState;
 
 public interface IModel {
 
@@ -24,6 +25,8 @@ public interface IModel {
 
 		// true if the model is continuous, false if discrete
 		public boolean continuous;
+
+		public GameState gameState;
 	}
 
 	Config config();
