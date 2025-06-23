@@ -7,8 +7,8 @@ import engine.model.Stunt;
 
 public abstract class StuntPNJ extends Stunt {
 	private PNJ pnj;
-	private static final int ROTATION_DURATION = 100;
-	private static final int MOVEMENT_DURATION = 250;
+	private static final int ROTATION_DURATION = 50;
+	private static final int MOVEMENT_DURATION = 150;
 
 	// CONSTRUCTOR
 	public StuntPNJ(Model m, PNJ e) {

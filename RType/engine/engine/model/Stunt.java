@@ -36,6 +36,10 @@ public abstract class Stunt {
 		return action;
 	}
 
+	public void abortAction() {
+		this.action = null;
+	}
+
 	public abstract boolean move(int nrows, int ncols);
 
 	public abstract void rotate(int angle);

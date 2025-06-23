@@ -9,7 +9,7 @@ public class Wall extends Entity {
 
 	public Wall(Model m, int r, int c, int o) {
 		super(m, r, c, o);
-		stunt = new StuntWall(m, this);
+		new StuntWall(m, this);
 		new BotWall(m.getBrain(), this);
 	}
 

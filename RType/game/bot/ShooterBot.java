@@ -5,13 +5,17 @@ import engine.brain.Brain;
 import engine.brain.Category;
 import engine.brain.Direction;
 import engine.model.Entity;
+import entities.ShootingPNJ;
 
 public class ShooterBot extends Bot {
 
 	private int duration;
+	private ShootingPNJ e;
 
-	public ShooterBot(Brain b, Entity e) {
+	public ShooterBot(Brain b, ShootingPNJ e) {
 		super(b, e);
+		this.e = e;
+
 		c = Category.Adversary;
 		duration = delay;
 		pointsValue += 100; // valeur d'un bot de base par exemple
@@ -33,22 +37,19 @@ public class ShooterBot extends Bot {
 			return;
 		Direction d = dirOf(e).cardinalOf();
 
-		if (d == Direction.N) {
-			moveWithRotation(Direction.N);
-		} else if (d == Direction.E) {
-			moveWithRotation(Direction.E);
-			if (e.row() == this.e.row()) {
-				shoot(Direction.E);
+		if (isFree(d)) {
+			moveWithRotation(d);
+			if (d == Direction.E && e.row() == this.e.row()) {
+				shoot(Direction.E, this.e);
 			}
-		} else if (d == Direction.S) {
-			moveWithRotation(Direction.S);
-		} else if (d == Direction.W) {
-			moveWithRotation(Direction.W);
-			if (e.row() == this.e.row()) {
-				shoot(Direction.W);
+			if (d == Direction.W && e.row() == this.e.row()) {
+				shoot(Direction.W, this.e);
 			}
+		} else {
+			tryAlternativeDirections();
 		}
 
 		delay = duration;
 	}
+
 }
