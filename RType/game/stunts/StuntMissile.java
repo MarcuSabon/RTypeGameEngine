@@ -29,7 +29,7 @@ public class StuntMissile extends Stunt {
 		e.speedX = (0.007 * Math.cos(rad)) + 0.993 * e.speedX;
 		e.speedY = (0.007 * Math.sin(rad)) + 0.993 * e.speedY;
 		if (action == null) {
-			move(e.speedX * elapsed / SPEEDNERF, e.speedY * elapsed / SPEEDNERF);
+			move(realSpeedX() * elapsed, realSpeedY() * elapsed);
 			IBot bot = e.bot;
 			if (bot != null) {
 				bot.think(elapsed);

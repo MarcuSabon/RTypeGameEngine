@@ -1,5 +1,6 @@
 package boss;
 
+import engine.brain.Category;
 import engine.model.Entity;
 import engine.model.Model;
 import entities.Bullet;
@@ -142,9 +143,9 @@ public class StuntMaster extends StuntShootingPNJ {
 		double col = e.col() - 3;
 		double row = e.row() + 1;
 		if (m.entity((int) row, (int) col) == null) {
-			Bullet b = new Bullet(m, (int) row, (int) col, 180);
-			Bullet b2 = new Bullet(m, (int) row + 1, (int) col, 130);
-			Bullet b3 = new Bullet(m, (int) row - 1, (int) col, 210);
+			Bullet b = new Bullet(m, (int) row, (int) col, 180, Category.Adversary);
+			Bullet b2 = new Bullet(m, (int) row + 1, (int) col, 130, Category.Adversary);
+			Bullet b3 = new Bullet(m, (int) row - 1, (int) col, 210, Category.Adversary);
 			b.at(col + 0.5, row + 0.5);
 			b2.at(col + 0.5, row + 1.5);
 			b3.at(col + 0.5, row - 0.5);

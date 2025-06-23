@@ -14,10 +14,6 @@ import entities.Tracker;
 import map.MapLoader;
 import map.SpawnData;
 
-//public enum GameState {
-//	INTRO, PSEUDO, PLAYING, END
-//}
-
 public class GameManager {
 	private Controller0 controller;
 	private View0 view;

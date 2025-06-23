@@ -48,6 +48,14 @@ public abstract class Stunt {
 		e.m_model.move(e, x, y);
 	}
 
+	public double realSpeedX() {
+		return e.speedX / SPEEDNERF;
+	}
+
+	public double realSpeedY() {
+		return e.speedY / SPEEDNERF;
+	}
+
 	public void tick(int elapsed) {
 		if (action == null) {
 			IBot bot = e.bot;

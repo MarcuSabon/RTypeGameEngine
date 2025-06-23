@@ -1,6 +1,7 @@
 package entities;
 
 import bot.BulletBot;
+import engine.brain.Category;
 import engine.model.Entity;
 import engine.model.Model;
 import engine.model.PNJ;
@@ -10,10 +11,10 @@ public class Bullet extends PNJ {
 
 	public boolean collided = false;
 
-	public Bullet(Model m, int r, int c, int o) {
+	public Bullet(Model m, int r, int c, int o, Category cat) {
 		super(m, r, c, o);
 		new StuntBullet(m_model, this);
-		new BulletBot(m.getBrain(), this);
+		new BulletBot(m.getBrain(), this, cat);
 	}
 
 	@Override

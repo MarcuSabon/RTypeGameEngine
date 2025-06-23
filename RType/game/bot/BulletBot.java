@@ -9,9 +9,9 @@ import sound.SoundPlayer;
 public class BulletBot extends Bot {
 	private int duration;
 
-	public BulletBot(Brain b, Entity e) {
+	public BulletBot(Brain b, Entity e, Category cat) {
 		super(b, e);
-		c = Category.Adversary;
+		c = cat;
 		duration = delay;
 		pointsValue += 100;
 	}

@@ -1,6 +1,7 @@
 package entities;
 
 import bot.BulletBot;
+import engine.brain.Category;
 import engine.model.Entity;
 import engine.model.Model;
 import stunts.StuntMissile;
@@ -12,7 +13,7 @@ public class Missile extends Entity {
 	public Missile(Model m, int r, int c, int o, Entity target) {
 		super(m, r, c, o);
 		new StuntMissile(m_model, this, target);
-		new BulletBot(m.getBrain(), this);
+		new BulletBot(m.getBrain(), this, Category.Adversary);
 	}
 
 	@Override
