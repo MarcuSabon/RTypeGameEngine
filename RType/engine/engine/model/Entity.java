@@ -10,7 +10,8 @@ public abstract class Entity {
 	protected double x, y;
 	protected double accX = 0;
 	protected double accY = 0;
-	public double speedX = 0, speedY = 0;;
+	public double speedX = 0, speedY = 0;
+	protected String sprite;
 
 	public IBot bot;
 	public Stunt stunt;
@@ -27,6 +28,11 @@ public abstract class Entity {
 		y = m_row * m.metric();
 		m_orientation = normalize(o);
 		m_model.addAt(this);
+	}
+
+	protected Entity(Model m, int r, int c, int o, String sprite) {
+		this(m, r, c, o);
+		this.sprite = sprite;
 	}
 
 	// Normalize an angle back to the range [0:360[
@@ -127,5 +133,13 @@ public abstract class Entity {
 	 */
 	public void setAccY(double accY) {
 		this.accY = accY;
+	}
+
+	public String sprite() {
+		return sprite;
+	}
+
+	public void collision() {
+//
 	}
 }

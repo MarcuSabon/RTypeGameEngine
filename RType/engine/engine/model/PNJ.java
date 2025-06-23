@@ -1,20 +1,21 @@
 package engine.model;
 
-import Stunts.StuntPNJ;
-import game.bot.Bot3HP;
+public abstract class PNJ extends Entity {
 
-public class PNJ extends Entity {
-
-	public PNJ(Model m, int r, int c, int o) {
+	protected PNJ(Model m, int r, int c, int o) {
 		super(m, r, c, o);
-		new StuntPNJ(m_model, this);
-		bot = new Bot3HP(m.getBrain(), this);
+	}
+
+	protected PNJ(Model m, int r, int c, int o, String s) {
+		super(m, r, c, o, s);
 	}
 
 	@Override
 	protected void collision(Entity entity) {
 		bot.setCollision(true);
-		System.out.println("Collision avec " + entity.getClass().getSimpleName());
+		stunt.abortAction();
+		System.out.println("Action aborted " + this.getClass().getSimpleName());
+		// System.out.println("Collision avec " + entity.getClass().getSimpleName());
 	}
 
 }

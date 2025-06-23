@@ -8,13 +8,20 @@ import engine.IModel;
 
 public class Brain implements IBrain {
 
-	protected IModel model;
+	private IModel model;
 	protected List<IBot> bots;
 
 	public Brain(IModel model) {
-		this.model = model;
+		this.setModel(model);
 		this.bots = new LinkedList<>();
 		model.cerebrate(this);
 	}
 
+	public IModel getModel() {
+		return model;
+	}
+
+	public void setModel(IModel model) {
+		this.model = model;
+	}
 }

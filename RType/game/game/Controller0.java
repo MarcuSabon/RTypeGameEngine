@@ -1,14 +1,14 @@
 package game;
 
-import Stunts.StuntPlayer;
 import engine.IModel;
 import engine.IView;
 import engine.controller.Controller;
-import engine.model.Player;
 import engine.utils.Utils;
+import entities.Player;
 import oop.graphics.Canvas;
 import oop.graphics.VirtualKeyCodes;
 import oop.tasks.Task;
+import stunts.StuntPlayer;
 
 public class Controller0 extends Controller {
 

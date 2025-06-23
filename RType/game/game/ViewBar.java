@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
 
-import engine.model.Player;
+import entities.Player;
 import oop.graphics.Canvas;
 
 public class ViewBar {

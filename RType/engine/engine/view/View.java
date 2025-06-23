@@ -7,8 +7,9 @@ import java.util.List;
 import engine.IModel;
 import engine.IView;
 import engine.model.Entity;
-import engine.model.Player;
-import engine.model.entities.Bullet;
+import engine.utils.FPSCounter;
+import entities.Bullet;
+import entities.Player;
 import oop.graphics.Canvas;
 
 public abstract class View implements IView {
@@ -18,15 +19,16 @@ public abstract class View implements IView {
 	protected int px;
 	protected int py;
 	protected int cellSize;
-	protected Player p;
 	protected int zoom = 1;
-	protected double oX = 0;
-	protected double oY = 0;
-	protected double speedX = 0;
-	protected double speedY = 0;
+	protected double oX;
+	protected double oY;
+	protected double speedX;
+	protected double speedY;
 	protected double pixelsPerMetricCell;
 	protected boolean debug;
 	protected List<Avatar> m_visibleAvatars;
+
+	private FPSCounter fpsCounter;
 
 	protected static final int MAX_ZOOM = 15;
 
@@ -36,7 +38,7 @@ public abstract class View implements IView {
 		model.register(this);
 		m_visibleAvatars = new LinkedList<Avatar>();
 		pixelsPerMetricCell = cellSize / m_model.metric();
-
+		fpsCounter = new FPSCounter();
 	}
 
 	public void focus(int px, int py) {
@@ -61,7 +63,7 @@ public abstract class View implements IView {
 	@Override
 	public void resetZoom() {
 		zoom = 1;
-		oX = 0;
+		oX = -cellSize;
 		oY = 0;
 	}
 
@@ -141,7 +143,7 @@ public abstract class View implements IView {
 
 	@Override
 	public double toPixel(double x) {
-		return x * cellSize / zoom;
+		return x * cellSize * zoom;
 	}
 
 	@Override
@@ -166,18 +168,28 @@ public abstract class View implements IView {
 
 		if (height / m_model.nrows() < m_canvas.getWidth() / m_model.ncols()) {
 			min = height;
-			cellSize = min / m_model.nrows();
+			cellSize = min * zoom / m_model.nrows();
 		} else {
 			min = m_canvas.getWidth();
-			cellSize = min / m_model.ncols();
+			cellSize = min * zoom / m_model.ncols();
 		}
 	}
 
+	@Override
+	public void tick(int elapsed) {
+		subtick(elapsed);
+	}
+
+	public abstract void subtick(int elapsed);
+
+	@Override
 	public void paint(Canvas canvas, Graphics2D g) {
+		oX = -cellSize;
 		cellSize();
 		g.translate(oX, oY);
 		subPaint(canvas, g);
 		if (debug) {
+			fpsCounter.frame();
 			debugMode(g);
 		}
 
@@ -197,11 +209,17 @@ public abstract class View implements IView {
 		m_model.player().setScore(e);
 	}
 
-// ------------- PRIVATE METHODS ------------- //
+	// ------------- PRIVATE METHODS ------------- //
 	private void debugMode(Graphics2D g) {
 		drawGrid(g);
 		drawScoreBots(g);
+		drawFPS(g);
+	}
 
+	private void drawFPS(Graphics2D g) {
+		int fps = fpsCounter.getFPS();
+		g.setColor(java.awt.Color.RED);
+		g.drawString("FPS : " + String.valueOf(fps), 10 + cellSize, 35 + cellSize);
 	}
 
 	private void drawGrid(Graphics2D g) {
@@ -209,12 +227,12 @@ public abstract class View implements IView {
 		g.setColor(java.awt.Color.WHITE);
 
 		for (int i = 0; i <= m_model.nrows(); i++) {
-			int y = i * cellSize * zoom;
-			g.fillRect(0, y, cellSize * zoom * m_model.ncols() + ligne, ligne);
+			int y = i * cellSize;
+			g.fillRect(0, y, cellSize * m_model.ncols() + ligne, ligne);
 		}
 		for (int i = 0; i <= m_model.ncols(); i++) {
-			int x = i * cellSize * zoom;
-			g.fillRect(x, 0, ligne, cellSize * zoom * m_model.nrows() + ligne);
+			int x = i * cellSize;
+			g.fillRect(x, 0, ligne, cellSize * m_model.nrows() + ligne);
 		}
 	}
 

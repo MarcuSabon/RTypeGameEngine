@@ -1,11 +1,15 @@
 package game;
 
+import boss.Master;
 import engine.brain.Brain;
 import engine.controller.Controller;
 import engine.model.Model;
-import engine.model.PNJ;
-import engine.model.Player;
 import engine.view.View;
+import entities.Player;
+import entities.Shooter;
+import entities.Tower;
+import entities.Tracker;
+import map.MapLoader;
 
 //public enum GameState {
 //	INTRO, PSEUDO, PLAYING, END
@@ -17,13 +21,15 @@ class GameManager {
 	private Model model;
 	private Brain m_brain;
 	private Player player;
+	private MapLoader m_loader;
 	public GameState gameState;// Initial state set to PSEUDO
 	protected static StringBuilder pseudoBuilder;
 	public static int surligne;
 	public static boolean restartButton;
 	private int time;
 	private int time2;
-	private boolean tr;
+
+	public boolean initialized;
 
 	public GameManager(Controller controller, View view, Model model) {
 		this.controller = (Controller0) controller;
@@ -117,16 +123,21 @@ class GameManager {
 			Player.name = GameManager.pseudoBuilder.toString();
 			initializePlayer();
 
-			PNJ W = new PNJ(model, 15, 15, 0);
-			// new Bot3HP(m_brain, W);
+			new Master(model, 35, 10, 180, "/Boss/Level1", m_brain);
 
-			//
-			// PNJ T = new PNJ(m_model, 10, 10, 0);
-			// new TrackerBot(m_brain, T);
-			//
-			// PNJ SH = new PNJ(m_model, 2, 2, 0);
-			// new SafeHunterBot(m_brain, SH);
+//			Master M2 = new Master(model, 20, 10, 180, "/Boss/Level1", m_brain);
+//			Master M3 = new Master(model, 15, 10, 180, "/Boss/Level1", m_brain);
+//			Master M4 = new Master(model, 10, 10, 180, "/Boss/Level1", m_brain);
 
+			new Shooter(model, 16, 16, 0);
+			new Tracker(model, 17, 17, 0);
+			new Tower(model, 18, 41, 0);
+			new Tower(model, 1, 41, 0);
+
+			String path = "game/Ressources/Maps/Map1.txt";
+			m_loader = new MapLoader(path, model);
+
+			m_brain = new Brain(model);
 		}
 	}
 

@@ -21,7 +21,7 @@ public class Painter implements Runnable {
 	public void run() {
 		m_canvas.repaint();
 		Task task = Task.task();
-		task.post(this, 100 / 6); // 60 FPS
+		task.post(this, 16); // 62,5 FPS
 	}
 
 	class PaintListener implements Canvas.PaintListener {

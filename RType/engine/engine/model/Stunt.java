@@ -8,7 +8,6 @@ public abstract class Stunt {
 		void tick(int elapsed);
 
 		int kind();
-
 	}
 
 	protected Model m;
@@ -35,6 +34,10 @@ public abstract class Stunt {
 
 	public Action action() {
 		return action;
+	}
+
+	public void abortAction() {
+		this.action = null;
 	}
 
 	public abstract boolean move(int nrows, int ncols);
