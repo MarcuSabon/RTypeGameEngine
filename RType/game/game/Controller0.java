@@ -8,6 +8,7 @@ import entities.Player;
 import oop.graphics.Canvas;
 import oop.graphics.VirtualKeyCodes;
 import oop.tasks.Task;
+import sound.SoundPlayer;
 import stunts.StuntPlayer;
 
 public class Controller0 extends Controller {
@@ -56,6 +57,7 @@ public class Controller0 extends Controller {
 
 			case VirtualKeyCodes.VK_SPACE:
 				sp.shoot();
+				SoundPlayer.play("/Sounds/Projectile.wav");
 				break;
 			}
 		} else if (VirtualKeyCodes.VK_ENTER == keyCode) {

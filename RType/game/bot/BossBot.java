@@ -8,6 +8,7 @@ import engine.brain.Bot;
 import engine.brain.Brain;
 import engine.brain.Category;
 import engine.model.Entity;
+import sound.SoundPlayer;
 
 public class BossBot extends Bot {
 
@@ -17,6 +18,7 @@ public class BossBot extends Bot {
 	private static final int HURT = 3;
 	private static final int DYING = 4;
 	private static final Random random = new Random();
+	private boolean SoundDeath=false;
 	public int state;
 
 	private int baseSpawnY;
@@ -169,6 +171,10 @@ public class BossBot extends Bot {
 	int DYINGTIME = 2000;
 
 	private void Dying(int elapsed) {
+		if (!SoundDeath) {
+			SoundDeath=true;
+			SoundPlayer.play("/Sounds/BossDeath.wav");
+		}
 		DYINGTIME -= elapsed;
 		if (DYINGTIME < 0) {
 			((Master) e).preDie();

@@ -4,6 +4,7 @@ import engine.brain.Bot;
 import engine.brain.Brain;
 import engine.brain.Category;
 import engine.model.Entity;
+import sound.SoundPlayer;
 
 public class BulletBot extends Bot {
 	private int duration;
