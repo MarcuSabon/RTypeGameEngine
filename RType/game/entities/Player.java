@@ -1,5 +1,6 @@
 package entities;
 
+import bot.PlayerBot;
 import engine.model.Entity;
 import engine.model.Model;
 import stunts.StuntPlayer;
@@ -13,6 +14,7 @@ public class Player extends Entity {
 	public Player(Model m, int x, int y, int o) {
 		super(m, x, y, o);
 		new StuntPlayer(m, this);
+		new PlayerBot(m.getBrain(), this);
 		m.setPlayer(this);
 		score = 0;
 		HP = 1000; // au pif sah
@@ -31,8 +33,7 @@ public class Player extends Entity {
 			bot.setCollision(true);
 			bot.setCollisionWithEntity(entity);
 		}
-		System.out.println("HP : " + HP);
-		System.out.println("Collision avec " + entity.getClass().getSimpleName());
+
 	}
 
 	public int getScore() {

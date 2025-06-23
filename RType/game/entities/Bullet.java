@@ -8,19 +8,20 @@ import stunts.StuntBullet;
 
 public class Bullet extends PNJ {
 
+	public boolean collided = false;
+
 	public Bullet(Model m, int r, int c, int o) {
 		super(m, r, c, o);
 		new StuntBullet(m_model, this);
 		new BulletBot(m.getBrain(), this);
-		speedX = 1;
-		speedY = 1;
 	}
 
 	@Override
 	protected void collision(Entity entity) {
-		bot.setCollision(true);
 		speedX = 0;
 		speedY = 0;
+		m_model.emptyGrid(m_row, m_col);
+		bot.setCollision(true);
+		collided = true;
 	}
-
 }

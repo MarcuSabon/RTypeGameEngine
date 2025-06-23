@@ -28,21 +28,24 @@ public class TrackerBot extends Bot {
 			e.die();
 		}
 
-		Entity e = closest(Category.Adversary);
-		if (e == null)
+		Entity entity = closest(Category.Adversary);
+		if (entity == null) {
 			return;
-		Direction d = dirOf(e).cardinalOf();
+		}
+		Direction d = dirOf(entity).cardinalOf();
 
-		if (d == Direction.N) {
-			moveWithRotation(Direction.N);
-		} else if (d == Direction.E) {
-			moveWithRotation(Direction.E);
-		} else if (d == Direction.S) {
-			moveWithRotation(Direction.S);
-		} else if (d == Direction.W) {
-			moveWithRotation(Direction.W);
+		if (isFree(d)) {
+			moveWithRotation(d);
+		} else {
+			tryAlternativeDirections();
 		}
 
 		delay = duration;
+	}
+
+	@Override
+	protected boolean isFree(Direction d) {
+		Entity entity = cell(d);
+		return entity == null || entity == b.getModel().player();
 	}
 }

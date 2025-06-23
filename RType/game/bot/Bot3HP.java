@@ -70,13 +70,12 @@ public class Bot3HP extends Bot {
 		} else {
 			action();
 		}
-
 		delay = duration;
 	}
 
 	private void action() {
 		if (cell(Direction.F) == null)
-			move(Direction.F);
+			move(Direction.F, 1); // On remets à 1
 		else if (cell(Direction.L) == null)
 			turn(Direction.L);
 		else if (cell(Direction.R) == null)

@@ -4,18 +4,17 @@ import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 
-import bot.Bot3HP;
-import bot.PlayerBot;
+import boss.Master;
 import engine.IModel.Config;
 import engine.brain.Brain;
 import engine.brain.FSM;
 import engine.controller.Controller;
 import engine.model.Model;
-import engine.model.PNJ;
 import engine.view.View;
 import entities.BasicPNJ;
 import entities.Player;
 import entities.Shooter;
+import entities.Tower;
 import entities.Tracker;
 import gal.ast.AST;
 import gal.ast.export.Ast2FSM;
@@ -55,22 +54,20 @@ public class Game {
 
 		m_fsm_list = loadAutomata("parser/gal/demo/test/GAL2025.gal");
 
-		Player P = new Player(m_model, 5, 5, 0);
-		new PlayerBot(m_brain, P);
+		new Player(m_model, 5, 5, 0);
 
 		m_ticker = new Ticker(this);
 
-		PNJ HP = new BasicPNJ(m_model, 15, 15, 0);
-		new Bot3HP(m_brain, HP);
+		new Master(m_model, 35, 10, 180, "/Boss/Level1", m_brain);
+
+//		Master M2 = new Master(m_model, 20, 10, 180, "/Boss/Level1", m_brain);
+//		Master M3 = new Master(m_model, 15, 10, 180, "/Boss/Level1", m_brain);
+//		Master M4 = new Master(m_model, 10, 10, 180, "/Boss/Level1", m_brain);
 
 		new Shooter(m_model, 16, 16, 0);
 		new Tracker(m_model, 17, 17, 0);
-//
-//		PNJ T = new PNJ(m_model, 10, 10, 0);
-//		new TrackerBot(m_brain, T);
-//
-//		PNJ SH = new PNJ(m_model, 2, 2, 0);
-//		new SafeHunterBot(m_brain, SH);
+		new Tower(m_model, 18, 41, 0);
+		new Tower(m_model, 1, 41, 0);
 
 		String path = "game/Ressources/Maps/Map1.txt";
 		m_loader = new MapLoader(path, m_model);

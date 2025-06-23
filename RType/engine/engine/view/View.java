@@ -143,7 +143,7 @@ public abstract class View implements IView {
 
 	@Override
 	public double toPixel(double x) {
-		return x * cellSize / zoom;
+		return x * cellSize * zoom;
 	}
 
 	@Override
@@ -168,10 +168,10 @@ public abstract class View implements IView {
 
 		if (height / m_model.nrows() < m_canvas.getWidth() / m_model.ncols()) {
 			min = height;
-			cellSize = min / m_model.nrows();
+			cellSize = min * zoom / m_model.nrows();
 		} else {
 			min = m_canvas.getWidth();
-			cellSize = min / m_model.ncols();
+			cellSize = min * zoom / m_model.ncols();
 		}
 	}
 
@@ -190,7 +190,7 @@ public abstract class View implements IView {
 		g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
 		g.translate(oX, oY);
 		g.setColor(java.awt.Color.GRAY);
-		g.fillRect(0, 0, m_model.ncols() * pxPerMeter() * zoom, m_model.nrows() * pxPerMeter() * zoom);
+		g.fillRect(0, 0, m_model.ncols() * pxPerMeter(), m_model.nrows() * pxPerMeter());
 		subPaint(canvas, g);
 
 		if (debug) {
@@ -232,12 +232,12 @@ public abstract class View implements IView {
 		g.setColor(java.awt.Color.WHITE);
 
 		for (int i = 0; i <= m_model.nrows(); i++) {
-			int y = i * cellSize * zoom;
-			g.fillRect(0, y, cellSize * zoom * m_model.ncols() + ligne, ligne);
+			int y = i * cellSize;
+			g.fillRect(0, y, cellSize * m_model.ncols() + ligne, ligne);
 		}
 		for (int i = 0; i <= m_model.ncols(); i++) {
-			int x = i * cellSize * zoom;
-			g.fillRect(x, 0, ligne, cellSize * zoom * m_model.nrows() + ligne);
+			int x = i * cellSize;
+			g.fillRect(x, 0, ligne, cellSize * m_model.nrows() + ligne);
 		}
 	}
 

@@ -13,13 +13,15 @@ public class StuntBullet extends Stunt {
 	public StuntBullet(Model m, Entity e) {
 		super(m, e);
 		SPEEDNERF = 50;
+		double rad = Math.toRadians(e.orientation());
+
+		e.speedX = Math.cos(rad);
+		e.speedY = Math.sin(rad);
 	}
 
 	@Override
 	public void tick(int elapsed) {
-		double rad = Math.toRadians(e.orientation());
-		e.speedX = Math.cos(rad);
-		e.speedY = Math.sin(rad);
+
 		if (action == null) {
 			move(e.speedX * elapsed / SPEEDNERF, e.speedY * elapsed / SPEEDNERF);
 			IBot bot = e.bot;

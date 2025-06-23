@@ -8,7 +8,6 @@ import java.util.List;
 import engine.IModel;
 import engine.IView;
 import engine.brain.Brain;
-import entities.Bullet;
 import entities.Player;
 
 public class Model implements IModel {
@@ -39,16 +38,16 @@ public class Model implements IModel {
 	 * A callback from the constructor of an entity to notify this model of a new
 	 * entity to add to this model.
 	 */
-	public void addAt(Entity e) {
+	public void add(Entity e) {
 		assert (m_grid[e.m_row][e.m_col] != null) : "There is already an entity at (" + e.m_row + "," + e.m_col + ")";
 
 		m_grid[e.m_row][e.m_col] = e;
-		if (e instanceof Bullet) // évite le concurrentModificationException
-			toAdd.add(e);
-		else
-			m_entities.add(e);
-
+		m_entities.add(e);
 		m_view.birth(e);
+	}
+
+	public void addAt(Entity e) {
+		toAdd.add(e);
 	}
 
 	public void setPlayer(Player p) {
@@ -96,13 +95,19 @@ public class Model implements IModel {
 		if (newRow == oldRow && newCol == oldCol)
 			return false; // No movement
 
+		Entity entity = entity(newRow, newCol);
+
 		if (entity(newRow, newCol) == null) {
 			m_grid[e.m_row][e.m_col] = null; // remove from old position
 
 			e.at(newRow, newCol); // update entity position
-			m_grid[newRow][newCol] = e; // add to new position
+			if (!e.isDead()) {
+				m_grid[newRow][newCol] = e; // add to new position
+			}
 			return true;
 		}
+		e.collision(entity);
+		entity.collision(e);
 		return false;
 	}
 
@@ -182,6 +187,12 @@ public class Model implements IModel {
 
 	@Override
 	public Entity entity(int r, int c) {
+		if (!m_conf.tore) {
+			if (r > m_grid.length - 1 || r < 0 || c > m_grid[0].length - 1 || c < 0) {
+				// TODO!m_player a changer par un mur quand mur existe!
+				return null;
+			}
+		}
 		return m_grid[normalize(r, m_nrows)][normalize(c, m_ncols)];
 	}
 
@@ -231,23 +242,22 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public void tick(int elapsed) { // Nouvelle version du tick permettant de différer la mort des entités
-		// -> évite une erreur lors de la modification d'une entité (mort) pendant son
-		// itération
+	public void tick(int elapsed) {
 		List<Entity> toRemove = new ArrayList<>();
-
 		for (Entity e : m_entities) {
-			if ((!e.isDead()) && (e.stunt != null))
+			if (!e.isDead() && e.stunt != null)
 				e.stunt.tick(elapsed);
-
-			else if (e.isDead())
+			if (e.isDead())
 				toRemove.add(e);
-
 		}
-		m_entities.addAll(toAdd); // on ajoute les entités créées lors de l'itération après
+
+		for (Entity e : toAdd)
+			add(e);
+
 		toAdd.clear();
 		for (Entity e : toRemove)
 			death(e);
+
 	}
 
 	public void death(Entity entity) {
@@ -408,6 +418,10 @@ public class Model implements IModel {
 		int newCol = normalize(toCellCoordinate(newX), m_ncols);
 		m_grid[newRow][newCol] = e;
 		e.at(newX, newY, newRow, newCol);
+	}
+
+	public void emptyGrid(int row, int col) {
+		m_grid[row][col] = null;
 	}
 
 }

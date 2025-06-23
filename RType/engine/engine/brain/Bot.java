@@ -4,9 +4,10 @@ import engine.IBrain.IBot;
 import engine.model.Entity;
 import engine.utils.Utils;
 import entities.Player;
+import entities.ShootingPNJ;
 import stunts.StuntPNJ;
 import stunts.StuntPlayer;
-import stunts.StuntShooter;
+import stunts.StuntShootingPNJ;
 
 public abstract class Bot implements IBot {
 	protected Brain b;
@@ -17,7 +18,7 @@ public abstract class Bot implements IBot {
 
 	// champs valeur d'un bot pour le score du Player
 	protected int pointsValue; // J'ai mis dans bot et pas Entity pcq la difficulté à tuer l'entité dépend de
-								// son bot mais on pourrait changer
+	// son bot mais on pourrait changer
 	protected int HP; // nombre de fois où un bot peut subir des collisions jusqu'à sa mort (à titre
 						// simplement informatif pour la vue, n'influe pas sur le comportement des bots)
 	protected boolean collision; // booleen qui indique s'il y a eu une collision avec le bot
@@ -197,19 +198,17 @@ public abstract class Bot implements IBot {
 		}
 	}
 
-	protected void shoot(Direction d) {
-		if (e.stunt instanceof StuntShooter) {
-			Direction cardinal = cardinalOfOrient(e.orientation(), d);
+	protected void shoot(Direction d, ShootingPNJ e) {
+		Direction cardinal = cardinalOfOrient(e.orientation(), d);
 
-			StuntShooter stuntShooter = (StuntShooter) e.stunt;
+		StuntShootingPNJ stuntShootingPNJ = (StuntShootingPNJ) e.stunt;
 
-			if (cardinal.equals(Direction.E))
-				stuntShooter.shoot();
-			else if (cardinal.equals(Direction.W))
-				stuntShooter.shoot();
-			else
-				throw new IllegalArgumentException("Invalid direction: " + d);
-		}
+		if (cardinal.equals(Direction.E))
+			stuntShootingPNJ.shoot(e);
+		else if (cardinal.equals(Direction.W))
+			stuntShootingPNJ.shoot(e);
+		else
+			throw new IllegalArgumentException("Invalid direction: " + d);
 	}
 
 	protected void playerCollision(Player p, Entity e) {
@@ -219,7 +218,7 @@ public abstract class Bot implements IBot {
 
 	protected Entity closest(Category c) {
 		// TODO: Implement a method to find the closest entity of the specified category
-		return b.model.player();
+		return b.getModel().player();
 	}
 
 	protected Direction dirOf(Entity e) {
@@ -229,6 +228,22 @@ public abstract class Bot implements IBot {
 		int angle = Utils.theta(dCol, dRow);
 
 		return Direction.newAbsolute(angle);
+	}
+
+	protected boolean isFree(Direction d) {
+		Entity entity = cell(d);
+		return entity == null;
+	}
+
+	protected void tryAlternativeDirections() {
+		if (cell(Direction.N) == null)
+			moveWithRotation(Direction.N);
+		else if (cell(Direction.S) == null)
+			moveWithRotation(Direction.S);
+		else if (cell(Direction.W) == null)
+			moveWithRotation(Direction.W);
+		else if (cell(Direction.E) == null)
+			moveWithRotation(Direction.E);
 	}
 
 	// ---------------------- Private methods ----------------------
@@ -246,13 +261,13 @@ public abstract class Bot implements IBot {
 		Direction cardinal = cardinalOfOrient(e.orientation(), d);
 
 		if (cardinal.equals(Direction.N))
-			return b.model.entity(e.row() - distance, e.col());
+			return b.getModel().entity(e.row() - distance, e.col());
 		else if (cardinal.equals(Direction.E))
-			return b.model.entity(e.row(), e.col() + distance);
+			return b.getModel().entity(e.row(), e.col() + distance);
 		else if (cardinal.equals(Direction.S))
-			return b.model.entity(e.row() + distance, e.col());
+			return b.getModel().entity(e.row() + distance, e.col());
 		else if (cardinal.equals(Direction.W))
-			return b.model.entity(e.row(), e.col() - distance);
+			return b.getModel().entity(e.row(), e.col() - distance);
 		else
 			throw new IllegalArgumentException("Invalid direction: " + d);
 	}
