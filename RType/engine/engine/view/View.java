@@ -240,7 +240,7 @@ public abstract class View implements IView {
 		for (Avatar avatar : m_visibleAvatars) {
 			Entity entity = avatar.e;
 
-			if (entity instanceof Player || entity instanceof Bullet )
+			if (entity instanceof Player || entity instanceof Bullet)
 				// NE PAS AFFICHER LA BARRE DE VIE
 				continue;
 

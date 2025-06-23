@@ -115,6 +115,7 @@ class GameManager {
 
 	public void init() {
 		if (!playerInitialized()) {
+			time2 = 2000;
 			setNomDonnee();
 			m_brain = new Brain(model);
 
