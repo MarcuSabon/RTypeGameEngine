@@ -39,6 +39,7 @@ public abstract class StuntPNJ extends Stunt {
 		}
 
 		public void tick(int elapsed) {
+			System.out.println(progress);
 			this.elapsed += elapsed;
 
 			delay -= elapsed;
@@ -69,6 +70,18 @@ public abstract class StuntPNJ extends Stunt {
 		private void updateProgress() {
 			double percent = (double) this.elapsed / duration;
 			sp.setProgress(percent);
+		}
+
+		public int getR() {
+			return nrows;
+		}
+
+		public int getC() {
+			return ncols;
+		}
+
+		public boolean hasMoved() {
+			return moved;
 		}
 	}
 

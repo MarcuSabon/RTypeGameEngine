@@ -7,6 +7,9 @@ import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
 
+import engine.IModel;
+import engine.model.Model;
+import engine.view.View;
 import entities.Player;
 import oop.graphics.Canvas;
 
@@ -14,9 +17,13 @@ public class ViewBar {
 
 	private Canvas canvas;
 	private Font retroFont;
+	private Model model;
+	private View view;
 
-	public ViewBar(Canvas canvas, String fontPath) {
+	public ViewBar(Canvas canvas, String fontPath, IModel model, View view) {
 		this.canvas = canvas;
+		this.model = (Model) model;
+		this.view = view;
 		try {
 			InputStream is = getClass().getResourceAsStream(fontPath);
 			if (is != null) {
@@ -34,7 +41,7 @@ public class ViewBar {
 		int barHeight = (int) (height * 0.1); // prend 10% de la hauteur
 
 		g.setColor(Color.BLACK);
-		g.fillRect(0, height - barHeight, width, barHeight);
+		g.fillRect(0, model.nrows() * view.pxPerMeter(), width + view.pxPerMeter(), height);
 
 		g.setFont(retroFont);
 		g.setColor(Color.GREEN);

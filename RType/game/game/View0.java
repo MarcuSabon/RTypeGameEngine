@@ -55,7 +55,7 @@ public class View0 extends View {
 	public View0(Canvas canvas, IModel model) {
 		super(canvas, model);
 		background = new ScrollingBackground(canvas, "/space.png");
-		viewBar = new ViewBar(canvas, "/retroGaming.ttf");
+		viewBar = new ViewBar(canvas, "/retroGaming.ttf", model, this);
 		animExplo = new Animator("/Explosion", 47, 1);
 		anim = new Animator("/Flame", 3, 10);
 		animLaser = new Animator("/LaserShot", 16, 1);
@@ -243,8 +243,8 @@ public class View0 extends View {
 		// Taille du bloc à dessiner
 		int boxWidth = 600;
 		int boxHeight = 200;
-		int boxX = (width - boxWidth) / 2;
-		int boxY = (height - boxHeight) / 2;
+		int boxX = (width - boxWidth) / 2 - (int) oX;
+		int boxY = (height - boxHeight) / 2 - (int) oY;
 
 		// Fond semi-transparent avec coins arrondis
 		g.setColor(new Color(0, 0, 0, 180)); // noir transparent
@@ -277,10 +277,11 @@ public class View0 extends View {
 			e.printStackTrace();
 		}
 		if (backgroundImage != null) {
-			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth() + cellSize, m_canvas.getHeight() + cellSize, null);
+			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth() + cellSize - (int) oX,
+					m_canvas.getHeight() + cellSize - (int) oY, null);
 		} else {
 			g.setColor(java.awt.Color.LIGHT_GRAY);
-			g.fillRect(0, 0, m_canvas.getWidth() + cellSize, m_canvas.getHeight() + cellSize);
+			g.fillRect(0, 0, m_canvas.getWidth() + cellSize - (int) oX, m_canvas.getHeight() + cellSize - (int) oY);
 		}
 	}
 
@@ -300,8 +301,8 @@ public class View0 extends View {
 		// Taille du bloc à dessiner
 		int boxWidth = 600;
 		int boxHeight = 200;
-		int boxX = (width - boxWidth) / 2;
-		int boxY = (height - boxHeight) / 2;
+		int boxX = (width - boxWidth) / 2 - (int) oX;
+		int boxY = (height - boxHeight) / 2 - (int) oY;
 
 		// Fond semi-transparent avec coins arrondis
 		g.setColor(new Color(0, 0, 0, 180)); // noir transparent
