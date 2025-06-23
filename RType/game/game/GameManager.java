@@ -1,15 +1,19 @@
 package game;
 
+import java.util.List;
+
 import boss.Master;
 import engine.brain.Brain;
 import engine.controller.Controller;
 import engine.model.Model;
 import engine.view.View;
+import entities.BasicPNJ;
 import entities.Player;
 import entities.Shooter;
 import entities.Tower;
 import entities.Tracker;
 import map.MapLoader;
+import map.SpawnData;
 
 //public enum GameState {
 //	INTRO, PSEUDO, PLAYING, END
@@ -31,7 +35,7 @@ class GameManager {
 
 	public boolean initialized;
 
-	public GameManager(Controller controller, View view, Model model) {
+	public GameManager(Game game, Controller controller, View view, Model model) {
 		this.controller = (Controller0) controller;
 		this.view = (View0) view;
 		this.model = model;
@@ -59,6 +63,8 @@ class GameManager {
 
 		if (gameState == GameState.Playing) {
 			init();
+
+			SpawnEntities(elapsed);
 
 			if (player.getHP() <= 0) {
 				gameState = switchState(gameState, false);
@@ -139,6 +145,8 @@ class GameManager {
 			m_loader = new MapLoader(path, model);
 
 			m_brain = new Brain(model);
+
+			initialized = true;
 		}
 	}
 
@@ -178,6 +186,20 @@ class GameManager {
 			return gameState;
 		}
 		return gameState;
+	}
+
+	private void SpawnEntities(int elapsed) {
+		if (m_loader != null) {
+			m_loader.tick(elapsed, model);
+			List<SpawnData> spawns = m_loader.RemoveNewEntities();
+			for (SpawnData s : spawns) {
+				switch (s.type) {
+				case '2':
+					new BasicPNJ(model, s.row, s.col, 0);
+					break;
+				}
+			}
+		}
 	}
 
 }

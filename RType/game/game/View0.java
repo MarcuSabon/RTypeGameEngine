@@ -277,10 +277,10 @@ public class View0 extends View {
 			e.printStackTrace();
 		}
 		if (backgroundImage != null) {
-			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth(), m_canvas.getHeight(), null);
+			g.drawImage(backgroundImage, 0, 0, m_canvas.getWidth() + cellSize, m_canvas.getHeight() + cellSize, null);
 		} else {
 			g.setColor(java.awt.Color.LIGHT_GRAY);
-			g.fillRect(0, 0, m_canvas.getWidth(), m_canvas.getHeight());
+			g.fillRect(0, 0, m_canvas.getWidth() + cellSize, m_canvas.getHeight() + cellSize);
 		}
 	}
 
