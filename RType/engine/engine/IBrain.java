@@ -25,6 +25,5 @@ public interface IBrain {
 		void setCollisionWithEntity(Entity entity);
 
 		Entity getCollisionWithEntity();
-
 	}
 }

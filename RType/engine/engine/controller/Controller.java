@@ -127,6 +127,7 @@ public abstract class Controller implements IController {
 		public void released(Canvas canvas, int bno, int x, int y) {
 			Controller.this.released(canvas, bno, x, y);
 		}
+
 	}
 
 	protected abstract void pressed(Canvas canvas, int keyCode, char keyChar);

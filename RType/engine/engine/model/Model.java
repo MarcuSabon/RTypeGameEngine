@@ -9,6 +9,7 @@ import engine.IModel;
 import engine.IView;
 import engine.brain.Brain;
 import entities.Player;
+import entities.Tracker;
 
 public class Model implements IModel {
 	private int m_ncols, m_nrows;

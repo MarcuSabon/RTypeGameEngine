@@ -12,7 +12,7 @@ public class StuntBullet extends Stunt {
 
 	public StuntBullet(Model m, Entity e) {
 		super(m, e);
-		SPEEDNERF = 50;
+		SPEEDNERF = 45;
 		double rad = Math.toRadians(e.orientation());
 
 		e.speedX = Math.cos(rad);
@@ -23,7 +23,7 @@ public class StuntBullet extends Stunt {
 	public void tick(int elapsed) {
 
 		if (action == null) {
-			move(e.speedX * elapsed / SPEEDNERF, e.speedY * elapsed / SPEEDNERF);
+			move(realSpeedX() * elapsed, realSpeedY() * elapsed);
 			IBot bot = e.bot;
 			if (bot != null) {
 				bot.think(elapsed);

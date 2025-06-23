@@ -8,9 +8,9 @@ public abstract class Entity {
 	protected int m_orientation;
 
 	protected double x, y;
-	protected double accX = 0;
-	protected double accY = 0;
-	public double speedX = 0, speedY = 0;
+	protected double accX;
+	protected double accY;
+	public double speedX, speedY;
 	protected String sprite;
 
 	public IBot bot;

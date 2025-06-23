@@ -1,5 +1,6 @@
 package game;
 
+import bot.PlayerBot;
 import engine.IModel;
 import engine.IView;
 import engine.controller.Controller;
@@ -17,8 +18,9 @@ public class Controller0 extends Controller {
 	private boolean rightButtonPressed;
 	private boolean inMotion;
 	private boolean focus;
+	private boolean shooting;
 	private int currentDirection; // 1 for clockwise, -1 for counter-clockwise
-	private Object rotationToken;
+	private Object rotationToken = null;
 
 	public boolean nameGiven;
 	public boolean playerInit;
@@ -35,6 +37,7 @@ public class Controller0 extends Controller {
 	protected void pressed(Canvas canvas, int keyCode, char keyChar) {
 		if (playerInit) {
 			Player p = m_model.player();
+			PlayerBot bot = (PlayerBot) p.bot;
 			StuntPlayer sp = ((StuntPlayer) p.stunt);
 
 			switch (keyCode) {
@@ -48,7 +51,6 @@ public class Controller0 extends Controller {
 
 			case VirtualKeyCodes.VK_UP:
 				sp.U(-1);
-
 				break;
 
 			case VirtualKeyCodes.VK_DOWN:
@@ -56,12 +58,13 @@ public class Controller0 extends Controller {
 				break;
 
 			case VirtualKeyCodes.VK_SPACE:
-				sp.shoot();
+				bot.shooting = true;
 				SoundPlayer.play("/Sounds/Projectile.wav");
 				break;
 			}
 		} else if (VirtualKeyCodes.VK_ENTER == keyCode) {
 			nameGiven = true;
+
 		}
 	}
 
@@ -69,6 +72,7 @@ public class Controller0 extends Controller {
 	protected void released(Canvas canvas, int keyCode, char keyChar) {
 		if (playerInit) {
 			Player p = m_model.player();
+			PlayerBot bot = (PlayerBot) p.bot;
 			StuntPlayer sp = ((StuntPlayer) p.stunt);
 
 			switch (keyCode) {
@@ -86,7 +90,11 @@ public class Controller0 extends Controller {
 			case VirtualKeyCodes.VK_RIGHT:
 				sp.R(0);
 				break;
+			case VirtualKeyCodes.VK_SPACE:
+				bot.shooting = false;
+				break;
 			}
+
 		}
 
 		else if (VirtualKeyCodes.VK_ENTER == keyCode)
@@ -108,25 +116,7 @@ public class Controller0 extends Controller {
 
 		else if (VirtualKeyCodes.VK_DOWN == keyCode) {
 			GameManager.surligne -= 1;
-
 		}
-
-		else if (VirtualKeyCodes.VK_ENTER == keyCode)
-			nameGiven = true;
-
-		else if (Character.isLetterOrDigit(keyChar) || Character.isWhitespace(keyChar))
-			if (GameManager.pseudoBuilder.length() < 3)
-				GameManager.pseudoBuilder.append(keyChar);
-
-			else if (keyCode == VirtualKeyCodes.VK_BACK_SPACE)
-				if (GameManager.pseudoBuilder.length() > 0)
-					GameManager.pseudoBuilder.deleteCharAt(GameManager.pseudoBuilder.length() - 1);
-
-				else if (VirtualKeyCodes.VK_UP == keyCode)
-					GameManager.surligne += 1;
-
-				else if (VirtualKeyCodes.VK_DOWN == keyCode)
-					GameManager.surligne -= 1;
 
 	}
 
@@ -137,16 +127,16 @@ public class Controller0 extends Controller {
 	@Override
 	protected void pressed(Canvas canvas, int bno, int x, int y) {
 		switch (bno) {
-//		case 1: // Left mouse button
-//			leftButtonPressed = true;
-//			currentDirection = -1;
-//			startRotation();
-//			break;
-//		case 3: // Right mouse button
-//			rightButtonPressed = true;
-//			currentDirection = 1;
-//			startRotation();
-//			break;
+		// case 1: // Left mouse button
+		// leftButtonPressed = true;
+		// currentDirection = -1;
+		// startRotation();
+		// break;
+		// case 3: // Right mouse button
+		// rightButtonPressed = true;
+		// currentDirection = 1;
+		// startRotation();
+		// break;
 		}
 
 	}
@@ -154,16 +144,16 @@ public class Controller0 extends Controller {
 	@Override
 	protected void released(Canvas canvas, int bno, int x, int y) {
 		switch (bno) {
-//		case 1: // Left mouse button
-//			leftButtonPressed = false;
-//			if (rightButtonPressed)
-//				currentDirection = 1;
-//			break;
-//		case 3: // Right mouse button
-//			rightButtonPressed = false;
-//			if (leftButtonPressed)
-//				currentDirection = -1;
-//			break;
+		// case 1: // Left mouse button
+		// leftButtonPressed = false;
+		// if (rightButtonPressed)
+		// currentDirection = 1;
+		// break;
+		// case 3: // Right mouse button
+		// rightButtonPressed = false;
+		// if (leftButtonPressed)
+		// currentDirection = -1;
+		// break;
 		}
 	}
 
@@ -176,6 +166,7 @@ public class Controller0 extends Controller {
 	}
 
 	// ---------- Private methods ----------
+
 	private void startRotation() {
 		final Object token = new Object();
 		rotationToken = token;

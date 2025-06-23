@@ -1,6 +1,7 @@
 package stunts;
 
 import engine.IModel;
+import engine.brain.Category;
 import engine.model.Entity;
 import engine.model.Model;
 import engine.model.Stunt;
@@ -14,6 +15,7 @@ public class StuntPlayer extends Stunt {
 	private static final int ROTATION_DURATION = 100;
 	private static final int MOVEMENT_DURATION = 250;
 	private static final int COLLISION_DURATION = 250;
+	private static final int SHOOTING_DURATION = 150;
 	protected int U, D, L, R = 0;
 
 	// CONSTRUCTOR
@@ -228,7 +230,12 @@ public class StuntPlayer extends Stunt {
 			switch (step) {
 			case 0:
 				step++;
-				if (collisionEntity != null) {
+				if (collisionEntity != null && collisionEntity.bot.category() != Category.Team) { // si c'est une
+																									// collision
+																									// avec sa propre
+																									// Bullet
+																									// -> Pas de dégat
+																									// subit
 					int damage = collisionEntity.bot.getPointsValue();
 					p.setHP(damage);
 				}
@@ -246,6 +253,60 @@ public class StuntPlayer extends Stunt {
 		@Override
 		public int kind() {
 			return 3;
+		}
+
+		private void updateProgress() {
+			double percent = (double) this.elapsed / duration; // Je prends de l'avance sur le fait qu'on a corrigé le
+																// pourcentage en double
+			sp.setProgress(percent);
+		}
+	}
+
+	class PlayerShoot implements Action {
+
+		private StuntPlayer sp;
+
+		private int delay, step, elapsed, duration;
+
+		PlayerShoot(StuntPlayer sp, int duration) {
+			this.sp = sp;
+			this.duration = duration;
+
+			p = sp.entity();
+			delay = duration;
+		}
+
+		public void tick(int elapsed) {
+			this.elapsed += elapsed;
+
+			switch (step) {
+			// Étape 0: Tir
+			case 0:
+				step++;
+				sp.shoot();
+				break;
+			// Étape 1: Attendre un délais avant de finir l'action
+			case 1:
+				delay -= elapsed;
+				if (delay > 0) {
+					updateProgress();
+					return;
+				}
+				step++;
+				break;
+			// Étape 2: Fin de l'action
+			case 2:
+				// Fin du mouvement
+				step++;
+				action = null;
+				break;
+			}
+			updateProgress();
+		}
+
+		@Override
+		public int kind() {
+			return 4;
 		}
 
 		private void updateProgress() {
@@ -276,6 +337,16 @@ public class StuntPlayer extends Stunt {
 		moveWithRotation(90, 1, 0); // Sud
 	}
 
+	public void rotateRight() {
+		int angle = cardinalOfRight(e.orientation());
+		rotate(angle);
+	}
+
+	public void rotateLeft() {
+		int angle = cardinalOfLeft(e.orientation());
+		rotate(angle);
+	}
+
 	public void U(int u) {
 		U = u;
 	}
@@ -298,6 +369,7 @@ public class StuntPlayer extends Stunt {
 		updateMove(elapsed);
 	}
 
+//  --------------- ACTIONS ----------------
 	/*
 	 * Move this entity in the model by the given count of rows and columns.
 	 */
@@ -333,14 +405,10 @@ public class StuntPlayer extends Stunt {
 		}
 	}
 
-	public void rotateRight() {
-		int angle = cardinalOfRight(e.orientation());
-		rotate(angle);
-	}
-
-	public void rotateLeft() {
-		int angle = cardinalOfLeft(e.orientation());
-		rotate(angle);
+	public void playerShoot(Entity entity) {
+		if (action == null) {
+			this.action = new PlayerShoot(this, SHOOTING_DURATION);
+		}
 	}
 
 	public Player entity() {
@@ -349,15 +417,19 @@ public class StuntPlayer extends Stunt {
 
 	public void shoot() {
 		double rad = Math.toRadians(e.orientation());
-		double col = p.col() + Math.cos(rad);
-		double row = p.row() + Math.sin(rad);
-		if (m.entity((int) row, (int) col) == null) {
-			if (m.entity((int) (e.y() + Math.sin(rad)), (int) (e.x() + Math.cos(rad))) == null) {
-				Bullet b = new Bullet((Model) m, (int) row, (int) col, p.orientation());
-				b.at(e.x() + Math.cos(rad), e.y() + Math.sin(rad));
-			}
-		}
+		int col = (int) (e.col() + Math.cos(rad) + 1);
+		int row = (int) (e.row() + Math.sin(rad));
 
+		// On vérifie la case discrète
+		if (m.entity(row, col) != null)
+			return;
+
+		// On vérifie la case continue
+		if (m.entity((int) (e.y() + Math.sin(rad)), (int) (e.x() + Math.cos(rad))) != null)
+			return;
+
+		Bullet b = new Bullet(m, row, col, e.orientation(), Category.Team);
+		b.at(col + Math.cos(rad), row + Math.sin(rad) + 0.5);
 	}
 
 	// --------------- Private methods ----------------
@@ -418,6 +490,6 @@ public class StuntPlayer extends Stunt {
 			e.speedX = 0;
 		}
 
-		move(e.speedX * elapsed / SPEEDNERF, e.speedY * elapsed / SPEEDNERF);
+		move(realSpeedX() * elapsed, realSpeedY() * elapsed);
 	}
 }
