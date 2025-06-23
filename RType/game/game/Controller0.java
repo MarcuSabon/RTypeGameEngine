@@ -90,6 +90,28 @@ public class Controller0 extends Controller {
 		else if (VirtualKeyCodes.VK_ENTER == keyCode)
 			nameGiven = true;
 
+		else if (Character.isLetterOrDigit(keyChar) || Character.isWhitespace(keyChar)) {
+			if (GameManager.pseudoBuilder.length() < 3)
+				GameManager.pseudoBuilder.append(keyChar);
+		}
+
+		else if (keyCode == VirtualKeyCodes.VK_BACK_SPACE) {
+			if (GameManager.pseudoBuilder.length() > 0)
+				GameManager.pseudoBuilder.deleteCharAt(GameManager.pseudoBuilder.length() - 1);
+		}
+
+		else if (VirtualKeyCodes.VK_UP == keyCode) {
+			GameManager.surligne += 1;
+		}
+
+		else if (VirtualKeyCodes.VK_DOWN == keyCode) {
+			GameManager.surligne -= 1;
+
+		}
+
+		else if (VirtualKeyCodes.VK_ENTER == keyCode)
+			nameGiven = true;
+
 		else if (Character.isLetterOrDigit(keyChar) || Character.isWhitespace(keyChar))
 			if (GameManager.pseudoBuilder.length() < 3)
 				GameManager.pseudoBuilder.append(keyChar);
