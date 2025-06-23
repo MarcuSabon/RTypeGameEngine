@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -45,7 +46,7 @@ public class View0 extends View {
 			background(g, canvas, "/landscape_comp.jpeg");
 			break;
 		case Pseudo:
-			background(g, canvas, "/main_fond.png");
+			background(g, canvas, "/main_fond3.jpg");
 			choisirPseudo(canvas, g);
 			break;
 		case Playing:
@@ -59,9 +60,10 @@ public class View0 extends View {
 			break;
 		case End:
 			background(g, canvas, "/gameOver.jpg");
+			clear_avatars();
 			break;
 		case Restart:
-			background(g, canvas, "/main_fond.png");
+			background(g, canvas, "/main_fond3.jpg");
 			choisir_restart_leave(canvas, g);
 			break;
 		default:
@@ -69,6 +71,15 @@ public class View0 extends View {
 			break;
 		}
 
+	}
+
+	private void clear_avatars() {
+		Iterator<Avatar> it = m_visibleAvatars.iterator();
+		while (it.hasNext()) {
+			Avatar a = it.next();
+			it.remove();
+
+		}
 	}
 
 	@Override
