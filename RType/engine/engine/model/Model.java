@@ -40,7 +40,6 @@ public class Model implements IModel {
 	 */
 	public void add(Entity e) {
 		assert (m_grid[e.m_row][e.m_col] != null) : "There is already an entity at (" + e.m_row + "," + e.m_col + ")";
-
 		m_grid[e.m_row][e.m_col] = e;
 		m_entities.add(e);
 		m_view.birth(e);

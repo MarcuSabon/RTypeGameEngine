@@ -166,12 +166,12 @@ public abstract class View implements IView {
 		// Pour laisser de la place pour l'HUD
 		int height = (int) (m_canvas.getHeight() * 0.9);
 
-		if (height / m_model.nrows() < m_canvas.getWidth() / m_model.ncols()) {
+		if (height / m_model.nrows() < m_canvas.getWidth() / m_model.ncols() + 6) {
 			min = height;
 			cellSize = min * zoom / m_model.nrows();
 		} else {
 			min = m_canvas.getWidth();
-			cellSize = min * zoom / m_model.ncols();
+			cellSize = min * zoom / m_model.ncols() + 6;
 		}
 	}
 
@@ -184,7 +184,7 @@ public abstract class View implements IView {
 
 	@Override
 	public void paint(Canvas canvas, Graphics2D g) {
-		oX = -cellSize;
+		oX = -2 * cellSize;
 		cellSize();
 		g.translate(oX, oY);
 		subPaint(canvas, g);
@@ -211,6 +211,7 @@ public abstract class View implements IView {
 
 	// ------------- PRIVATE METHODS ------------- //
 	private void debugMode(Graphics2D g) {
+		drawEntitie(g);
 		drawGrid(g);
 		drawScoreBots(g);
 		drawFPS(g);
@@ -219,7 +220,7 @@ public abstract class View implements IView {
 	private void drawFPS(Graphics2D g) {
 		int fps = fpsCounter.getFPS();
 		g.setColor(java.awt.Color.RED);
-		g.drawString("FPS : " + String.valueOf(fps), 10 + cellSize, 35 + cellSize);
+		g.drawString("FPS : " + String.valueOf(fps), 10 + cellSize - (int) oX, 35 + cellSize - (int) oY);
 	}
 
 	private void drawGrid(Graphics2D g) {
@@ -265,6 +266,27 @@ public abstract class View implements IView {
 			g.setColor(java.awt.Color.YELLOW);
 			g.drawString(String.valueOf(currentScore), barX, barY - 2);
 
+		}
+	}
+	
+	private void drawEntitie(Graphics2D g) {
+		int w = m_canvas.getWidth();
+		int h = m_canvas.getHeight();
+		int nrows = m_model.nrows();
+		int ncols = m_model.ncols();
+		int cell = Math.min(w / ncols, h / nrows);
+
+		g.setColor(java.awt.Color.CYAN);
+		int pointSize = 10;
+
+		for (int row = 0; row < nrows; row++) {
+			for (int col = 0; col < ncols; col++) {
+				if (m_model.entity(row, col) != null) {
+					int x = col * cell + cell / 2 - pointSize / 2;
+					int y = row * cell + cell / 2 - pointSize / 2;
+					g.fillOval(x, y, pointSize, pointSize);
+				}
+			}
 		}
 	}
 

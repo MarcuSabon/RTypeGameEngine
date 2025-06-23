@@ -24,7 +24,7 @@ public class Game {
 
 		Config conf = new Config();
 		conf.tore = false;
-		conf.gameState = GameState.Playing;
+		conf.gameState = GameState.Intro;
 //		conf.continuous = true; // continuous model
 
 		m_model = new Model(nrows, ncols);
@@ -48,8 +48,5 @@ public class Game {
 		m_model.tick(elapsed);
 		gameManager.start(elapsed);
 	}
-
-//  ----- PRIVATE METHODS -----
-	// spawn les entités de la grille Map.txt
 
 }

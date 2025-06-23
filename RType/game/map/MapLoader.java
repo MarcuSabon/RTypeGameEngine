@@ -10,7 +10,7 @@ import java.util.List;
 import engine.model.Model;
 
 public class MapLoader {
-	private static final int CHUNK_WIDTH = 30;
+	private static final int CHUNK_WIDTH = 42;
 	private static final int CHUNK_HEIGHT = 20;
 
 	private final static List<char[][]> chunks = new ArrayList<>();
@@ -19,7 +19,8 @@ public class MapLoader {
 	private static int currentChunk = 0;
 	private static char[][] actChunk;
 	private static char[][] nextChunk;
-	private boolean endLvl = false;
+	private static boolean endLvl = false;
+	private boolean BossSpawned = false;
 
 	private double scrollTimer = 0;
 	private final double SCROLL_INTERVAL = 1000;
@@ -40,6 +41,9 @@ public class MapLoader {
 				loadActChunk(model);
 				scrollTimer = 0; // Reset du timer
 			}
+		} else if (!BossSpawned) {
+			newEntities.add(new SpawnData('9', 10, 35));
+			BossSpawned = true;
 		}
 	}
 
@@ -66,8 +70,11 @@ public class MapLoader {
 
 	// true if map finished
 	public static boolean updateMap(Model m) {
-		decalageActChunk(m);
-		ajoutColActChunk(m);
+		if (!endLvl) {
+			decalageActChunk(m);
+			ajoutColActChunk(m);
+		}
+
 		offset++;
 		if (offset == CHUNK_WIDTH) {
 			offset = 0;
@@ -122,6 +129,9 @@ public class MapLoader {
 
 	// charge la liste de chunk à partir du fichier
 	private void loadChunks(String filename) {
+		if (!chunks.isEmpty()) {
+			chunks.clear();
+		}
 		List<String> lines = null;
 		try {
 			lines = Files.readAllLines(Paths.get(filename));
@@ -155,6 +165,7 @@ public class MapLoader {
 	public void reset() {
 		currentChunk = 0;
 		offset = 0;
+		BossSpawned = false;
 		actChunk = chunks.get(0);
 	}
 

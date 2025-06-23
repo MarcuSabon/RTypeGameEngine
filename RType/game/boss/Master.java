@@ -15,7 +15,7 @@ public class Master extends PNJ {
 	// Le master a besoin du brain pour créer son corps
 
 	public Master(Model m, int r, int c, int o, String filepath, Brain brain) {
-		super(m, c, r, o, filepath + "/Master.png");
+		super(m, r, c, o, filepath + "/Master.png");
 		new StuntMaster(m, this);
 		new BossBot(m.getBrain(), this);
 		String[][] StringBody = null;
@@ -31,6 +31,7 @@ public class Master extends PNJ {
 				if (StringBody[i][j].equals("9")) {
 					iMaster = i;
 					jMaster = j;
+					break;
 				}
 			}
 		}
@@ -45,7 +46,7 @@ public class Master extends PNJ {
 				case "0":
 					break;
 				default:
-					Entity b = new BossPart(m_model, i + c - iMaster, j + r - jMaster, 180,
+					Entity b = new BossPart(m_model, i + r - iMaster, j + c - jMaster, 180,
 							filepath + "/" + StringBody[i][j], this);
 					b.bot = new BossPartBot(brain, b);
 					body[i][j] = b;

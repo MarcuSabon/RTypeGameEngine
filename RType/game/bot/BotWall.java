@@ -16,12 +16,17 @@ public class BotWall extends Bot {
 	}
 
 	@Override
-	public void think() {
-		Action();
+	public void think(int elapsed) {
+		Action(elapsed);
 	}
 
-	private void Action() {
-		delay = duration;
+	private void Action(int elapsed) {
+//
+	}
+
+	@Override
+	public void think() {
+//
 	}
 
 }

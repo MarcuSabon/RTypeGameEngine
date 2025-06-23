@@ -1,17 +1,27 @@
 package avatars;
 
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import engine.model.Entity;
+import engine.model.Stunt.Action;
 import engine.view.Avatar;
 import engine.view.View;
+import stunts.StuntPNJ;
 
 public class AvatarPNJ extends Avatar {
 
+	String filepath;
+	private BufferedImage image;
+
 	public AvatarPNJ(View v, Entity e) {
 		super(v, e);
+		loadImage();
+
 	}
 
 	@Override
@@ -23,33 +33,41 @@ public class AvatarPNJ extends Avatar {
 	}
 
 	// ------------- Private methods -------------//
-	private void paintPlayer(Graphics2D g, Entity e, int x, int y, Polygon pg) {
-		int d = e.orientation();
-		double rot = Math.toRadians(d);
-		AffineTransform saved = g.getTransform();
-		g.translate(x, y);
-		g.rotate(rot);
-		g.fillPolygon(pg);
-		g.setTransform(saved);
+	private void loadImage() {
+		try {
+			image = ImageIO.read(getClass().getResource("/lirililalila.png"));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
 	}
 
 	private void drawPNJCell(Graphics2D g) {
-		int CellWidth = v.pxPerMeter();
+		double posX = e.col() + 0.5;
+		double posY = e.row() + 0.5;
 
-		int x = e.col() * CellWidth + CellWidth / 2;
-		int y = e.row() * CellWidth + CellWidth / 2;
+		Action action = e.stunt.action();
 
-		// create a polygon for the PNJ, a triangle pointing upwards
-		Polygon pg = new Polygon();
-		int polySize = (int) (CellWidth / 3);
+		if (action != null && action.kind() == 0) {
+			StuntPNJ.PNJMotion motion = (StuntPNJ.PNJMotion) action;
+			double progress = e.stunt.progress();
+			double nr = motion.getR();
+			double nc = motion.getC();
 
-		pg.addPoint(polySize, 0); // front point (right)
-		pg.addPoint(-polySize, -polySize); // rear left
-		pg.addPoint(-polySize, polySize); // rear right
+			if (progress <= 0.5) {
+				posX += nc * progress * 2;
+				posY += nr * progress * 2;
+			}
+		}
 
-		// paint the PNJ
-		g.setColor(java.awt.Color.BLUE);
-		paintPlayer(g, e, x, y, pg);
+		AffineTransform savedTransform = g.getTransform();
 
+		g.translate(posX * v.pxPerMeter(), posY * v.pxPerMeter());
+
+		int size = v.pxPerMeter();
+		g.drawImage(image, -size / 2, -size / 2, size, size, null);
+
+		g.setTransform(savedTransform);
 	}
+
 }

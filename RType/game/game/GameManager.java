@@ -7,7 +7,6 @@ import engine.brain.Brain;
 import engine.controller.Controller;
 import engine.model.Model;
 import engine.view.View;
-import entities.BasicPNJ;
 import entities.Player;
 import entities.Shooter;
 import entities.Tower;
@@ -129,19 +128,20 @@ public class GameManager {
 			Player.name = GameManager.pseudoBuilder.toString();
 			initializePlayer();
 
-			new Master(model, 35, 10, 180, "/Boss/Level1", m_brain);
+//			new Master(model, 35, 10, 180, "/Boss/Level1", m_brain);
 
 //			Master M2 = new Master(model, 20, 10, 180, "/Boss/Level1", m_brain);
 //			Master M3 = new Master(model, 15, 10, 180, "/Boss/Level1", m_brain);
 //			Master M4 = new Master(model, 10, 10, 180, "/Boss/Level1", m_brain);
 
-			new Shooter(model, 16, 16, 0);
-			new Tracker(model, 17, 17, 0);
-			new Tower(model, 18, 41, 0);
-			new Tower(model, 1, 41, 0);
+//			new Shooter(model, 16, 16, 0);
+//			new Tracker(model, 17, 17, 0);
+//			new Tower(model, 18, 41, 0);
+//			new Tower(model, 1, 41, 0);
 
-			String path = "game/Ressources/Maps/Map1.txt";
+			String path = "game/Ressources/Map1/Map1.txt";
 			m_loader = new MapLoader(path, model);
+			m_loader.reset();
 
 			m_brain = new Brain(model);
 
@@ -194,7 +194,16 @@ public class GameManager {
 			for (SpawnData s : spawns) {
 				switch (s.type) {
 				case '2':
-					new BasicPNJ(model, s.row, s.col, 0);
+					new Shooter(model, s.row, s.col - 1, 0);
+					break;
+				case '3':
+					new Tower(model, s.row, s.col - 1, 0);
+					break;
+				case '4':
+					new Tracker(model, s.row, s.col - 1, 0);
+					break;
+				case '9':
+					new Master(model, s.row, s.col - 10, 0, "/Boss/Level1", m_brain);
 					break;
 				}
 			}
