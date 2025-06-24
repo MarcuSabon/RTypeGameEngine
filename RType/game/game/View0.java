@@ -90,6 +90,14 @@ public class View0 extends View {
 			background(g, canvas, "/main_fond3.jpg");
 			choisir_restart_leave(canvas, g);
 			break;
+		case LevelWin:
+			background(g, canvas, "/transition1.jpg");
+			clear_avatars();
+			break;
+		case Win:
+			background(g, canvas, "/win.jpg");
+			clear_avatars();
+			break;
 		default:
 			System.err.println("Unknown game state: " + gameState);
 			break;

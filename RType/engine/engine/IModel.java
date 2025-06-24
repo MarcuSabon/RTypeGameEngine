@@ -27,6 +27,8 @@ public interface IModel {
 		public boolean continuous;
 
 		public GameState gameState;
+
+		public boolean immortal;
 	}
 
 	Config config();
