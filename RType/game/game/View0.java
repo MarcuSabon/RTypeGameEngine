@@ -75,12 +75,13 @@ public class View0 extends View {
 		case Playing:
 			this.g = g;
 			background.draw(g);
-			Player p = m_model.player();
-			viewBar.draw(g, p);
 			g.scale(zoom, zoom);
 
 			for (Avatar a : m_visibleAvatars)
 				a.render(g);
+			Player p = m_model.player();
+			viewBar.draw(g, p);
+
 			break;
 		case End:
 			background(g, canvas, "/gameOver.jpg");
