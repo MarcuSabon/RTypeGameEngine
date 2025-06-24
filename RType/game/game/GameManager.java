@@ -21,12 +21,16 @@ public class GameManager {
 	private Brain m_brain;
 	private Player player;
 	private MapLoader m_loader;
+	private Master boss;
 	public GameState gameState;// Initial state set to PSEUDO
 	protected static StringBuilder pseudoBuilder;
 	public static int surligne;
 	public static boolean restartButton;
-	private int time;
-	private int time2;
+	private int time = 2000;
+	private int time2 = 2000;
+	private int time3 = 2000;
+	private int time4 = 2000;
+	private int i = 0; // Counter for level progression
 
 	public boolean initialized;
 
@@ -37,8 +41,6 @@ public class GameManager {
 		this.gameState = gameState; // Initialize game state
 		this.view.setGameState(gameState);
 		pseudoBuilder = new StringBuilder();
-		this.time = 2000;
-		this.time2 = 2000;
 	}
 
 	public void start(int elapsed) {
@@ -56,22 +58,32 @@ public class GameManager {
 			}
 		}
 		if (gameState == GameState.Playing) {
-			init();
+			switch (i) {
+			case 0:
+				init();
+				break;
+			case 1:
+				init_lvl2();
+				break;
+			default:
+				break;
+			}
 
 			SpawnEntities(elapsed);
-
 			if (player.getHP() <= 0) {
 				gameState = switchState(gameState, false);
 				view.setGameState(gameState);
-			} else if (player.getHP() > 0 && player.getHP() <= 0) { // && boss.getHP() <= 0) {
+			} else if (boss != null && player.getHP() > 0 && boss.isDead()) {
+				i++;
 				gameState = switchState(gameState, true);
 				view.setGameState(gameState);
+
 			}
 		}
-		if (gameState == GameState.End) {
+		if (gameState == GameState.End)
+
+		{
 			model.clear();
-			// clean la view /////////////// IMPORTANT
-			// proposeRestart();
 			time2 -= elapsed;
 			if (time2 < 0) {
 				controller.playerInit = false;
@@ -79,7 +91,6 @@ public class GameManager {
 				gameState = switchState(gameState, false);
 				view.setGameState(gameState);
 			}
-
 		}
 		if (gameState == GameState.Restart) {
 			if (controller.nameGiven) {
@@ -94,6 +105,26 @@ public class GameManager {
 				}
 			}
 
+		}
+		if (gameState == GameState.LevelWin) {
+			time3 -= elapsed;
+			if (time3 < 0) {
+				model.clear();
+				controller.playerInit = false;
+				controller.nameGiven = false;
+				gameState = switchState(gameState, false);
+				view.setGameState(gameState);
+			}
+		}
+		if (gameState == GameState.Win) {
+			time4 -= elapsed;
+			if (time4 < 0) {
+				model.clear();
+				controller.playerInit = false;
+				controller.nameGiven = false;
+				gameState = switchState(gameState, false);
+				view.setGameState(gameState);
+			}
 		}
 	}
 
@@ -139,14 +170,30 @@ public class GameManager {
 			m_loader = new MapLoader(path, model);
 			m_loader.reset();
 
+			initialized = true;
+		}
+	}
+
+	public void init_lvl2() {
+		if (!playerInitialized()) {
+			time2 = 2000;
 			m_brain = new Brain(model);
+
+			player = new Player(model, 5, 5, 0);
+
+			initializePlayer();
+
+			// boss = new Master(model, 35, 10, 180, "/Boss/Level1", m_brain);
+			m_loader.reset();
+//			String path = "game/Ressources/Map1/Map1.txt";
+//			m_loader = new MapLoader(path, model);
 
 			initialized = true;
 		}
 	}
 
 	public enum GameState {
-		Intro, Pseudo, Playing, End, Level1Win, Restart, Level2;
+		Intro, Pseudo, Playing, End, LevelWin, Restart, Win;
 	}
 
 	public GameState getGameState() {
@@ -162,13 +209,17 @@ public class GameManager {
 			gameState = GameState.Playing;
 			break;
 		case Playing:
-			if (b)
-				gameState = GameState.Level1Win;
+			if (b && (i > 1)) {
+				System.out.println(">> Vous avez gagné !");
+				gameState = GameState.Win;
+			} else if (b)
+				gameState = GameState.LevelWin;
+
 			else
 				gameState = GameState.End;
 
 			break;
-		case Level1Win:
+		case LevelWin:
 			gameState = GameState.Playing;
 			break;
 		case End:
@@ -199,7 +250,7 @@ public class GameManager {
 					new Tracker(model, s.row, s.col - 1, 0);
 					break;
 				case '9':
-					new Master(model, s.row, s.col - 10, 0, "/Boss/Level1", m_brain);
+					this.boss = new Master(model, s.row, s.col - 10, 0, "/Boss/Level1", m_brain);
 					break;
 				}
 			}

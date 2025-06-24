@@ -23,7 +23,7 @@ public class PlayerBot extends Bot {
 	}
 
 	private void Playing() {
-		if (collision(e)) {
+		if (collision(e) && !b.getModel().config().immortal) {
 			playerCollision((Player) e, entityCollisionWithPlayer); // action de collision -> décrémentation des HP
 		} else if (shooting) {
 			StuntPlayer sp = (StuntPlayer) e.stunt;
