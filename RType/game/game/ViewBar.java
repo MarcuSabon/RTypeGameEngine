@@ -42,7 +42,8 @@ public class ViewBar {
 
 		g.setColor(Color.BLACK);
 		g.fillRect(0, model.nrows() * view.pxPerMeter(), width + view.pxPerMeter(), height);
-
+		g.fillRect(model.ncols() * view.pxPerMeter() - 2 * view.pxPerMeter(), 0, model.ncols() * view.pxPerMeter(),
+				height);
 		g.setFont(retroFont);
 		g.setColor(Color.GREEN);
 		String name = "BDI"; // Valeur par défaut si Player.name est null
