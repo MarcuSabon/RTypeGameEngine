@@ -100,7 +100,7 @@ public abstract class Entity {
 	public void die() { // chagngement de die(), on ne fait plus mourir l'entité directement pour éviter
 						// une ConcurrentModificationException
 		isDead = true;
-		if (!(this instanceof Wall)) {
+		if (!(m_model.entity(m_row, m_col) instanceof Wall)) {
 			SoundPlayer.play("/Sounds/BotDeath.wav");
 		}
 	}
