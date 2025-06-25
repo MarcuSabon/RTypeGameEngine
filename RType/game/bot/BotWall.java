@@ -17,6 +17,10 @@ public class BotWall extends Bot {
 
 	@Override
 	public void think(int elapsed) {
+		if (b.getModel().entity(e.row(), e.col()) != e) { // marche pas à chaque fois, je comprend pas pourquoi
+			b.getModel().setGrid(e.row(), e.col(), (Entity) e);
+			System.out.println("Replacement Wall");
+		}
 		Action(elapsed);
 	}
 

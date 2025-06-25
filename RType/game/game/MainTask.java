@@ -10,7 +10,7 @@ public class MainTask {
 
 	public static void main(String args[]) {
 		EventPump ep = new EventPump();
-		Dimension d = new Dimension(960, 540);
+		Dimension d = new Dimension(1920, 1080);
 		Runnable r = new Runnable() {
 			public void run() {
 				Task task = Task.task();

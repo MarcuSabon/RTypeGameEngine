@@ -2,6 +2,7 @@ package engine.brain;
 
 import engine.IBrain.IBot;
 import engine.model.Entity;
+import engine.model.PNJ;
 import engine.utils.Utils;
 import entities.Player;
 import entities.ShootingPNJ;
@@ -22,7 +23,8 @@ public abstract class Bot implements IBot {
 	protected int HP; // nombre de fois où un bot peut subir des collisions jusqu'à sa mort (à titre
 						// simplement informatif pour la vue, n'influe pas sur le comportement des bots)
 	protected boolean collision; // booleen qui indique s'il y a eu une collision avec le bot
-	protected Entity entityCollisionWithPlayer;
+	protected Entity entityCollisionWith;
+	protected int nb_collision;
 
 	private boolean wait;
 	protected int delay;
@@ -90,14 +92,23 @@ public abstract class Bot implements IBot {
 	@Override
 	public void setCollisionWithEntity(Entity e) { // Permet au bot du PLayer de savoir avec quelle entité il a eu une
 													// collision
-		entityCollisionWithPlayer = e;
+		entityCollisionWith = e;
 	}
 
 	@Override
 	public Entity getCollisionWithEntity() { // Permet au bot du Player de savoir avec quelle entité il a eu une
 												// collision
-		return entityCollisionWithPlayer;
+		return entityCollisionWith;
 	}
+
+	public void setNbCollision() {
+		nb_collision++;
+	};
+
+	@Override
+	public int getNbCollision() {
+		return nb_collision;
+	};
 
 	// ---------------- Protected ------------------------
 	protected void turn(Direction d) {
@@ -214,6 +225,11 @@ public abstract class Bot implements IBot {
 	protected void playerCollision(Player p, Entity e) {
 		StuntPlayer sp = (StuntPlayer) p.stunt;
 		sp.playerCollision(e);
+	}
+
+	protected void PNJCollision(PNJ pnj, Entity e) {
+		StuntPNJ sp = (StuntPNJ) pnj.stunt;
+		sp.PNJCollision(e);
 	}
 
 	protected Entity closest(Category c) {

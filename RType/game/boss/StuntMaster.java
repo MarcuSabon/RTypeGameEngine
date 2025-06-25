@@ -5,12 +5,26 @@ import engine.model.Entity;
 import engine.model.Model;
 import entities.Bullet;
 import entities.Missile;
+import sound.SoundPlayer;
 import stunts.StuntShootingPNJ;
 
 public class StuntMaster extends StuntShootingPNJ {
 
 	public StuntMaster(Model m, Master e) {
 		super(m, e);
+	}
+
+	public void spawn() {
+		Entity[][] body = ((Master) e).body();
+		for (int j = 0; j < body[0].length; j++) {
+			for (int i = 0; i < body.length; i++) {
+				if (body[i][j] instanceof Master) {
+					action = new Spawn(this, -10, -10);
+				} else if (body[i][j] != null) {
+					((StuntBossPart) body[i][j].stunt).spawn(-10, -10);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -149,6 +163,7 @@ public class StuntMaster extends StuntShootingPNJ {
 			b.at(col + 0.5, row + 0.5);
 			b2.at(col + 0.5, row + 1.5);
 			b3.at(col + 0.5, row - 0.5);
+			SoundPlayer.shootProjectile();
 		}
 	}
 
@@ -164,6 +179,39 @@ public class StuntMaster extends StuntShootingPNJ {
 			Missile mis2 = new Missile(m, (int) row2, (int) col2, 270, m.player());
 			mis2.at(col2 + 0.5, row2 + 0.5);
 		}
+	}
+
+	protected class Spawn implements Action {
+		private StuntMaster s;
+		private int duration = 2000;
+		private int remainingDuration = duration;
+		public final int nrows, ncols;
+
+		protected Spawn(StuntMaster s, int nrows, int ncols) {
+			this.s = s;
+			this.nrows = nrows;
+			this.ncols = ncols;
+		}
+
+		@Override
+		public void tick(int elapsed) {
+			remainingDuration -= elapsed;
+			if (s.progress() < 1) {
+				float percent = 1 - ((float) remainingDuration / (float) duration);
+				s.setProgress(percent);
+			} else {
+				s.progress = 0;
+				action = null;
+				remainingDuration = duration;
+			}
+		}
+
+		@Override
+		public int kind() {
+			// TODO Auto-generated method stub
+			return 1;
+		}
+
 	}
 
 }

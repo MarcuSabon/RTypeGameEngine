@@ -8,6 +8,7 @@ import engine.IModel;
 import engine.IView;
 import engine.model.Entity;
 import engine.utils.FPSCounter;
+import engine.utils.TPSCounter;
 import entities.Bullet;
 import entities.Player;
 import oop.graphics.Canvas;
@@ -28,8 +29,6 @@ public abstract class View implements IView {
 	protected boolean debug;
 	protected List<Avatar> m_visibleAvatars;
 
-	private FPSCounter fpsCounter;
-
 	protected static final int MAX_ZOOM = 15;
 
 	protected View(Canvas canvas, IModel model) {
@@ -38,12 +37,15 @@ public abstract class View implements IView {
 		model.register(this);
 		m_visibleAvatars = new LinkedList<Avatar>();
 		pixelsPerMetricCell = cellSize / m_model.metric();
-		fpsCounter = new FPSCounter();
 	}
 
 	public void focus(int px, int py) {
 		this.px = px;
 		this.py = py;
+	}
+
+	public double getZoom() {
+		return zoom;
 	}
 
 	@Override
@@ -141,6 +143,14 @@ public abstract class View implements IView {
 		return py;
 	}
 
+	public double oX() {
+		return oX;
+	}
+
+	public double oY() {
+		return oY;
+	}
+
 	@Override
 	public double toPixel(double x) {
 		return x * cellSize * zoom;
@@ -189,7 +199,7 @@ public abstract class View implements IView {
 		g.translate(oX, oY);
 		subPaint(canvas, g);
 		if (debug) {
-			fpsCounter.frame();
+			FPSCounter.frame();
 			debugMode(g);
 		}
 
@@ -206,7 +216,6 @@ public abstract class View implements IView {
 	@Override
 	public void death(Entity e) {
 		m_visibleAvatars.remove(e.avatar);
-		m_model.player().setScore(e);
 	}
 
 	// ------------- PRIVATE METHODS ------------- //
@@ -215,12 +224,25 @@ public abstract class View implements IView {
 		drawGrid(g);
 		drawScoreBots(g);
 		drawFPS(g);
+		drawTPS(g);
 	}
 
 	private void drawFPS(Graphics2D g) {
-		int fps = fpsCounter.getFPS();
+		double fps = FPSCounter.getFPS();
+		double fps10sAvg = FPSCounter.getFPS10sAvg();
 		g.setColor(java.awt.Color.RED);
-		g.drawString("FPS : " + String.valueOf(fps), 10 + cellSize - (int) oX, 35 + cellSize - (int) oY);
+		g.drawString(String.format("FPS : %.1f", fps), 10 + cellSize - (int) oX, 35 + cellSize - (int) oY);
+		g.drawString(String.format("FPS 10s average : %.1f", fps10sAvg), 10 + cellSize - (int) oX,
+				35 + 2 * cellSize - (int) oY);
+	}
+
+	private void drawTPS(Graphics2D g) {
+		double tps = TPSCounter.getTPS();
+		double tps10sAvg = TPSCounter.getTPS10sAvg();
+		g.setColor(java.awt.Color.RED);
+		g.drawString(String.format("TPS : %.1f", tps), 10 + cellSize - (int) oX, 35 + 3 * cellSize - (int) oY);
+		g.drawString(String.format("TPS 10s average : %.1f", tps10sAvg), 10 + cellSize - (int) oX,
+				35 + 4 * cellSize - (int) oY);
 	}
 
 	private void drawGrid(Graphics2D g) {
@@ -268,7 +290,7 @@ public abstract class View implements IView {
 
 		}
 	}
-	
+
 	private void drawEntitie(Graphics2D g) {
 		int nrows = m_model.nrows();
 		int ncols = m_model.ncols();
@@ -278,13 +300,12 @@ public abstract class View implements IView {
 		for (int row = 0; row < nrows; row++) {
 			for (int col = 0; col < ncols; col++) {
 				if (m_model.entity(row, col) != null) {
-					int x = col*cellSize;
-					int y = row*cellSize;
+					int x = col * cellSize;
+					int y = row * cellSize;
 					g.fillRect(x, y, cellSize, cellSize);
 				}
 			}
 		}
 	}
-
 
 }

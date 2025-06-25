@@ -4,6 +4,7 @@ import engine.brain.Bot;
 import engine.brain.Brain;
 import engine.brain.Category;
 import engine.model.Entity;
+import engine.model.PNJ;
 
 public class BossPartBot extends Bot {
 	private static final int FULL = 0;
@@ -79,8 +80,9 @@ public class BossPartBot extends Bot {
 		//
 	}
 
-	private void full() {
+	private void full() { // faudra penser à clean les méthodes non utilisées
 		if (collision(e)) {
+			PNJCollision((PNJ) e, entityCollisionWith);
 			HP--;
 			System.out.println("HP Bot : " + getHP());
 			state = MID;
@@ -89,6 +91,7 @@ public class BossPartBot extends Bot {
 
 	private void mid() {
 		if (collision(e)) {
+			PNJCollision((PNJ) e, entityCollisionWith);
 			HP--;
 			System.out.println("HP Bot : " + getHP());
 			state = LOW;
@@ -98,6 +101,7 @@ public class BossPartBot extends Bot {
 
 	private void low() {
 		if (collision(e)) {
+			PNJCollision((PNJ) e, entityCollisionWith);
 			HP--;
 			System.out.println("HP Bot : " + getHP());
 			e.die();

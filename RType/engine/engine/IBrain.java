@@ -25,5 +25,10 @@ public interface IBrain {
 		void setCollisionWithEntity(Entity entity);
 
 		Entity getCollisionWithEntity();
+
+		public int getNbCollision();
+
+		void setNbCollision(); // permet de savoir au moment d'incrémenter le score du joueur si l'entité est
+								// morte d'une collision ou des murs
 	}
 }

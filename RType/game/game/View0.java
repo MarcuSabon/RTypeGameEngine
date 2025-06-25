@@ -9,7 +9,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -54,7 +53,7 @@ public class View0 extends View {
 
 	public View0(Canvas canvas, IModel model) {
 		super(canvas, model);
-		background = new ScrollingBackground(canvas, "/space.png");
+		background = new ScrollingBackground(canvas, "/space.png", this);
 		viewBar = new ViewBar(canvas, "/retroGaming.ttf", model, this);
 		animExplo = new Animator("/Explosion", 47, 1);
 		anim = new Animator("/Flame", 3, 10);
@@ -107,12 +106,7 @@ public class View0 extends View {
 	}
 
 	private void clear_avatars() {
-		Iterator<Avatar> it = m_visibleAvatars.iterator();
-		while (it.hasNext()) {
-			Avatar a = it.next();
-			it.remove();
-
-		}
+		m_visibleAvatars.clear();
 	}
 
 	@Override
@@ -345,4 +339,5 @@ public class View0 extends View {
 	public void setGameState(GameState gameState) {
 		this.gameState = gameState;
 	}
+
 }

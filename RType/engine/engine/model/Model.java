@@ -9,7 +9,7 @@ import engine.IModel;
 import engine.IView;
 import engine.brain.Brain;
 import entities.Player;
-import entities.Tracker;
+import map.WallNull;
 
 public class Model implements IModel {
 	private int m_ncols, m_nrows;
@@ -47,6 +47,9 @@ public class Model implements IModel {
 	}
 
 	public void addAt(Entity e) {
+		if (e instanceof WallNull) {
+			return;
+		}
 		toAdd.add(e);
 	}
 
@@ -77,6 +80,13 @@ public class Model implements IModel {
 	public void decerebrate(Brain b) {
 		assert (b == null) : "Cannot set a null view to the model";
 		m_brain = b;
+	}
+
+	@Override
+	// A n'utiliser que dans les bots des Tower et éventuellement de Wall (entités
+	// statique)
+	public void setGrid(int row, int col, Entity e) { // our régler le bug d'entité fantome
+		m_grid[row][col] = e;
 	}
 
 	/*
@@ -189,8 +199,7 @@ public class Model implements IModel {
 	public Entity entity(int r, int c) {
 		if (!m_conf.tore) {
 			if (r > m_grid.length - 1 || r < 0 || c > m_grid[0].length - 1 || c < 0) {
-				// TODO!m_player a changer par un mur quand mur existe!
-				return null;
+				return new WallNull(this);
 			}
 		}
 		return m_grid[normalize(r, m_nrows)][normalize(c, m_ncols)];
@@ -264,6 +273,7 @@ public class Model implements IModel {
 		m_grid[entity.m_row][entity.m_col] = null;
 		m_entities.remove(entity);
 		m_view.death(entity);
+		m_brain.killed(entity);
 	}
 
 	// ---------- Private methods -------------
@@ -432,5 +442,4 @@ public class Model implements IModel {
 	public void emptyGrid(int row, int col) {
 		m_grid[row][col] = null;
 	}
-
 }

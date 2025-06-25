@@ -486,7 +486,7 @@ public class StuntPlayer extends Stunt {
 		e.speedX = e.speedX * (1 - SPEEDLOSS * elapsed);
 		e.speedY = e.speedY * (1 - SPEEDLOSS * elapsed);
 
-		if (e.col() <= 1 && e.speedX < 0) {
+		if ((e.col() <= 1 && e.speedX < 0) || (e.col() > m.ncols() - 3 && e.speedX > 0)) {
 			e.speedX = 0;
 		}
 

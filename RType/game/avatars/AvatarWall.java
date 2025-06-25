@@ -9,10 +9,9 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import engine.model.Entity;
-import engine.model.Stunt.Action;
 import engine.view.Avatar;
 import engine.view.View;
-import stunts.StuntWall;
+import map.Synchronyser;
 
 public class AvatarWall extends Avatar {
 	private Image image;
@@ -36,20 +35,14 @@ public class AvatarWall extends Avatar {
 		}
 
 		int cellWidth = v.pxPerMeter();
-		Action a = e.stunt.action();
 
 		double x, y;
-		if (a != null && a.kind() == 0) {
-			StuntWall.Motion motion = (StuntWall.Motion) a;
-			double progress = (e.stunt.progress());
-			double actionOffsetX = motion.getC() * cellWidth * progress / 2;
-			double actionOffsetY = motion.getR() * cellWidth * progress / 2;
-			x = (e.col() * cellWidth) + cellWidth / 2.0 + actionOffsetX - cellWidth * motion.getC();
-			y = (e.row() * cellWidth) + cellWidth / 2.0 + actionOffsetY - cellWidth * motion.getR();
-		} else {
-			x = (e.col() * cellWidth) + cellWidth / 2.0;
-			y = (e.row() * cellWidth) + cellWidth / 2.0;
-		}
+
+		x = (e.col() * cellWidth) + cellWidth / 2.0;
+		y = (e.row() * cellWidth) + cellWidth / 2.0;
+
+		int CellWidth = v.pxPerMeter();
+		x = (int) Synchronyser.synchronise(x, CellWidth);
 
 		AffineTransform transform = new AffineTransform();
 		transform.translate(x, y);

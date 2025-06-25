@@ -53,4 +53,6 @@ public interface IModel {
 
 	Brain getBrain();
 
+	void setGrid(int row, int col, Entity e);
+
 }

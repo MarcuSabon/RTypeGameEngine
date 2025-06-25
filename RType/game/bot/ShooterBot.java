@@ -5,7 +5,9 @@ import engine.brain.Brain;
 import engine.brain.Category;
 import engine.brain.Direction;
 import engine.model.Entity;
+import engine.model.PNJ;
 import entities.ShootingPNJ;
+import sound.SoundPlayer;
 
 public class ShooterBot extends Bot {
 
@@ -29,6 +31,7 @@ public class ShooterBot extends Bot {
 
 	private void Action() {
 		if (collision(e)) {
+			PNJCollision((PNJ) e, entityCollisionWith);
 			e.die();
 		}
 
@@ -41,9 +44,11 @@ public class ShooterBot extends Bot {
 			moveWithRotation(d);
 			if (d == Direction.E && e.row() == this.e.row()) {
 				shoot(Direction.E, this.e);
+				SoundPlayer.shootProjectile();
 			}
 			if (d == Direction.W && e.row() == this.e.row()) {
 				shoot(Direction.W, this.e);
+				SoundPlayer.shootProjectile();
 			}
 		} else {
 			tryAlternativeDirections();

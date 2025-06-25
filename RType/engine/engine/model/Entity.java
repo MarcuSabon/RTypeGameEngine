@@ -1,6 +1,8 @@
 package engine.model;
 
 import engine.IBrain.IBot;
+import map.Wall;
+import sound.SoundPlayer;
 
 public abstract class Entity {
 	protected Model m_model;
@@ -98,6 +100,9 @@ public abstract class Entity {
 	public void die() { // chagngement de die(), on ne fait plus mourir l'entité directement pour éviter
 						// une ConcurrentModificationException
 		isDead = true;
+		if (!(this instanceof Wall)) {
+			SoundPlayer.play("/Sounds/BotDeath.wav");
+		}
 	}
 
 	public boolean isDead() { // Marque l'entité comme morte. La suppression réelle est différée à la fin du

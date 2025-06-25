@@ -5,8 +5,12 @@ import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 
 import engine.model.Entity;
+import engine.model.Stunt.Action;
 import engine.view.Avatar;
 import engine.view.View;
+import map.Synchronyser;
+import stunts.StuntPNJ;
+import stunts.StuntPNJ.PNJRotateAndMove;
 
 public class AvatarShooter extends Avatar {
 
@@ -23,10 +27,12 @@ public class AvatarShooter extends Avatar {
 	}
 
 	// ------------- Private methods -------------//
-	private void paintPlayer(Graphics2D g, Entity e, int x, int y, Polygon pg) {
-		int d = e.orientation();
+	private void paintPlayer(Graphics2D g, Entity e, int x, int y, int d, Polygon pg) {
+		int CellWidth = v.pxPerMeter();
 		double rot = Math.toRadians(d);
 		AffineTransform saved = g.getTransform();
+		x = (int) Synchronyser.synchronise(x, CellWidth);
+
 		g.translate(x, y);
 		g.rotate(rot);
 		g.fillPolygon(pg);
@@ -35,9 +41,41 @@ public class AvatarShooter extends Avatar {
 
 	private void drawShooterCell(Graphics2D g) {
 		int CellWidth = v.pxPerMeter();
+		Action a = e.stunt.action();
+		int d = e.orientation();
+		double x, y;
+		if (a != null && a.kind() == 2) {
+			StuntPNJ.PNJRotateAndMove motion = (StuntPNJ.PNJRotateAndMove) a;
+			if (motion.isRotating()) {
+				double progress = (((PNJRotateAndMove) e.stunt.action()).getRotationProgress());
+				int angle = e.orientation() - motion.targetAngle;
+				if (angle > 180) {
+					angle -= 360;
+				}
+				if (angle < -180) {
+					angle += 360;
+				}
+				d = (int) (e.orientation() - angle * progress * 2);
+			}
+			if (motion.isMoving()) {
+				double progress = (((PNJRotateAndMove) e.stunt.action()).getMoveProgress());
+				double actionOffsetX = motion.ncols * CellWidth * progress;
+				double actionOffsetY = motion.nrows * CellWidth * progress;
+				x = (e.col() * CellWidth) + CellWidth / 2.0 + actionOffsetX;
+				y = (e.row() * CellWidth) + CellWidth / 2.0 + actionOffsetY;
+				if (motion.movedDone) {
+					x -= motion.ncols * CellWidth;
+					y -= motion.nrows * CellWidth;
+				}
+			} else {
+				x = (e.col() * CellWidth) + CellWidth / 2.0;
+				y = (e.row() * CellWidth) + CellWidth / 2.0;
+			}
 
-		int x = e.col() * CellWidth + CellWidth / 2;
-		int y = e.row() * CellWidth + CellWidth / 2;
+		} else {
+			x = (e.col() * CellWidth) + CellWidth / 2.0;
+			y = (e.row() * CellWidth) + CellWidth / 2.0;
+		}
 
 		// create a polygon for the Shooter, a triangle pointing upwards
 		Polygon pg = new Polygon();
@@ -49,7 +87,7 @@ public class AvatarShooter extends Avatar {
 
 		// paint the Shooter
 		g.setColor(java.awt.Color.GREEN);
-		paintPlayer(g, e, x, y, pg);
+		paintPlayer(g, e, (int) x, (int) y, d, pg);
 
 	}
 }

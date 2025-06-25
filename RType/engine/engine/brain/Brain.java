@@ -5,6 +5,7 @@ import java.util.List;
 
 import engine.IBrain;
 import engine.IModel;
+import engine.model.Entity;
 
 public class Brain implements IBrain {
 
@@ -24,4 +25,12 @@ public class Brain implements IBrain {
 	public void setModel(IModel model) {
 		this.model = model;
 	}
+    
+	public void killed(Entity entity) {
+        if (entity.bot.getNbCollision() >= 1) {
+			model.player().setScore(entity);
+		}
+		bots.remove(entity.bot);
+	}
+		
 }

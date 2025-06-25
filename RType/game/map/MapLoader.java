@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import engine.model.Model;
+import entities.Player;
 
 public class MapLoader {
 	private static final int CHUNK_WIDTH = 42;
@@ -23,7 +24,7 @@ public class MapLoader {
 	private boolean BossSpawned = false;
 
 	private double scrollTimer = 0;
-	private final double SCROLL_INTERVAL = 1000;
+	private final double SCROLL_INTERVAL = 500;
 
 	private static LinkedList<Wall> allWalls;
 
@@ -32,6 +33,7 @@ public class MapLoader {
 		actChunk = chunks.get(0);
 		nextChunk = chunks.get(1);
 		allWalls = new LinkedList<Wall>();
+		new Synchronyser((int) SCROLL_INTERVAL);
 	}
 
 	public void tick(double elapsed, Model model) {
@@ -73,6 +75,7 @@ public class MapLoader {
 		if (!endLvl) {
 			decalageActChunk(m);
 			ajoutColActChunk(m);
+			Synchronyser.resetProg();
 		}
 
 		offset++;
@@ -81,6 +84,7 @@ public class MapLoader {
 			currentChunk++;
 			if (currentChunk + 1 >= chunks.size()) {
 				nextChunk = actChunk;
+				Synchronyser.stop();
 				return true;
 			} else {
 				actChunk = chunks.get(currentChunk);
@@ -88,7 +92,8 @@ public class MapLoader {
 			}
 		}
 		for (int i = 0; i < m.nrows(); i++) {
-			if (m.entity(i, 0) != null) {
+			if (m.entity(i, 0) != null && !(m.entity(i, 0) instanceof Player)
+					&& !(m.entity(i, 0) instanceof WallNull)) {
 				m.entity(i, 0).die();
 			}
 		}
@@ -119,8 +124,19 @@ public class MapLoader {
 		int lignes = actChunk.length;
 		int colonnes = actChunk[0].length;
 
-		for (Wall w : allWalls) {
-			w.stunt.move(0, -1);
+//		for (Wall w : allWalls) {
+//			w.stunt.move(0, -1);
+//		}
+		for (int j = 0; j < m.ncols(); j++) {
+			for (int i = 0; i < m.nrows(); i++) {
+				if (m.entity(i, j) != null && !(m.entity(i, j) instanceof Player))
+					if (m.entity(i, j) instanceof Wall) {
+						m.entity(i, j).stunt.move(0, -1);
+					} else {
+						m.move(m.entity(i, j), 0, -1);
+
+					}
+			}
 		}
 		for (int i = 0; i < lignes; i++) {
 			actChunk[i][colonnes - 1] = '0';
