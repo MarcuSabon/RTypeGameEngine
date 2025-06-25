@@ -1,12 +1,12 @@
 package boss;
 
-import engine.model.Entity;
 import engine.model.Model;
-import engine.model.Stunt;
+import engine.model.PNJ;
+import stunts.StuntPNJ;
 
-public class StuntBossPart extends Stunt {
+public class StuntBossPart extends StuntPNJ {
 
-	public StuntBossPart(Model m, Entity e) {
+	public StuntBossPart(Model m, PNJ e) {
 		super(m, e);
 	}
 
@@ -89,8 +89,52 @@ public class StuntBossPart extends Stunt {
 		}
 	}
 
+	public void spawn(int nrows, int ncols) {
+		action = new Spawn(this, nrows, ncols);
+	}
+
 	public void explode() {
 		// TODO Auto-generated method stub
+
+	}
+
+	protected class Spawn implements Action {
+		private StuntBossPart s;
+		private int duration = 2000;
+		private int remainingDuration = duration;
+		private int nrows, ncols;
+
+		protected Spawn(StuntBossPart s, int nrows, int ncols) {
+			this.s = s;
+			this.nrows = nrows;
+			this.ncols = ncols;
+		}
+
+		@Override
+		public void tick(int elapsed) {
+			remainingDuration -= elapsed;
+			if (s.progress() < 1) {
+				float percent = 1 - ((float) remainingDuration / (float) duration);
+				s.setProgress(percent);
+			} else {
+				s.progress = 0;
+				action = null;
+				remainingDuration = duration;
+			}
+		}
+
+		@Override
+		public int kind() {
+			return 1;
+		}
+
+		public int getR() {
+			return nrows;
+		}
+
+		public int getC() {
+			return ncols;
+		}
 
 	}
 

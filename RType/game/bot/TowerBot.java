@@ -5,6 +5,7 @@ import engine.brain.Brain;
 import engine.brain.Category;
 import engine.brain.Direction;
 import engine.model.Entity;
+import engine.model.PNJ;
 import entities.ShootingPNJ;
 
 public class TowerBot extends Bot {
@@ -29,6 +30,13 @@ public class TowerBot extends Bot {
 
 	@Override
 	public void think() {
+		if (b.getModel().entity(e.row(), e.col()) == null) {
+			b.getModel().setGrid(e.row(), e.col(), (Entity) e);
+			System.out.println("Replacement Tower");
+		} else if (b.getModel().entity(e.row(), e.col()) != e && b.getModel().entity(e.row(), e.col()) != null) {
+			e.die();
+			System.out.println("DEAD Tower");
+		}
 		switch (state) {
 		case MOVING:
 			Moving();
@@ -41,6 +49,7 @@ public class TowerBot extends Bot {
 
 	private void Moving() {
 		if (collision(e)) {
+			PNJCollision((PNJ) e, entityCollisionWith);
 			e.die();
 		} else {
 			moveFinish--;
@@ -56,6 +65,7 @@ public class TowerBot extends Bot {
 
 	private void Action() {
 		if (collision(e)) {
+			PNJCollision((PNJ) e, entityCollisionWith);
 			e.die();
 		}
 
@@ -65,7 +75,7 @@ public class TowerBot extends Bot {
 
 		if (delayShoot <= 0) {
 			shoot(Direction.E, this.e);
-			delayShoot = 5000;
+			delayShoot = 10000;
 		}
 
 		delay = duration;

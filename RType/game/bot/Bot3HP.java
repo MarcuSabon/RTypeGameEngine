@@ -5,6 +5,7 @@ import engine.brain.Brain;
 import engine.brain.Category;
 import engine.brain.Direction;
 import engine.model.Entity;
+import engine.model.PNJ;
 
 public class Bot3HP extends Bot {
 	private static final int FULL = 0;
@@ -41,6 +42,7 @@ public class Bot3HP extends Bot {
 	private void full() {
 		if (collision(e)) {
 			HP--;
+			PNJCollision((PNJ) e, entityCollisionWith);
 			System.out.println("HP Bot : " + getHP());
 			state = MID;
 		} else {
@@ -53,6 +55,7 @@ public class Bot3HP extends Bot {
 	private void mid() {
 		if (collision(e)) {
 			HP--;
+			PNJCollision((PNJ) e, entityCollisionWith);
 			System.out.println("HP Bot : " + getHP());
 			state = LOW;
 		} else {
@@ -65,6 +68,7 @@ public class Bot3HP extends Bot {
 	private void low() {
 		if (collision(e)) {
 			HP--;
+			PNJCollision((PNJ) e, entityCollisionWith);
 			System.out.println("HP Bot : " + getHP());
 			e.die();
 		} else {

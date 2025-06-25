@@ -56,13 +56,26 @@ public class AvatarBossPart extends Avatar {
 		Action a = bp.stunt.action();
 
 		double x, y;
-		if (a != null && a.kind() == 0) {
-			StuntBossPart.Motion motion = (StuntBossPart.Motion) a;
-			double progress = (bp.master.stunt.progress());
-			double actionOffsetX = motion.getC() * cellWidth * progress;
-			double actionOffsetY = motion.getR() * cellWidth * progress;
-			x = (e.col() * cellWidth) + cellWidth / 2.0 + actionOffsetX - cellWidth * motion.getC();
-			y = (e.row() * cellWidth) + cellWidth / 2.0 + actionOffsetY - cellWidth * motion.getR();
+		if (a != null) {
+			if (a.kind() == 0) {
+				StuntBossPart.Motion motion = (StuntBossPart.Motion) a;
+				double progress = (bp.master.stunt.progress());
+				double actionOffsetX = motion.getC() * cellWidth * progress;
+				double actionOffsetY = motion.getR() * cellWidth * progress;
+				x = (e.col() * cellWidth) + cellWidth / 2.0 + actionOffsetX - cellWidth * motion.getC();
+				y = (e.row() * cellWidth) + cellWidth / 2.0 + actionOffsetY - cellWidth * motion.getR();
+			} else if (a.kind() == 1) {
+				StuntBossPart.Spawn motion = (StuntBossPart.Spawn) a;
+				double progress = (bp.master.stunt.progress());
+				double actionOffsetX = motion.getC() * cellWidth * progress;
+				double actionOffsetY = motion.getR() * cellWidth * progress;
+				x = (e.col() * cellWidth) + cellWidth / 2.0 + actionOffsetX - cellWidth * motion.getC();
+				y = (e.row() * cellWidth) + cellWidth / 2.0 + actionOffsetY - cellWidth * motion.getR();
+			} else {
+				x = (e.col() * cellWidth) + cellWidth / 2.0;
+				y = (e.row() * cellWidth) + cellWidth / 2.0;
+			}
+
 		} else {
 			x = (e.col() * cellWidth) + cellWidth / 2.0;
 			y = (e.row() * cellWidth) + cellWidth / 2.0;

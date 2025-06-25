@@ -17,8 +17,12 @@ public class ScrollingBackground {
 	private double speed = 50.0; // pixels par seconde
 	private Canvas canvas;
 
-	public ScrollingBackground(Canvas canvas, String imagePath) {
+	// ajout accès au zoom et à l'offset
+	private View0 view0;
+
+	public ScrollingBackground(Canvas canvas, String imagePath, View0 view) {
 		this.canvas = canvas;
+		this.view0 = view;
 		try {
 			backgroundImage = ImageIO.read(getClass().getResource(imagePath));
 		} catch (IOException | IllegalArgumentException e) {
@@ -42,11 +46,21 @@ public class ScrollingBackground {
 			return;
 
 		int imgW = backgroundImage.getWidth(null);
+		int imgH = backgroundImage.getHeight(null);
 		int screenW = canvas.getWidth();
 		int screenH = canvas.getHeight();
 
+		double zoom = view0.getZoom();
+		double viewportX = view0.oX();
+		double viewportY = view0.oY();
+
+		int bgOffsetX = (int) (-viewportX / zoom % imgW);
+		int bgOffsetY = (int) (-viewportY / zoom % imgH);
+
 		for (int i = -1; i < screenW / imgW + 2; i++) {
-			g.drawImage(backgroundImage, offsetX + i * imgW, 0, imgW, screenH, null);
+			for (int j = -1; j < screenH / imgH + 2; j++) {
+				g.drawImage(backgroundImage, offsetX + bgOffsetX + i * imgW, bgOffsetY + j * imgH, imgW, imgH, null);
+			}
 		}
 	}
 }

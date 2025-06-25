@@ -59,7 +59,6 @@ public class Controller0 extends Controller {
 
 			case VirtualKeyCodes.VK_SPACE:
 				bot.shooting = true;
-				SoundPlayer.play("/Sounds/Projectile.wav");
 				break;
 			}
 		} else if (VirtualKeyCodes.VK_ENTER == keyCode) {

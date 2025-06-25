@@ -5,8 +5,10 @@ import java.awt.Graphics2D;
 import engine.IModel.Config;
 import engine.controller.Controller;
 import engine.model.Model;
+import engine.utils.TPSCounter;
 import engine.view.View;
 import game.GameManager.GameState;
+import map.Synchronyser;
 import oop.graphics.Canvas;
 
 public class Game {
@@ -16,9 +18,6 @@ public class Game {
 	private Controller m_controller;
 	private GameManager gameManager;
 
-	private double scrollTimer = 0;
-	private final double SCROLL_INTERVAL = 500;
-
 	Game(Canvas canvas, int nrows, int ncols) {
 		this.m_canvas = canvas;
 
@@ -26,7 +25,7 @@ public class Game {
 		conf.tore = false;
 		conf.gameState = GameState.Playing;
 		conf.immortal = true;
-//		conf.continuous = true; // continuous model
+		// conf.continuous = true; // continuous model
 
 		m_model = new Model(nrows, ncols);
 		m_model.config(conf); // configure before adding entities
@@ -45,9 +44,11 @@ public class Game {
 	}
 
 	public void tick(int elapsed) {
+		TPSCounter.tick(elapsed);
 		m_view.tick(elapsed);
 		m_model.tick(elapsed);
 		gameManager.start(elapsed);
+		Synchronyser.tick(elapsed);
 	}
 
 }

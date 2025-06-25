@@ -54,13 +54,25 @@ public class AvatarMaster extends Avatar {
 		}
 		int cellWidth = v.pxPerMeter();
 		Action a = e.stunt.action();
-		if (a != null && a.kind() == 0) {
-			StuntMaster.Motion motion = (StuntMaster.Motion) a;
-			double progress = e.stunt.progress();
-			double actionOffsetX = motion.ncols * cellWidth * progress;
-			double actionOffsetY = motion.nrows * cellWidth * progress;
-			x = (e.col() * cellWidth) + cellWidth / 2.0 + actionOffsetX - cellWidth * motion.ncols;
-			y = (e.row() * cellWidth) + cellWidth / 2.0 + actionOffsetY - cellWidth * motion.nrows;
+		if (a != null) {
+			if (a.kind() == 0) {
+				StuntMaster.Motion motion = (StuntMaster.Motion) a;
+				double progress = e.stunt.progress();
+				double actionOffsetX = motion.ncols * cellWidth * progress;
+				double actionOffsetY = motion.nrows * cellWidth * progress;
+				x = (e.col() * cellWidth) + cellWidth / 2.0 + actionOffsetX - cellWidth * motion.ncols;
+				y = (e.row() * cellWidth) + cellWidth / 2.0 + actionOffsetY - cellWidth * motion.nrows;
+			} else if (a.kind() == 1) {
+				StuntMaster.Spawn motion = (StuntMaster.Spawn) a;
+				double progress = e.stunt.progress();
+				double actionOffsetX = motion.ncols * cellWidth * progress;
+				double actionOffsetY = motion.nrows * cellWidth * progress;
+				x = (e.col() * cellWidth) + cellWidth / 2.0 + actionOffsetX - cellWidth * motion.ncols;
+				y = (e.row() * cellWidth) + cellWidth / 2.0 + actionOffsetY - cellWidth * motion.nrows;
+			} else {
+				x = (e.col() * cellWidth) + cellWidth / 2.0;
+				y = (e.row() * cellWidth) + cellWidth / 2.0;
+			}
 		} else {
 			x = (e.col() * cellWidth) + cellWidth / 2.0;
 			y = (e.row() * cellWidth) + cellWidth / 2.0;

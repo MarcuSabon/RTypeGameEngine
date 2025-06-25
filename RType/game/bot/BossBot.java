@@ -8,6 +8,7 @@ import engine.brain.Bot;
 import engine.brain.Brain;
 import engine.brain.Category;
 import engine.model.Entity;
+import engine.model.PNJ;
 import sound.SoundPlayer;
 
 public class BossBot extends Bot {
@@ -18,7 +19,7 @@ public class BossBot extends Bot {
 	private static final int HURT = 3;
 	private static final int DYING = 4;
 	private static final Random random = new Random();
-	private boolean SoundDeath=false;
+	private boolean SoundDeath = false;
 	public int state;
 
 	private int baseSpawnY;
@@ -39,7 +40,8 @@ public class BossBot extends Bot {
 		if (e.stunt.action() != null) {
 			return;
 		}
-		if (collision(e)) {
+		if (collision(e) && spawned) {
+			PNJCollision((PNJ) e, entityCollisionWith);
 			state = HURT;
 		}
 		switch (state) {
@@ -77,8 +79,13 @@ public class BossBot extends Bot {
 	}
 
 	int SPAWNINGTIME = 1000;
+	boolean spawned = false;
 
 	private void SPAWNING(int elapsed) {
+		if (!spawned) {
+			((StuntMaster) e.stunt).spawn();
+			spawned = true;
+		}
 		SPAWNINGTIME -= elapsed;
 		if (SPAWNINGTIME < 0) {
 			state = MOVING;
@@ -172,7 +179,7 @@ public class BossBot extends Bot {
 
 	private void Dying(int elapsed) {
 		if (!SoundDeath) {
-			SoundDeath=true;
+			SoundDeath = true;
 			SoundPlayer.play("/Sounds/BossDeath.wav");
 		}
 		DYINGTIME -= elapsed;

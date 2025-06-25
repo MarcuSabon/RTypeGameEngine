@@ -3,6 +3,7 @@ package stunts;
 import engine.model.Model;
 import engine.model.PNJ;
 import entities.ShootingPNJ;
+import sound.SoundPlayer;
 
 public class StuntShootingPNJ extends StuntPNJ {
 

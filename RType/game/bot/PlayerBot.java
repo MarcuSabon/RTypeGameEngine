@@ -5,6 +5,7 @@ import engine.brain.Brain;
 import engine.brain.Category;
 import engine.model.Entity;
 import entities.Player;
+import sound.SoundPlayer;
 import stunts.StuntPlayer;
 
 public class PlayerBot extends Bot {
@@ -23,11 +24,15 @@ public class PlayerBot extends Bot {
 	}
 
 	private void Playing() {
+		if (e.col() == 0) {
+			HP = 0;
+		}
 		if (collision(e) && !b.getModel().config().immortal) {
-			playerCollision((Player) e, entityCollisionWithPlayer); // action de collision -> décrémentation des HP
+			playerCollision((Player) e, entityCollisionWith); // action de collision -> décrémentation des HP
 		} else if (shooting) {
 			StuntPlayer sp = (StuntPlayer) e.stunt;
 			sp.playerShoot(e);
+			SoundPlayer.shootProjectile();
 		}
 
 		delay = duration;

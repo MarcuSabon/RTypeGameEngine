@@ -1,6 +1,7 @@
 package stunts;
 
 import engine.IModel;
+import engine.model.Entity;
 import engine.model.Model;
 import engine.model.PNJ;
 import engine.model.Stunt;
@@ -9,6 +10,7 @@ public abstract class StuntPNJ extends Stunt {
 	private PNJ pnj;
 	private static final int ROTATION_DURATION = 50;
 	private static final int MOVEMENT_DURATION = 150;
+	private static final int COLLISION_DURATION = 250;
 
 	// CONSTRUCTOR
 	public StuntPNJ(Model m, PNJ e) {
@@ -23,7 +25,7 @@ public abstract class StuntPNJ extends Stunt {
 		private IModel m;
 		private PNJ pnj;
 
-		private int nrows, ncols;
+		public final int nrows, ncols;
 		private int delay, duration, step, elapsed;
 		private boolean moved;
 
@@ -49,15 +51,15 @@ public abstract class StuntPNJ extends Stunt {
 			}
 
 			switch (step) {
-			case 0:
-				step++;
-				moved = m.move(pnj, nrows, ncols);
-				delay = duration / 2;
-				break;
-			case 1:
-				step++;
-				action = null;
-				break;
+				case 0:
+					step++;
+					moved = m.move(pnj, nrows, ncols);
+					delay = duration / 2;
+					break;
+				case 1:
+					step++;
+					action = null;
+					break;
 			}
 			updateProgress();
 		}
@@ -91,7 +93,7 @@ public abstract class StuntPNJ extends Stunt {
 		private IModel m;
 		private PNJ pnj;
 
-		private int angle;
+		public final int angle;
 		private int delay, duration, step, elapsed;
 
 		public PNJRotation(StuntPNJ sp, int angle, int duration) {
@@ -114,15 +116,15 @@ public abstract class StuntPNJ extends Stunt {
 			}
 
 			switch (step) {
-			case 0:
-				step++;
-				pnj.face(angle + pnj.orientation());
-				delay = duration / 2;
-				break;
-			case 1:
-				step++;
-				action = null;
-				break;
+				case 0:
+					step++;
+					pnj.face(angle + pnj.orientation());
+					delay = duration / 2;
+					break;
+				case 1:
+					step++;
+					action = null;
+					break;
 			}
 			updateProgress();
 		}
@@ -144,9 +146,13 @@ public abstract class StuntPNJ extends Stunt {
 		private IModel m;
 		private PNJ pnj;
 
-		private int targetAngle;
-		private int nrows, ncols;
-		private int delay, step, elapsed, duration;
+		public final int targetAngle;
+		public final int nrows, ncols;
+
+		public boolean movedDone = false;
+		private int delay, step, elapsed;
+		private final int rotationDuration, moveDuration;
+		private final int totalDuration;
 		private boolean needsRotation, moved;
 
 		public PNJRotateAndMove(StuntPNJ sp, int targetAngle, int nrows, int ncols) {
@@ -159,8 +165,11 @@ public abstract class StuntPNJ extends Stunt {
 			pnj = sp.entity();
 			// Vérifier si une rotation est nécessaire
 			needsRotation = (pnj.orientation() != targetAngle);
-			duration = needsRotation ? ROTATION_DURATION / 2 : MOVEMENT_DURATION / 2;
-			delay = duration;
+			rotationDuration = needsRotation ? ROTATION_DURATION : 0;
+			moveDuration = MOVEMENT_DURATION;
+			totalDuration = rotationDuration + moveDuration;
+
+			delay = needsRotation ? rotationDuration / 2 : 0;
 		}
 
 		public void tick(int elapsed) {
@@ -176,23 +185,28 @@ public abstract class StuntPNJ extends Stunt {
 			case 0:
 				if (needsRotation) {
 					// First step: Rotation
+					pnj.face(targetAngle); // On tourne directement
 					step++;
-					pnj.face(targetAngle);
 					delay = ROTATION_DURATION / 2;
 				} else {
 					// No rotation necessary, start moving immediately
 					step = 2;
-					moved = m.move(pnj, nrows, ncols);
 					delay = MOVEMENT_DURATION / 2;
 				}
 				break;
 			case 1:
 				// End of rotation, starting to move
 				step++;
-				moved = m.move(pnj, nrows, ncols);
 				delay = MOVEMENT_DURATION / 2;
 				break;
 			case 2:
+				// End of rotation, starting to move
+				step++;
+				moved = m.move(pnj, nrows, ncols);
+				movedDone = true;
+				delay = MOVEMENT_DURATION / 2;
+				break;
+			case 3:
 				// End of movement
 				step++;
 				action = null;
@@ -207,7 +221,91 @@ public abstract class StuntPNJ extends Stunt {
 		}
 
 		private void updateProgress() {
-			double percent = (double) this.elapsed / duration;
+			double percent = Math.min(1.0, (double) elapsed / totalDuration);
+			sp.setProgress(percent);
+		}
+
+		public boolean moved() {
+			return moved;
+		}
+
+		public boolean isRotating() {
+			return needsRotation && elapsed < rotationDuration;
+		}
+
+		public boolean isMoving() {
+			if (!needsRotation) {
+				return elapsed < moveDuration;
+			}
+			return elapsed >= rotationDuration && elapsed < totalDuration;
+		}
+
+		public double getRotationProgress() {
+			if (!needsRotation)
+				return 1.0;
+			if (!isRotating())
+				return 1.0;
+			return Math.min(1.0, (double) elapsed / rotationDuration);
+		}
+
+		public double getMoveProgress() {
+			if (!needsRotation) {
+				return Math.min(1.0, (double) elapsed / moveDuration);
+			}
+			if (!isMoving())
+				return 0.0;
+			return Math.min(1.0, (double) (elapsed - rotationDuration) / moveDuration);
+		}
+	}
+
+	class PNJCollision implements Action {
+
+		private StuntPNJ sp;
+		private PNJ p;
+		private Entity collisionEntity;
+
+		private int delay, step, elapsed, duration;
+
+		PNJCollision(StuntPNJ sp, Entity collisionEntity, int duration) {
+			this.sp = sp;
+			this.collisionEntity = collisionEntity;
+			this.duration = duration;
+
+			p = sp.entity();
+			delay = duration;
+		}
+
+		public void tick(int elapsed) {
+			this.elapsed += elapsed;
+
+			delay -= elapsed;
+			if (delay > 0) {
+				updateProgress();
+				return;
+			}
+
+			switch (step) {
+			case 0:
+				step++;
+				break;
+			case 1:
+				// Fin du mouvement
+				step++;
+
+				action = null;
+				break;
+			}
+			updateProgress();
+		}
+
+		@Override
+		public int kind() {
+			return 3;
+		}
+
+		private void updateProgress() {
+			double percent = (double) this.elapsed / duration; // Je prends de l'avance sur le fait qu'on a corrigé le
+																// pourcentage en double
 			sp.setProgress(percent);
 		}
 
@@ -243,5 +341,11 @@ public abstract class StuntPNJ extends Stunt {
 			return true;
 		}
 		return false;
+	}
+
+	public void PNJCollision(Entity entity) {
+		if (action == null) {
+			this.action = new PNJCollision(this, entity, COLLISION_DURATION);
+		}
 	}
 }

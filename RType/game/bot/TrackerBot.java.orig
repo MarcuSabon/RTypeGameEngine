@@ -38,6 +38,7 @@ public class TrackerBot extends Bot {
 	private void FULL() {
 		if (collision(e)) {
 			PNJCollision((PNJ) e, entityCollisionWith);
+<<<<<<< HEAD
 			HP--;
 			state = LOW;
 		}
@@ -61,6 +62,8 @@ public class TrackerBot extends Bot {
 		if (collision(e)) {
 			PNJCollision((PNJ) e, entityCollisionWith);
 			HP--;
+=======
+>>>>>>> bots
 			e.die();
 		}
 

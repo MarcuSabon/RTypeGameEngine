@@ -13,6 +13,8 @@ import entities.Tower;
 import entities.Tracker;
 import map.MapLoader;
 import map.SpawnData;
+import map.Synchronyser;
+import sound.SoundPlayer;
 
 public class GameManager {
 	private Controller0 controller;
@@ -75,6 +77,7 @@ public class GameManager {
 				view.setGameState(gameState);
 			} else if (boss != null && player.getHP() > 0 && boss.isDead()) {
 				i++;
+				controller.playerInit = false;
 				gameState = switchState(gameState, true);
 				view.setGameState(gameState);
 
@@ -93,6 +96,7 @@ public class GameManager {
 			}
 		}
 		if (gameState == GameState.Restart) {
+			Synchronyser.start();
 			if (controller.nameGiven) {
 				if ((surligne % 2 + 2) % 2 == 0) {
 					System.out.println(">> Nouvelle partie");
@@ -176,6 +180,7 @@ public class GameManager {
 
 	public void init_lvl2() {
 		if (!playerInitialized()) {
+			System.out.println(">> Init Level 2");
 			time2 = 2000;
 			m_brain = new Brain(model);
 
@@ -184,6 +189,8 @@ public class GameManager {
 			initializePlayer();
 
 			// boss = new Master(model, 35, 10, 180, "/Boss/Level1", m_brain);
+			String path = "game/Ressources/Map2/Map2.txt";
+			m_loader = new MapLoader(path, model);
 			m_loader.reset();
 //			String path = "game/Ressources/Map1/Map1.txt";
 //			m_loader = new MapLoader(path, model);
