@@ -10,6 +10,7 @@ import engine.view.View;
 import game.GameManager.GameState;
 import map.Synchronyser;
 import oop.graphics.Canvas;
+import sound.SoundPlayer;
 
 public class Game {
 	private Canvas m_canvas;
@@ -33,6 +34,7 @@ public class Game {
 		m_view = new View0(canvas, m_model);
 
 		m_controller = new Controller0(canvas, m_model, m_view);
+		SoundPlayer.preloadSounds();
 		gameManager = new GameManager(this, m_controller, m_view, m_model, conf.gameState);
 
 		new Ticker(this);
