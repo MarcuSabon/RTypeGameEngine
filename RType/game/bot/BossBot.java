@@ -9,6 +9,7 @@ import engine.brain.Brain;
 import engine.brain.Category;
 import engine.model.Entity;
 import engine.model.PNJ;
+import game.GameManager;
 import sound.SoundPlayer;
 
 public class BossBot extends Bot {
@@ -147,16 +148,30 @@ public class BossBot extends Bot {
 			ATTACKINGTIME = 1000;
 			shot = false;
 		}
+		if (GameManager.lvl1) {
 
-		if (ATTACKINGTIME % 200 == 0) {
-			int r = random.nextInt(4);
-			StuntMaster sm = (StuntMaster) e.stunt;
-			if (r == 0)
-				sm.Missile();
-			else
-				sm.shoot();
+			if (ATTACKINGTIME % 200 == 0) {
+				int r = random.nextInt(4);
+				StuntMaster sm = (StuntMaster) e.stunt;
+				if (r == 0)
+					sm.Missile();
+				else
+					sm.shoot();
 
-			shot = true;
+				shot = true;
+			}
+		} else {
+
+			if (ATTACKINGTIME % 200 == 0) {
+				int r = random.nextInt(4);
+				StuntMaster sm = (StuntMaster) e.stunt;
+				if (r == 0)
+					sm.shoot();
+				else
+					sm.Missile();
+
+				shot = true;
+			}
 		}
 	}
 

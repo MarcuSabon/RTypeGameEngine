@@ -28,13 +28,16 @@ public class GameManager {
 	protected static StringBuilder pseudoBuilder;
 	public static int surligne;
 	public static boolean restartButton;
-	private int time = 2000;
+ 	public static boolean lvl1 = true; // Level 1 flag
+	private int time = 4000;
 	private int time2 = 2000;
 	private int time3 = 2000;
 	private int time4 = 2000;
+	private int time5 = 2000;
 	private int i = 0; // Counter for level progression
 
 	public boolean initialized;
+	private int score = 0;
 
 	public GameManager(Game game, Controller controller, View view, Model model, GameState gameState) {
 		this.controller = (Controller0) controller;
@@ -55,6 +58,13 @@ public class GameManager {
 		}
 		if (gameState == GameState.Pseudo) {
 			if (nameGiven()) {
+				gameState = switchState(gameState, false);
+				view.setGameState(gameState);
+			}
+		}
+		if (gameState == GameState.Transition0) {
+			time5 -= elapsed;
+			if (time5 < 0) {
 				gameState = switchState(gameState, false);
 				view.setGameState(gameState);
 			}
@@ -83,23 +93,13 @@ public class GameManager {
 
 			}
 		}
-		if (gameState == GameState.End)
-
-		{
-			model.clear();
-			time2 -= elapsed;
-			if (time2 < 0) {
-				controller.playerInit = false;
-				controller.nameGiven = false;
-				gameState = switchState(gameState, false);
-				view.setGameState(gameState);
-			}
-		}
 		if (gameState == GameState.Restart) {
 			Synchronyser.start();
 			if (controller.nameGiven) {
+				time4 = time3 = 2000;
 				if ((surligne % 2 + 2) % 2 == 0) {
 					System.out.println(">> Nouvelle partie");
+					i = 0;
 					gameState = switchState(gameState, false);
 					view.setGameState(gameState);
 				} else {
@@ -108,9 +108,13 @@ public class GameManager {
 					System.exit(0); // ou autre méthode de fermeture
 				}
 			}
-
 		}
 		if (gameState == GameState.LevelWin) {
+			this.score = player.getScore();
+			model.clear();
+			m_loader.reset();
+			boss = null;
+			lvl1 = true;
 			time3 -= elapsed;
 			if (time3 < 0) {
 				model.clear();
@@ -121,6 +125,10 @@ public class GameManager {
 			}
 		}
 		if (gameState == GameState.Win) {
+			model.clear();
+			m_loader.reset();
+			boss = null;
+			lvl1 = true;
 			time4 -= elapsed;
 			if (time4 < 0) {
 				model.clear();
@@ -129,6 +137,24 @@ public class GameManager {
 				gameState = switchState(gameState, false);
 				view.setGameState(gameState);
 			}
+		}
+		if (gameState == GameState.End) {
+			model.clear();
+			m_loader.reset();
+			boss = null;
+			lvl1 = true;
+			time2 -= elapsed;
+			if (time2 < 0) {
+				controller.playerInit = false;
+				controller.nameGiven = false;
+				gameState = switchState(gameState, false);
+				view.setGameState(gameState);
+			}
+		}
+		if (gameState == GameState.Charge) {
+			initialize_charge_tester();
+			view.setGameState(GameState.Charge);
+			SpawnEntities(elapsed);
 		}
 	}
 
@@ -159,17 +185,6 @@ public class GameManager {
 			Player.name = GameManager.pseudoBuilder.toString();
 			initializePlayer();
 
-//			new Master(model, 35, 10, 180, "/Boss/Level1", m_brain);
-
-//			Master M2 = new Master(model, 20, 10, 180, "/Boss/Level1", m_brain);
-//			Master M3 = new Master(model, 15, 10, 180, "/Boss/Level1", m_brain);
-//			Master M4 = new Master(model, 10, 10, 180, "/Boss/Level1", m_brain);
-
-//			new Shooter(model, 16, 16, 0);
-//			new Tracker(model, 17, 17, 0);
-//			new Tower(model, 18, 41, 0);
-//			new Tower(model, 1, 41, 0);
-
 			String path = "game/Ressources/Map1/Map1.txt";
 			m_loader = new MapLoader(path, model);
 			m_loader.reset();
@@ -180,27 +195,39 @@ public class GameManager {
 
 	public void init_lvl2() {
 		if (!playerInitialized()) {
-			System.out.println(">> Init Level 2");
+			lvl1 = false;
 			time2 = 2000;
 			m_brain = new Brain(model);
-
 			player = new Player(model, 5, 5, 0);
-
-			initializePlayer();
-
-			// boss = new Master(model, 35, 10, 180, "/Boss/Level1", m_brain);
+			player.setScore(this.score);
 			String path = "game/Ressources/Map2/Map2.txt";
 			m_loader = new MapLoader(path, model);
+
+			initializePlayer();
 			m_loader.reset();
-//			String path = "game/Ressources/Map1/Map1.txt";
-//			m_loader = new MapLoader(path, model);
+
+			initialized = true;
+		}
+	}
+
+	public void initialize_charge_tester() {
+		if (!playerInitialized()) {
+
+			m_brain = new Brain(model);
+			player = new Player(model, 5, 5, 0);
+
+			String path = "game/Ressources/MapCharge/MapCharge.txt";
+			m_loader = new MapLoader(path, model);
+
+			initializePlayer();
+			m_loader.reset();
 
 			initialized = true;
 		}
 	}
 
 	public enum GameState {
-		Intro, Pseudo, Playing, End, LevelWin, Restart, Win;
+		Intro, Pseudo, Playing, End, LevelWin, Restart, Win, Transition0, Charge;
 	}
 
 	public GameState getGameState() {
@@ -213,6 +240,9 @@ public class GameManager {
 			gameState = GameState.Pseudo;
 			break;
 		case Pseudo:
+			gameState = GameState.Transition0;
+			break;
+		case Transition0:
 			gameState = GameState.Playing;
 			break;
 		case Playing:
@@ -234,6 +264,9 @@ public class GameManager {
 			break;
 		case Restart:
 			gameState = GameState.Playing;
+			break;
+		case Win:
+			gameState = GameState.Restart;
 			break;
 		default:
 			return gameState;
@@ -273,7 +306,10 @@ public class GameManager {
 						}
 					}
 					SoundPlayer.play("/Sounds/BossSpawn.wav");
-					this.boss = new Master(model, s.row, s.col - 10, 0, "/Boss/Level1", m_brain);
+					if (lvl1)
+						this.boss = new Master(model, s.row, s.col - 10, 0, "/Boss/Level1", m_brain);
+					else
+						this.boss = new Master(model, s.row, s.col - 10, 0, "/Boss/Level2", m_brain);
 					break;
 				}
 			}

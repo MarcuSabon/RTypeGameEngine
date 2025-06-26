@@ -20,7 +20,7 @@ public class MapLoader {
 	private static int currentChunk = 0;
 	private static char[][] actChunk;
 	private static char[][] nextChunk;
-	private static boolean endLvl = false;
+	private static boolean endLvl;
 	private boolean BossSpawned = false;
 
 	private double scrollTimer = 0;
@@ -32,6 +32,7 @@ public class MapLoader {
 		loadChunks(filename);
 		actChunk = chunks.get(0);
 		nextChunk = chunks.get(1);
+		this.endLvl = false;
 		allWalls = new LinkedList<Wall>();
 		new Synchronyser((int) SCROLL_INTERVAL);
 	}
@@ -182,6 +183,7 @@ public class MapLoader {
 		currentChunk = 0;
 		offset = 0;
 		BossSpawned = false;
+		endLvl = false;
 		actChunk = chunks.get(0);
 	}
 

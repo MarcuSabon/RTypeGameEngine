@@ -1,8 +1,11 @@
 package avatars;
 
 import java.awt.Graphics2D;
-import java.awt.Polygon;
+import java.awt.Image;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import engine.model.Entity;
 import engine.model.Stunt.Action;
@@ -13,9 +16,11 @@ import stunts.StuntPNJ;
 import stunts.StuntPNJ.PNJRotateAndMove;
 
 public class AvatarShooter extends Avatar {
+	private Image image;
 
 	public AvatarShooter(View v, Entity e) {
 		super(v, e);
+		loadImage();
 	}
 
 	@Override
@@ -27,7 +32,15 @@ public class AvatarShooter extends Avatar {
 	}
 
 	// ------------- Private methods -------------//
-	private void paintPlayer(Graphics2D g, Entity e, int x, int y, int d, Polygon pg) {
+	private void loadImage() {
+		try {
+			image = ImageIO.read(getClass().getResource("/shooter.png"));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private void paintPlayer(Graphics2D g, Entity e, int x, int y, int d) {
 		int CellWidth = v.pxPerMeter();
 		double rot = Math.toRadians(d);
 		AffineTransform saved = g.getTransform();
@@ -35,7 +48,7 @@ public class AvatarShooter extends Avatar {
 
 		g.translate(x, y);
 		g.rotate(rot);
-		g.fillPolygon(pg);
+		g.drawImage(image, -CellWidth / 2, -CellWidth / 2, CellWidth, CellWidth, null);
 		g.setTransform(saved);
 	}
 
@@ -76,18 +89,7 @@ public class AvatarShooter extends Avatar {
 			x = (e.col() * CellWidth) + CellWidth / 2.0;
 			y = (e.row() * CellWidth) + CellWidth / 2.0;
 		}
-
-		// create a polygon for the Shooter, a triangle pointing upwards
-		Polygon pg = new Polygon();
-		int polySize = (int) (CellWidth / 3);
-
-		pg.addPoint(polySize, 0); // front point (right)
-		pg.addPoint(-polySize, -polySize); // rear left
-		pg.addPoint(-polySize, polySize); // rear right
-
-		// paint the Shooter
-		g.setColor(java.awt.Color.GREEN);
-		paintPlayer(g, e, (int) x, (int) y, d, pg);
-
+		d += 180;
+		paintPlayer(g, e, (int) x, (int) y, d);
 	}
 }

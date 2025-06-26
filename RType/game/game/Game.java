@@ -24,8 +24,8 @@ public class Game {
 
 		Config conf = new Config();
 		conf.tore = false;
-		conf.gameState = GameState.Playing;
-		conf.immortal = true;
+		conf.gameState = GameState.Intro;
+		conf.immortal = false;
 		// conf.continuous = true; // continuous model
 
 		m_model = new Model(nrows, ncols);
