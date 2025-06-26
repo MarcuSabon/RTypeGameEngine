@@ -51,7 +51,7 @@ public class Player extends Entity {
 		return this.HP;
 	}
 
-	public void setHP(int points) {
+	public void inflictHP(int points) {
 		this.HP -= points;
 	}
 

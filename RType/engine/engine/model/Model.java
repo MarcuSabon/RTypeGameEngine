@@ -129,7 +129,7 @@ public class Model implements IModel {
 	 * Move the given entity from its current location by adding the given number of
 	 * rows and columns to its current location.
 	 */
-	public void move(Entity e, double x, double y) {
+	public boolean move(Entity e, double x, double y) {
 		double oldX = e.x;
 		double oldY = e.y;
 		double tempX = x + e.x;
@@ -139,7 +139,7 @@ public class Model implements IModel {
 		tempX = normalize(tempX, m_xsize);
 
 		if (tempX == oldX && tempY == oldY)
-			return; // No movement
+			return false; // No movement
 
 		boolean left = isEntityAtLeftEdge(e);
 		boolean right = isEntityAtRightEdge(e);
@@ -174,8 +174,8 @@ public class Model implements IModel {
 				e.speedX = 0;
 			}
 		}
-//		System.out.println(tempX+ " "+tempY);
-		updateEntityPosition(e, tempX, tempY);
+		// System.out.println(tempX+ " "+tempY);
+		return updateEntityPosition(e, tempX, tempY);
 	}
 
 	/*
@@ -422,12 +422,22 @@ public class Model implements IModel {
 		return false;
 	}
 
-	private void updateEntityPosition(Entity e, double newX, double newY) {
+	private boolean updateEntityPosition(Entity e, double newX, double newY) {
 		m_grid[e.row()][e.col()] = null;
 		int newRow = normalize(toCellCoordinate(newY), m_nrows);
 		int newCol = normalize(toCellCoordinate(newX), m_ncols);
+
+		Entity target = entity(newRow, newCol);
+		if (target != null && target != e) {
+			e.collision(target);
+			target.collision(e);
+			m_grid[e.row()][e.col()] = e;
+			return false;
+		}
+
 		m_grid[newRow][newCol] = e;
 		e.at(newX, newY, newRow, newCol);
+		return true;
 	}
 
 	public void clear() {
