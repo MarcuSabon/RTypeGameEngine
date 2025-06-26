@@ -257,6 +257,7 @@ public class GameManager {
 					new Tracker(model, s.row, s.col - 1, 0);
 					break;
 				case '9':
+					SoundPlayer.play("/Sounds/BossSpawn.wav");
 					this.boss = new Master(model, s.row, s.col - 10, 0, "/Boss/Level1", m_brain);
 					break;
 				}
