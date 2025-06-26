@@ -4,7 +4,6 @@ import bot.BulletBot;
 import engine.brain.Category;
 import engine.model.Entity;
 import engine.model.Model;
-import sound.SoundPlayer;
 import stunts.StuntMissile;
 
 public class Missile extends Entity {
@@ -21,8 +20,6 @@ public class Missile extends Entity {
 	protected void collision(Entity entity) {
 		speedX = 0;
 		speedY = 0;
-		// m_model.emptyGrid(m_row, m_col); // plus besoin car collision lance une
-		// action
 		bot.setCollision(true);
 		collided = true;
 	}

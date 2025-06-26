@@ -5,7 +5,6 @@ import engine.brain.Category;
 import engine.model.Entity;
 import engine.model.Model;
 import engine.model.PNJ;
-import sound.SoundPlayer;
 import stunts.StuntBullet;
 
 public class Bullet extends PNJ {
@@ -22,8 +21,6 @@ public class Bullet extends PNJ {
 	protected void collision(Entity entity) {
 		speedX = 0;
 		speedY = 0;
-		// m_model.emptyGrid(m_row, m_col); //On ne devrait plus en avoir besoin avec
-		// l'implémentation des actions collisions
 		bot.setCollision(true);
 		collided = true;
 	}

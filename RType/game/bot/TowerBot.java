@@ -30,13 +30,6 @@ public class TowerBot extends Bot {
 
 	@Override
 	public void think() {
-		if (b.getModel().entity(e.row(), e.col()) == null) {
-			b.getModel().setGrid(e.row(), e.col(), (Entity) e);
-			System.out.println("Replacement Tower");
-		} else if (b.getModel().entity(e.row(), e.col()) != e && b.getModel().entity(e.row(), e.col()) != null) {
-			e.die();
-			System.out.println("DEAD Tower");
-		}
 		switch (state) {
 		case MOVING:
 			Moving();
