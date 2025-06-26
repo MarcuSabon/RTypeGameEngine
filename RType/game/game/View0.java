@@ -41,23 +41,33 @@ import oop.graphics.Canvas;
 
 public class View0 extends View {
 	private ScrollingBackground background;
+	private ScrollingBackground background2;
 	private ViewBar viewBar;
 	private BufferedImage backgroundImage;
 	private GameState gameState;
 	private Animator animExplo;
 	private Animator anim;
 	private Animator animLaser;
+	private Animator cinematic;
 	private Graphics2D g;
 
+	private int cinematicFrame = 0;
+
 	protected boolean nomDonnee;
+
+	private int cinematicElapsedTime = 0;
+	private final int cinematicFrameDuration = 1000 / 24; // ~41 ms par frame
+	private int framesOnLastImage = 0;
 
 	public View0(Canvas canvas, IModel model) {
 		super(canvas, model);
 		background = new ScrollingBackground(canvas, "/space.png", this);
+		background2 = new ScrollingBackground(canvas, "/jungle.jpg", this);
 		viewBar = new ViewBar(canvas, "/retroGaming.ttf", model, this);
 		animExplo = new Animator("/Explosion", 47, 1);
 		anim = new Animator("/Flame", 3, 10);
 		animLaser = new Animator("/LaserShot", 16, 1);
+		cinematic = new Animator("/Cinematic", 79, 1);
 		nomDonnee = false;
 	}
 
@@ -65,15 +75,24 @@ public class View0 extends View {
 	public void subPaint(Canvas canvas, Graphics2D g) {
 		switch (gameState) {
 		case Intro:
-			background(g, canvas, "/landscape_comp.jpeg");
+			this.g = g;
+			cinematic.printFullscreen(g, canvas.getWidth() + cellSize - (int) oX,
+					canvas.getHeight() + cellSize - (int) oY, cinematicFrame);
 			break;
 		case Pseudo:
 			background(g, canvas, "/main_fond3.jpg");
 			choisirPseudo(canvas, g);
 			break;
+		case Transition0:
+			background(g, canvas, "/BCVSTTS.jpg");
+			break;
 		case Playing:
 			this.g = g;
-			background.draw(g);
+			if (GameManager.lvl1) {
+				background.draw(g);
+			} else {
+				background2.draw(g);
+			}
 			g.scale(zoom, zoom);
 
 			for (Avatar a : m_visibleAvatars)
@@ -82,21 +101,31 @@ public class View0 extends View {
 			viewBar.draw(g, p);
 
 			break;
-		case End:
-			background(g, canvas, "/gameOver.jpg");
-			clear_avatars();
-			break;
 		case Restart:
 			background(g, canvas, "/main_fond3.jpg");
 			choisir_restart_leave(canvas, g);
 			break;
 		case LevelWin:
-			background(g, canvas, "/transition1.jpg");
+			background(g, canvas, "/BCVSBBP.jpg");
 			clear_avatars();
 			break;
 		case Win:
-			background(g, canvas, "/win.jpg");
+			background(g, canvas, "/rtypeWin.jpg");
 			clear_avatars();
+			break;
+		case End:
+			background(g, canvas, "/gameOver.jpg");
+			clear_avatars();
+			break;
+		case Charge:
+			this.g = g;
+			background.draw(g);
+			g.scale(zoom, zoom);
+
+			for (Avatar a : m_visibleAvatars)
+				a.render(g);
+			Player p1 = m_model.player();
+			viewBar.draw(g, p1);
 			break;
 		default:
 			System.err.println("Unknown game state: " + gameState);
@@ -111,7 +140,28 @@ public class View0 extends View {
 
 	@Override
 	public void subtick(int elapsed) {
-		background.update(elapsed);
+		if (GameManager.lvl1) {
+			background.update(elapsed);
+		} else {
+			background2.update(elapsed);
+		}
+		if (gameState == GameState.Intro) {
+			cinematicElapsedTime += elapsed;
+
+			if (cinematicElapsedTime >= cinematicFrameDuration) {
+				cinematicElapsedTime = 0;
+
+				if (cinematicFrame < cinematic.images.length - 1) {
+					cinematicFrame++;
+				} else {
+					framesOnLastImage++;
+					if (framesOnLastImage >= 24) { // 24 frames ≈ 1 seconde
+						cinematicFrame = 0;
+						framesOnLastImage = 0;
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -202,6 +252,23 @@ public class View0 extends View {
 				return frame + 1;
 			}
 		}
+
+		public void printFullscreen(Graphics2D g, int canvasWidth, int canvasHeight, int frame) {
+			if (frame < 0 || frame >= images.length || images[frame] == null)
+				return;
+
+			BufferedImage image = images[frame];
+			double scaleX = (double) canvasWidth / image.getWidth();
+			double scaleY = (double) canvasHeight / image.getHeight();
+
+			AffineTransform transform = new AffineTransform();
+			transform.scale(scaleX, scaleY);
+			transform.translate(0, 0);
+
+			// Dessine bien sur toute la taille du canvas
+			g.drawImage(image, 0, 0, canvasWidth, canvasHeight, null);
+		}
+
 	}
 
 	public void setNomDonnee(boolean bool) {

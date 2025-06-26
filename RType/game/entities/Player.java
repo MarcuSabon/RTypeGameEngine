@@ -53,6 +53,10 @@ public class Player extends Entity {
 		}
 	}
 
+	public void setScore(int points) {
+		this.score += points;
+	}
+
 	public int getHP() {
 		return this.HP;
 	}

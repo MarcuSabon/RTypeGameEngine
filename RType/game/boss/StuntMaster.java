@@ -3,8 +3,10 @@ package boss;
 import engine.brain.Category;
 import engine.model.Entity;
 import engine.model.Model;
+import engine.utils.Utils;
 import entities.Bullet;
 import entities.Missile;
+import game.GameManager;
 import sound.SoundPlayer;
 import stunts.StuntShootingPNJ;
 
@@ -154,25 +156,52 @@ public class StuntMaster extends StuntShootingPNJ {
 
 	public void shoot() {
 		// TODO : cleanup
-		double col = e.col() - 3;
-		double row = e.row() + 1;
-		if (m.entity((int) row, (int) col) == null) {
-			Bullet b = new Bullet(m, (int) row, (int) col, 180, Category.Adversary);
-			Bullet b2 = new Bullet(m, (int) row + 1, (int) col, 130, Category.Adversary);
-			Bullet b3 = new Bullet(m, (int) row - 1, (int) col, 210, Category.Adversary);
-			b.at(col + 0.5, row + 0.5);
-			b2.at(col + 0.5, row + 1.5);
-			b3.at(col + 0.5, row - 0.5);
-			SoundPlayer.shootProjectile();
+		if (GameManager.lvl1) {
+			double col = e.col() - 3;
+			double row = e.row() + 1;
+			if (m.entity((int) row, (int) col) == null) {
+				Bullet b = new Bullet(m, (int) row, (int) col, 180, Category.Adversary);
+				Bullet b2 = new Bullet(m, (int) row + 1, (int) col, 130, Category.Adversary);
+				Bullet b3 = new Bullet(m, (int) row - 1, (int) col, 210, Category.Adversary);
+				b.at(col + 0.5, row + 0.5);
+				b2.at(col + 0.5, row + 1.5);
+				b3.at(col + 0.5, row - 0.5);
+				SoundPlayer.shootProjectile();
+			}
+		} else {
+			double col = e.col() - 3;
+			double row = e.row() + 1;
+			int o = Utils.theta((float) (e.x() - m.player().x()), (float) (e.y() - m.player().y()));
+			o += 180;
+			if (m.entity((int) row, (int) col) == null) {
+				Bullet b = new Bullet(m, (int) row, (int) col, o, Category.Adversary);
+				Bullet b2 = new Bullet(m, (int) row + 1, (int) col, o, Category.Adversary);
+				Bullet b3 = new Bullet(m, (int) row - 1, (int) col, o, Category.Adversary);
+				Bullet b5 = new Bullet(m, (int) row + 2, (int) col, o, Category.Adversary);
+				b.at(col + 0.5, row + 0);
+				b2.at(col + 0.5, row + 1.5);
+				b3.at(col + 0.5, row - 1.5);
+				b5.at(col + 0.5, row + 3);
+				SoundPlayer.shootProjectile();
+			}
 		}
 	}
 
 	public void Missile() {
 		// TODO : cleanup
-		double col = e.col() + 2;
-		double row = e.row() + 3;
-		double col2 = e.col() + 2;
-		double row2 = e.row() - 3;
+		double col, row, col2, row2;
+		if (GameManager.lvl1) {
+			col = e.col() + 2;
+			row = e.row() + 3;
+			col2 = e.col() + 2;
+			row2 = e.row() - 3;
+		} else {
+			col = e.col() + 4;
+			row = e.row() - 6;
+			col2 = e.col() + 4;
+			row2 = e.row() - 8;
+		}
+
 		if (m.entity((int) row, (int) col) == null) {
 			Missile mis = new Missile(m, (int) row, (int) col, 90, m.player());
 			mis.at(col + 0.5, row + 0.5);

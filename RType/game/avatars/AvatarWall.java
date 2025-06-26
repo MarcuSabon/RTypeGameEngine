@@ -11,6 +11,8 @@ import javax.imageio.ImageIO;
 import engine.model.Entity;
 import engine.view.Avatar;
 import engine.view.View;
+import game.GameManager;
+import stunts.StuntWall;
 import map.Synchronyser;
 
 public class AvatarWall extends Avatar {
@@ -21,7 +23,11 @@ public class AvatarWall extends Avatar {
 		try {
 			Random rand = new Random();
 			int n = rand.nextInt(3) + 1;
-			String imagePath = "/Map1/Wall" + n + "Map1.png";
+			String imagePath;
+			if (GameManager.lvl1)
+				imagePath = "/Map1/Wall" + n + "Map1.png";
+			else
+				imagePath = "/Map2/buisson" + n + ".png";
 			image = ImageIO.read(getClass().getResourceAsStream(imagePath));
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -35,6 +41,7 @@ public class AvatarWall extends Avatar {
 		}
 
 		int cellWidth = v.pxPerMeter();
+		
 
 		double x, y;
 

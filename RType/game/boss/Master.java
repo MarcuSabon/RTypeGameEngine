@@ -8,6 +8,7 @@ import engine.brain.Brain;
 import engine.model.Entity;
 import engine.model.Model;
 import engine.model.PNJ;
+import game.GameManager;
 
 public class Master extends PNJ {
 	public Entity[][] body;
@@ -20,7 +21,10 @@ public class Master extends PNJ {
 		new BossBot(m.getBrain(), this);
 		String[][] StringBody = null;
 		try {
-			StringBody = new ParserBoss().parseTableauFromFile(filepath + "/Boss");
+			if (GameManager.lvl1)
+				StringBody = new ParserBoss().parseTableauFromFile(filepath + "/Boss");
+			else
+				StringBody = new ParserBoss().parseTableauFromFile(filepath + "/Boss2");
 		} catch (IOException e) {
 			System.out.println("Fichier de boss introuvable");
 		}

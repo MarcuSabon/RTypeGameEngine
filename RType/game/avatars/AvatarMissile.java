@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import engine.model.Entity;
 import engine.view.Avatar;
 import entities.Missile;
+import game.GameManager;
 import game.View0;
 
 public class AvatarMissile extends Avatar {
@@ -25,7 +26,11 @@ public class AvatarMissile extends Avatar {
 
 	private void loadImage() {
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream("/ship.png"));
+			if (GameManager.lvl1) {
+				image = ImageIO.read(getClass().getResourceAsStream("/ship.png"));
+			} else {
+				image = ImageIO.read(getClass().getResourceAsStream("/BdB.png"));
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

@@ -19,7 +19,7 @@ public class AvatarPlayer extends Avatar {
 	public AvatarPlayer(View v, Entity e) {
 		super(v, e);
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream("/bombardiro_crocodilo.png"));
+			image = ImageIO.read(getClass().getResourceAsStream("/BC.png"));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

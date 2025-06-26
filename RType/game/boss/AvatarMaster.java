@@ -11,6 +11,7 @@ import bot.BossBot;
 import engine.model.Entity;
 import engine.model.Stunt.Action;
 import engine.view.Avatar;
+import game.GameManager;
 import game.View0;
 
 public class AvatarMaster extends Avatar {
@@ -96,9 +97,10 @@ public class AvatarMaster extends Avatar {
 		int cellWidth = v.pxPerMeter();
 		Entity[][] temp = master.body();
 		BossBot b = (BossBot) master.bot;
-
-		if (!(((Master) e).body()[2][2].isDead()) && b.state != 4) {
-			flammeframes = v.flamme(x + 0.15 * cellWidth, y + 2.8 * cellWidth, flammeframes, 1, 0);
+		if (GameManager.lvl1) {
+			if (!(((Master) e).body()[2][2].isDead()) && b.state != 4) {
+				flammeframes = v.flamme(x + 0.15 * cellWidth, y + 2.8 * cellWidth, flammeframes, 1, 0);
+			}
 		}
 		if (b.state == 4 && explosionframes > 0) {
 			explosionframes = v.explosion(x, y, explosionframes, 50, 0);
