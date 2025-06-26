@@ -15,7 +15,7 @@ public class PlayerBot extends Bot {
 	public PlayerBot(Brain b, Entity e) {
 		super(b, e);
 		c = Category.Player;
-		delay = 100;
+		delay = 150;
 	}
 
 	@Override

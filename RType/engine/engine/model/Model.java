@@ -82,13 +82,6 @@ public class Model implements IModel {
 		m_brain = b;
 	}
 
-	@Override
-	// A n'utiliser que dans les bots des Tower et éventuellement de Wall (entités
-	// statique)
-	public void setGrid(int row, int col, Entity e) { // our régler le bug d'entité fantome
-		m_grid[row][col] = e;
-	}
-
 	/*
 	 * Move the given entity from its current location by adding the given number of
 	 * rows and columns to its current location.
@@ -276,6 +269,19 @@ public class Model implements IModel {
 		m_brain.killed(entity);
 	}
 
+	public void clear() {
+
+		for (Entity e : m_entities) {
+			m_grid[e.m_row][e.m_col] = null; // Clear the grid
+		}
+		m_entities.clear(); // Clear the entity list
+
+	}
+
+	public void emptyGrid(int row, int col) {
+		m_grid[row][col] = null;
+	}
+
 	// ---------- Private methods -------------
 
 	private boolean isEntityAtLeftEdge(Entity e) {
@@ -440,16 +446,4 @@ public class Model implements IModel {
 		return true;
 	}
 
-	public void clear() {
-
-		for (Entity e : m_entities) {
-			m_grid[e.m_row][e.m_col] = null; // Clear the grid
-		}
-		m_entities.clear(); // Clear the entity list
-
-	}
-
-	public void emptyGrid(int row, int col) {
-		m_grid[row][col] = null;
-	}
 }

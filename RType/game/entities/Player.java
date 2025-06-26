@@ -37,6 +37,12 @@ public class Player extends Entity {
 
 	}
 
+	@Override
+	public void die() {
+		super.die();
+		HP = 0; // Le joueur meurt
+	}
+
 	public int getScore() {
 		return this.score;
 	}
