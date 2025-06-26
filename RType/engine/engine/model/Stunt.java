@@ -44,8 +44,8 @@ public abstract class Stunt {
 
 	public abstract void rotate(int angle);
 
-	public void move(double x, double y) {
-		e.m_model.move(e, x, y);
+	public boolean move(double x, double y) {
+		return e.m_model.move(e, x, y);
 	}
 
 	public double realSpeedX() {

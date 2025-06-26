@@ -237,7 +237,7 @@ public class StuntPlayer extends Stunt {
 																									// -> Pas de dégat
 																									// subit
 					int damage = collisionEntity.bot.getPointsValue();
-					p.setHP(damage);
+					p.inflictHP(damage);
 				}
 				p.bot.setCollisionWithEntity(null);
 				break;

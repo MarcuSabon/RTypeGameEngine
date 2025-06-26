@@ -23,11 +23,18 @@ public class StuntBullet extends Stunt {
 	public void tick(int elapsed) {
 
 		if (action == null) {
-			move(realSpeedX() * elapsed, realSpeedY() * elapsed);
+			boolean moved = move(realSpeedX() * elapsed, realSpeedY() * elapsed);
+
 			IBot bot = e.bot;
-			if (bot != null) {
-				bot.think(elapsed);
+			if (bot == null) {
+				return; // No bot to think, nothing to do
 			}
+
+			if (!moved) {
+				bot.setCollision(true);
+			}
+
+			bot.think(elapsed);
 		}
 	}
 
