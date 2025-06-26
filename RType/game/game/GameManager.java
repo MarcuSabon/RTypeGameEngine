@@ -257,6 +257,21 @@ public class GameManager {
 					new Tracker(model, s.row, s.col - 1, 0);
 					break;
 				case '9':
+					if (model.player().col() > 5) {
+						if (model.entity(10, 5) != null) {
+							model.entity(10, 5).die();
+						}
+						// model.player().at(10, 10);
+						model.player().at(10.0, 5.0);
+						model.player().move(0.0, 0.1);
+					}
+					for (int i = s.row - 5; i < s.row + 5; i++) {
+						for (int j = s.col - 15; j < s.col - 5; j++) {
+							if (model.entity(i, j) != null) {
+								model.entity(i, j).die();
+							}
+						}
+					}
 					SoundPlayer.play("/Sounds/BossSpawn.wav");
 					this.boss = new Master(model, s.row, s.col - 10, 0, "/Boss/Level1", m_brain);
 					break;
