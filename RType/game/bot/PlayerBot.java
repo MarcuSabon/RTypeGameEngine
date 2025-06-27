@@ -31,7 +31,7 @@ public class PlayerBot extends Bot {
 			playerCollision((Player) e, entityCollisionWith); // action de collision -> décrémentation des HP
 		} else if (shooting) {
 			StuntPlayer sp = (StuntPlayer) e.stunt;
-			sp.playerShoot(e);
+			sp.playerShoot();
 			SoundPlayer.shootProjectile();
 		}
 

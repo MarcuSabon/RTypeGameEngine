@@ -405,7 +405,7 @@ public class StuntPlayer extends Stunt {
 		}
 	}
 
-	public void playerShoot(Entity entity) {
+	public void playerShoot() {
 		if (action == null) {
 			this.action = new PlayerShoot(this, SHOOTING_DURATION);
 		}

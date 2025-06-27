@@ -3,7 +3,6 @@ package entities;
 import bot.ShooterBot;
 import engine.brain.Category;
 import engine.model.Model;
-import sound.SoundPlayer;
 import stunts.StuntShooter;
 
 public class Shooter extends ShootingPNJ {

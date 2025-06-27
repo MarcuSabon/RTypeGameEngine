@@ -1,4 +1,0 @@
-Mover(Init){
- * Init:
- | True ? Move : Init
- }

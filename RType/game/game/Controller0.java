@@ -9,7 +9,6 @@ import entities.Player;
 import oop.graphics.Canvas;
 import oop.graphics.VirtualKeyCodes;
 import oop.tasks.Task;
-import sound.SoundPlayer;
 import stunts.StuntPlayer;
 
 public class Controller0 extends Controller {
