@@ -1,5 +1,6 @@
 package engine.view;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
@@ -295,7 +296,7 @@ public abstract class View implements IView {
 		int nrows = m_model.nrows();
 		int ncols = m_model.ncols();
 
-		g.setColor(java.awt.Color.CYAN);
+		g.setColor(new Color(0, 255, 255, 76)); // Cyan avec 30% d'opacité
 
 		for (int row = 0; row < nrows; row++) {
 			for (int col = 0; col < ncols; col++) {
