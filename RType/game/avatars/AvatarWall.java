@@ -12,7 +12,6 @@ import engine.model.Entity;
 import engine.view.Avatar;
 import engine.view.View;
 import game.GameManager;
-import stunts.StuntWall;
 import map.Synchronyser;
 
 public class AvatarWall extends Avatar {

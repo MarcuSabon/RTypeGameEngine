@@ -64,8 +64,6 @@
 			<src path="../ple.given/_given"/>
 			<src path="engine"/>
 			<src path="game"/>
-			<src path="GAL"/>
-			<src path="parser"/>
 		</javac>
 	</target>
 

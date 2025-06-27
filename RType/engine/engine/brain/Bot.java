@@ -14,8 +14,6 @@ public abstract class Bot implements IBot {
 	protected Brain b;
 	protected Entity e;
 	protected Category c;
-	protected Mode mode;
-	protected FSM fsm;
 
 	// champs valeur d'un bot pour le score du Player
 	protected int pointsValue; // J'ai mis dans bot et pas Entity pcq la difficulté à tuer l'entité dépend de
@@ -58,11 +56,6 @@ public abstract class Bot implements IBot {
 	@Override
 	public Category category() {
 		return c;
-	}
-
-	@Override
-	public void setFSM(FSM fsm) {
-		this.fsm = fsm;
 	}
 
 	@Override
