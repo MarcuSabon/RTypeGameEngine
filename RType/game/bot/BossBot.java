@@ -167,8 +167,9 @@ public class BossBot extends Bot {
 				StuntMaster sm = (StuntMaster) e.stunt;
 				if (r == 0)
 					sm.shoot();
-				else
+				else if (r == 2) {
 					sm.Missile();
+				}
 
 				shot = true;
 			}

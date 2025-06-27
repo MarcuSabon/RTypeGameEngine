@@ -195,18 +195,27 @@ public class StuntMaster extends StuntShootingPNJ {
 			row = e.row() + 3;
 			col2 = e.col() + 2;
 			row2 = e.row() - 3;
+			if (m.entity((int) row, (int) col) == null) {
+				Missile mis = new Missile(m, (int) row, (int) col, 90, m.player());
+				mis.at(col + 0.5, row + 0.5);
+			}
+			if (m.entity((int) row2, (int) col2) == null) {
+				Missile mis2 = new Missile(m, (int) row2, (int) col2, 270, m.player());
+				mis2.at(col2 + 0.5, row2 + 0.5);
+			}
 		} else {
-			col = e.col() + 4;
-			row = e.row() - 6;
-			col2 = e.col() + 4;
-			row2 = e.row() - 8;
-		}
-
-		if (m.entity((int) row, (int) col) == null) {
-			Missile mis = new Missile(m, (int) row, (int) col, 90, m.player());
-			mis.at(col + 0.5, row + 0.5);
-			Missile mis2 = new Missile(m, (int) row2, (int) col2, 270, m.player());
-			mis2.at(col2 + 0.5, row2 + 0.5);
+			col = 23;
+			row = 4;
+			col2 = 20;
+			row2 = 4;
+			if (m.entity((int) row, (int) col) == null) {
+				Missile mis = new Missile(m, (int) row, (int) col, 90, m.player());
+				mis.at(col + 0.5, row + 0.5);
+			}
+			if (m.entity((int) row2, (int) col2) == null) {
+				Missile mis2 = new Missile(m, (int) row2, (int) col2, 270, m.player());
+				mis2.at(col2 + 0.5, row2 + 0.5);
+			}
 		}
 	}
 

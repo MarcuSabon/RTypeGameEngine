@@ -38,6 +38,9 @@ public class MapLoader {
 	}
 
 	public void tick(double elapsed, Model model) {
+		if (endLvl) {
+			Synchronyser.stop();
+		}
 		if (!endLvl) {
 			scrollTimer += elapsed;
 			if (scrollTimer >= SCROLL_INTERVAL) {

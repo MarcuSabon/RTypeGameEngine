@@ -12,7 +12,7 @@ public class TowerBot extends Bot {
 
 	private static final int MOVING = 0;
 	private static final int ACTION = 1;
-	private int moveFinish = 2; // nombre de déplacement vers la gauche avant de rester immobile
+	private int moveFinish = 1; // nombre de déplacement vers la gauche avant de rester immobile
 	private int state;
 	private int delayShoot = 0;
 
@@ -46,7 +46,7 @@ public class TowerBot extends Bot {
 			e.die();
 		} else {
 			moveFinish--;
-			moveWithRotation(Direction.W);
+			e.face(180);
 		}
 
 		if (moveFinish == 0) {
@@ -61,14 +61,13 @@ public class TowerBot extends Bot {
 			PNJCollision((PNJ) e, entityCollisionWith);
 			e.die();
 		}
-
 		Entity e = closest(Category.Adversary);
 		if (e == null)
 			return;
 
 		if (delayShoot <= 0) {
-			shoot(Direction.E, this.e);
-			delayShoot = 10000;
+			shoot(Direction.W, this.e);
+			delayShoot = 5000;
 		}
 
 		delay = duration;

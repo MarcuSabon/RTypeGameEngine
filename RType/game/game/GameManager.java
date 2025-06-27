@@ -28,7 +28,7 @@ public class GameManager {
 	protected static StringBuilder pseudoBuilder;
 	public static int surligne;
 	public static boolean restartButton;
- 	public static boolean lvl1 = true; // Level 1 flag
+	public static boolean lvl1 = true; // Level 1 flag
 	private int time = 4000;
 	private int time2 = 2000;
 	private int time3 = 2000;
@@ -82,7 +82,7 @@ public class GameManager {
 			}
 
 			SpawnEntities(elapsed);
-			if (player.getHP() <= 0) {
+			if (player.getHP() <= 0 || player.col() == 0) {
 				gameState = switchState(gameState, false);
 				view.setGameState(gameState);
 			} else if (boss != null && player.getHP() > 0 && boss.isDead()) {
@@ -94,7 +94,7 @@ public class GameManager {
 			}
 		}
 		if (gameState == GameState.Restart) {
-			Synchronyser.start();
+			// Synchronyser.start();
 			if (controller.nameGiven) {
 				time4 = time3 = 2000;
 				if ((surligne % 2 + 2) % 2 == 0) {
@@ -175,6 +175,7 @@ public class GameManager {
 	}
 
 	public void init() {
+		Synchronyser.start();
 		if (!playerInitialized()) {
 			time2 = 2000;
 			setNomDonnee();
@@ -194,6 +195,7 @@ public class GameManager {
 	}
 
 	public void init_lvl2() {
+		Synchronyser.start();
 		if (!playerInitialized()) {
 			lvl1 = false;
 			time2 = 2000;
@@ -281,13 +283,13 @@ public class GameManager {
 			for (SpawnData s : spawns) {
 				switch (s.type) {
 				case '2':
-					new Shooter(model, s.row, s.col - 1, 0);
+					new Shooter(model, s.row, s.col, 0);
 					break;
 				case '3':
-					new Tower(model, s.row, s.col - 1, 0);
+					new Tower(model, s.row, s.col, 0);
 					break;
 				case '4':
-					new Tracker(model, s.row, s.col - 1, 0);
+					new Tracker(model, s.row, s.col, 0);
 					break;
 				case '9':
 					if (model.player().col() > 5) {

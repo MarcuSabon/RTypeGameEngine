@@ -50,13 +50,15 @@ public class ScrollingBackground {
 		int screenW = canvas.getWidth();
 		int screenH = canvas.getHeight();
 
+		if (screenW != imgW || screenH != imgH)
+			backgroundImage = backgroundImage.getScaledInstance(screenW, screenH, Image.SCALE_SMOOTH);
+
 		double zoom = view0.getZoom();
 		double viewportX = view0.oX();
 		double viewportY = view0.oY();
 
 		int bgOffsetX = (int) (-viewportX / zoom % imgW);
 		int bgOffsetY = (int) (-viewportY / zoom % imgH);
-
 		for (int i = -1; i < screenW / imgW + 2; i++) {
 			for (int j = -1; j < screenH / imgH + 2; j++) {
 				g.drawImage(backgroundImage, offsetX + bgOffsetX + i * imgW, bgOffsetY + j * imgH, imgW, imgH, null);
