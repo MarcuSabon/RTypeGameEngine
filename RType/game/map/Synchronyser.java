@@ -16,10 +16,10 @@ public class Synchronyser {
 	public static void tick(int elapsed) {
 		progress = (double) totElapsed / (double) SCROLL_INTERVAL;
 		totElapsed += elapsed;
-		if (progress > 1) {
-			totElapsed = 0;
-			progress = 0;
-		}
+//		if (progress >= 1) {
+//			totElapsed = 0;
+//			progress = 0;
+//		}
 	}
 
 	public static double progress() {
@@ -31,6 +31,7 @@ public class Synchronyser {
 
 	public static void resetProg() {
 		totElapsed = 0;
+		progress = 0;
 	}
 
 	public static double synchronise(double x, double cellWidth) {

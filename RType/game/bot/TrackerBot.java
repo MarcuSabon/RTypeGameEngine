@@ -17,7 +17,7 @@ public class TrackerBot extends Bot {
 	public TrackerBot(Brain b, Entity e) {
 		super(b, e);
 		c = Category.Adversary;
-		duration = delay;
+		duration = 300;
 		pointsValue += 100; // valeur d'un bot de base par exemple
 		state = FULL;
 		HP = 2;

@@ -18,7 +18,7 @@ public class Player extends Entity {
 		new PlayerBot(m.getBrain(), this);
 		m.setPlayer(this);
 		score = 0;
-		HP = 1000; // au pif sah
+		HP = 2500; // au pif sah
 	}
 
 	/*

@@ -23,7 +23,7 @@ public class TowerBot extends Bot {
 		super(b, e);
 		this.e = e;
 		c = Category.Adversary;
-		duration = delay;
+		duration = 300;
 		pointsValue += 300; // valeur d'un bot de base par exemple
 		state = MOVING;
 	}

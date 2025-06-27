@@ -7,8 +7,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import engine.model.Entity;
 import engine.model.Model;
 import entities.Player;
+import entities.Shooter;
+import entities.Tower;
+import entities.Tracker;
 
 public class MapLoader {
 	private static final int CHUNK_WIDTH = 42;
@@ -78,8 +82,8 @@ public class MapLoader {
 	public static boolean updateMap(Model m) {
 		if (!endLvl) {
 			decalageActChunk(m);
-			ajoutColActChunk(m);
 			Synchronyser.resetProg();
+			ajoutColActChunk(m);
 		}
 
 		offset++;
@@ -89,6 +93,7 @@ public class MapLoader {
 			if (currentChunk + 1 >= chunks.size()) {
 				nextChunk = actChunk;
 				Synchronyser.stop();
+				cleanGrid(m);
 				return true;
 			} else {
 				actChunk = chunks.get(currentChunk);
@@ -102,6 +107,17 @@ public class MapLoader {
 			}
 		}
 		return false;
+	}
+
+	private static void cleanGrid(Model m) {
+		for (int i = 0; i < m.nrows(); i++) {
+			for (int j = 0; j < m.ncols(); j++) {
+				Entity suj = m.entity(i, j);
+				if (suj instanceof Shooter || suj instanceof Tower || suj instanceof Tracker) {
+					suj.die();
+				}
+			}
+		}
 	}
 
 	// met à jour la dernière colonne de actChunk

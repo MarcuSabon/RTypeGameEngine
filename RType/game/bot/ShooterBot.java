@@ -19,7 +19,7 @@ public class ShooterBot extends Bot {
 		this.e = e;
 
 		c = Category.Adversary;
-		duration = delay;
+		duration = 300;
 		pointsValue += 100; // valeur d'un bot de base par exemple
 
 	}

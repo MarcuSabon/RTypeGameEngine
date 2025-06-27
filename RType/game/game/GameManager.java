@@ -309,9 +309,9 @@ public class GameManager {
 					}
 					SoundPlayer.play("/Sounds/BossSpawn.wav");
 					if (lvl1)
-						this.boss = new Master(model, s.row, s.col - 10, 0, "/Boss/Level1", m_brain);
+						this.boss = new Master(model, s.row, s.col - 7, 0, "/Boss/Level1", m_brain);
 					else
-						this.boss = new Master(model, s.row, s.col - 10, 0, "/Boss/Level2", m_brain);
+						this.boss = new Master(model, s.row, s.col - 7, 0, "/Boss/Level2", m_brain);
 					break;
 				}
 			}

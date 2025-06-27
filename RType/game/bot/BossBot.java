@@ -151,11 +151,11 @@ public class BossBot extends Bot {
 		if (GameManager.lvl1) {
 
 			if (ATTACKINGTIME % 200 == 0) {
-				int r = random.nextInt(4);
+				int r = random.nextInt(5);
 				StuntMaster sm = (StuntMaster) e.stunt;
 				if (r == 0)
 					sm.Missile();
-				else
+				else if (r == 2 || r == 3)
 					sm.shoot();
 
 				shot = true;
