@@ -1,30 +1,36 @@
 # G3 - BR-Type Game
 
-Ce projet implémente **BR-Type**, un jeu de type shoot ’em up 2D développé avec un moteur de jeu personnalisé.  
+This project implements **BR-Type**, a 2D shoot 'em up game developed using a custom-built game engine.
 
 ---
 
-## 🎮 Lancement du jeu
+## 🎮 Running the Game
 
-Pour exécuter le jeu, suivez ces étapes :  
+To launch the game, follow these steps:
 
-1. Ouvrir un terminal et se placer dans le **dossier du projet**, là où se trouve ce README.  
-2. Donner les permissions d’exécution au script de lancement :
+1. Open a terminal and navigate to the **project folder**, where this README is located.
+2. Grant execution permissions to the launch script:
+
 ```bash
 chmod +x BRType.sh
 ```
-Lancer le jeu avec la commande :
-```
+
+3. Start the game with:
+
+```bash
 ./BRType.sh
 ```
-🛠️ Prérequis
 
-Java 11+ ou supérieur
+---
 
-📂 Contenu du projet
+## 🛠️ Prerequisites
 
-BRType.sh : script de lancement
+* Java 11 or higher
 
-src/ : code source du moteur et du jeu
+---
 
-assets/ : images, sons et autres ressources
+## 📂 Project Structure
+
+* **BRType.sh** – Launch script
+* **src/** – Source code for the engine and the game
+* **assets/** – Images, sounds, and other resources
